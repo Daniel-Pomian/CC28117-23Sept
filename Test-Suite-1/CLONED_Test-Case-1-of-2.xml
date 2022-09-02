@@ -152,6 +152,44 @@
       </con:restRequest>
     </con:config>
   </con:testStep>
+  <con:setupScript>// This defines the path to the Sample Excel File which is uploaded in the Document Upload section
+// This property is set as a Global Property at the Project level and is seen under Preferences > Global Properties
+def FLocation = testRunner.testCase.testSuite.project.path
+log.info(FLocation)
+com.eviware.soapui.SoapUI.globalProperties.setPropertyValue( "Ppath", FLocation )
+log.info(com.eviware.soapui.SoapUI.globalProperties.getPropertyValue( "Ppath" ))
+
+// These script lines generate various dates (today, dates in the future, etc.,)
+// These Dates are set at a Test Case level so that any Test Step within the Test Case can make use of it
+// These are set as Custom Test Case Properties and can be viewed by highlighting the Test Case and accessing the frame on the bottom left called Custom Test Case Properties
+def today = new Date()
+def TDate = today.format("MM/dd/yyyy")
+testRunner.testCase.setPropertyValue("TodayDate", TDate)
+//requestedEffectiveDate is used to set the Policy effective date on the General Information page and sets this date as today plus 15 days
+String requestedEffectiveDate = today.plus(10).format("yyyy-MM-dd").toString()+"T00:00:00.000Z"
+testRunner.testCase.setPropertyValue("requestedEffectiveDate",requestedEffectiveDate)
+//initialWithdrawalDate is used to set the initial deposit payment withdrawal date for PAD on the Administration Information page and sets this date as today plus 30 days
+String initialWithdrawalDate = today.plus(30).format("yyyy-MM-dd").toString()+"T00:00:00.000Z"
+testRunner.testCase.setPropertyValue("initialWithdrawalDate",initialWithdrawalDate)
+//initBenefitPrdStartDate &amp; initBenefitPrdEndDate are used to set HCSA &amp; TSA benefit start &amp; end dates
+String initBenefitPrdStartDate = today.plus(30).format("yyyy-MM-dd").toString()+"T00:00:00.000Z"
+String initBenefitPrdEndDate = today.plus(90).format("yyyy-MM-dd").toString()+"T00:00:00.000Z"
+testRunner.testCase.setPropertyValue("initBenefitPrdStartDate",initBenefitPrdStartDate)
+testRunner.testCase.setPropertyValue("initBenefitPrdEndDate",initBenefitPrdEndDate)
+log.info(TDate)
+log.info(requestedEffectiveDate)
+log.info(initialWithdrawalDate)
+log.info(initBenefitPrdStartDate)
+log.info(initBenefitPrdEndDate)
+
+
+def ClassId = UUID.randomUUID().toString()
+def DivisionId =  UUID.randomUUID().toString()
+
+testRunner.testCase.setPropertyValue("ClassId", ClassId)
+testRunner.testCase.setPropertyValue("DivisionId", DivisionId)
+log.info(ClassId)
+log.info(DivisionId)</con:setupScript>
   <con:properties/>
   <con:reportParameters/>
 </con:testCase>
