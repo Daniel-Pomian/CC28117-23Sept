@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="f2b82dbc-d62b-49bc-9538-15f7072cb59b" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-ReplaceValueInFile" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="f2b82dbc-d62b-49bc-9538-15f7072cb59bfileName">TestCase-ReplaceValueInFile</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-ReplaceValueInFile" id="16bfdfad-d06a-4648-b3b3-76a144aed02d">
+    <con:settings/>
+    <con:config>
+      <script>/*
+  * This script replace any value in file with new one from input in test-case
+  * Author: 	Michael Gordon
+  * Date:		2020-11-12
+  */
+
+ // set reguired values from properties 
+ String sFilePath = context.expand( '${#TestCase#inFilePath}' ).replace('\\','/')
+ String sValue1 = context.expand( '${#TestCase#inOldValue}' )
+ String sValue2 = context.expand( '${#TestCase#inNewValue}')
+ 
+ // create file for read and write in created camt054 file credit
+ File fFile=new File(sFilePath)
+ assert fFile.exists()
+ 
+  // read file content replace and save
+ String sContent=new File(sFilePath).getText('utf-8')
+ fFile.write( sContent.replaceAll( sValue1, sValue2), 'utf-8')
+ log.info('Replaced: ' +sValue1 + ' with ' +sValue2 + ' in file: '+ sFilePath)</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFilePath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/2022-10-04_C54_DE99999999999999999990_EUR_994987.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inOldValue</con:name>
+      <con:value>&lt;TxId>.*&lt;/TxId></con:value>
+    </con:property>
+    <con:property>
+      <con:name>inNewValue</con:name>
+      <con:value>&lt;AcctSvcrRef>PTS108762316&lt;/AcctSvcrRef></con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

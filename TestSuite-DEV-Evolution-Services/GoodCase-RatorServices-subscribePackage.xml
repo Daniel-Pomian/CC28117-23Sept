@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="a911c783-384a-4cf2-8988-37a538fafadc" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-RatorServices-subscribePackage" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests positive business cases from Rator / PSST  evolution services based on documentation in svn:
+...src\trunk\SRs\Interfaces\RATOR-PSST\ST_TD_DRC_U-036_PSST_Interface_Specification-V3.2.1.pdf
+§ 4.2.1
+Tests positive test-cases for subscribePackages</con:description>
+  <con:settings>
+    <con:setting id="a911c783-384a-4cf2-8988-37a538fafadcfileName">GoodCase-RatorServices-subscribePackage</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="calltestcase" name="_Run TestCase-getSetting" id="ebc2a2d0-d2d5-4da1-86ae-4afa248fb2a0">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>e17d9c21-4e1d-492a-b204-766769a26d72</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrand</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outSetting</con:name>
+          <con:value>Not found any known ocs-setting for brand: - 1</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outSetting</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo" id="ddbe0f61-c078-4295-958a-a04d254bca9c">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script continues with test-steps below, if ocs-setting=ocs or springs to steps for ocs-setting=ngocs
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+
+def sCurrentSetting = context.expand( '${_Run TestCase-getSetting#outSetting}' )
+def oCSSetting_NEW = context.expand( '${#Project#OCSSetting_NEW}' )
+
+// if current setting for ocs=ngocs, go to test-steps for ngocs.
+if(sCurrentSetting==oCSSetting_NEW)
+	testRunner.gotoStepByName(["Assertion_for_NGOCS"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="35ee3e36-ec98-4aaf-b4b9-ea3b1e80805d" name="1400P_subscribePackage-MandParam">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1400P_subscribePackage-MandParam" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:subscribePackage>
+         <subscribePackageDto>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <packageId>${#Project#GUID_Moved-}</packageId>
+            <subscriptionFee>${#TestSuite#Rator-subscripFee-Default}</subscriptionFee>
+            
+         </subscribePackageDto>
+      </v3:subscribePackage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d39ae4a8-5789-4911-aeaa-5f15a6d3b857" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="1099debf-0941-4412-bc45-9607881fac12" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="8faae22d-3199-4bc3-be7f-94dcb903e0b1" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="4fc2c495-624c-41f1-b899-c5a337054077" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/subscriptionFee[1]</con:xpath>
+              <con:element>subscriptionFee</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Rator-subscripFee-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Rator-amount-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1400P_subscribePackage-MandParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/msisdn[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/referenceId[1]</con:xpath>
+              <con:element>referenceId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1400P_subscribePackage-MandParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/referenceId[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/packageId[1]</con:xpath>
+              <con:element>packageId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1400P_subscribePackage-MandParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/packageId[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/lifeCycleState[1]</con:xpath>
+              <con:element>lifeCycleState</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>A</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/lifeCycleSubState[1]</con:xpath>
+              <con:element>lifeCycleSubState</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>R</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/tariffPlanId[1]</con:xpath>
+              <con:element>tariffPlanId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>B1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns7:subscribePackageResponse xmlns:ns8="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/" xmlns:ns7="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/gettopupbulkasynchronousresults/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupbulkasynchronous/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/">
+         <subscribePackageResultDto>
+            <msisdn>4917659514513</msisdn>
+            <referenceId>d7ed5a4bf9674ad19ab036bb81bd18c6</referenceId>
+            <packageId>c104dac0c9e7486e8baf5adf4a295cfc</packageId>
+            <startDate>2016-10-25T16:56:42+02:00</startDate>
+            <endDate>2016-11-24T16:56:42+01:00</endDate>
+            <subscriptionFee>499</subscriptionFee>
+            <amount>1024000</amount>
+            <lifeCycleState>A</lifeCycleState>
+            <lifeCycleSubState>R</lifeCycleSubState>
+            <tariffPlanId>B1</tariffPlanId>
+         </subscribePackageResultDto>
+      </ns7:subscribePackageResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fa1c2d00-ddc9-404f-a948-7248211e6127" name="Match content of [startDate]">
+          <con:configuration>
+            <path>declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]/startDate[1]>'${#Project#Date_Current}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="849a72ca-e903-45ed-8907-31d647a1be30" name="Match content-length of [endDate]>24">
+          <con:configuration>
+            <path>declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+string-length(//ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]/endDate[1]/text())>24</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="5eb1fbcf-838e-449d-ab77-ccb5839d7282" name="1410P_subscribePackage-AllParam">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1410P_subscribePackage-AllParam" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:subscribePackage>
+         <subscribePackageDto>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <packageId>${#Project#GUID_Moved-}</packageId>
+            <startDate>${#Project#DateTime_Current_Offset}</startDate>
+            <endDate>${#Project#Date_Future_Offset}</endDate>
+            <subscriptionFee>${#TestSuite#Rator-subscripFee-Default}</subscriptionFee>
+            <amount>${#TestSuite#Rator-amount-Default}</amount>
+         </subscribePackageDto>
+      </v3:subscribePackage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="71ab2835-66e9-4a57-91b5-6213721e23af"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d34a1be3-9b8a-4693-9c6d-34c9266a289a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3daaab36-c770-445c-b7ee-0950cc9967fc"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="b2c06f9c-f478-4987-83e9-07b31ef8746f">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/subscriptionFee[1]</con:xpath>
+              <con:element>subscriptionFee</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Rator-subscripFee-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Rator-amount-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1410P_subscribePackage-AllParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/msisdn[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/referenceId[1]</con:xpath>
+              <con:element>referenceId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1410P_subscribePackage-AllParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/referenceId[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/packageId[1]</con:xpath>
+              <con:element>packageId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${1410P_subscribePackage-AllParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/packageId[1]}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/lifeCycleState[1]</con:xpath>
+              <con:element>lifeCycleState</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>A</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/lifeCycleSubState[1]</con:xpath>
+              <con:element>lifeCycleSubState</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>R</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns1:subscribePackageResponse[1]/subscribePackageResultDto[1]/tariffPlanId[1]</con:xpath>
+              <con:element>tariffPlanId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>B1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns7:subscribePackageResponse xmlns:ns8="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/" xmlns:ns7="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/gettopupbulkasynchronousresults/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupbulkasynchronous/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/">
+         <subscribePackageResultDto>
+            <msisdn>4917659514513</msisdn>
+            <referenceId>d7ed5a4bf9674ad19ab036bb81bd18c6</referenceId>
+            <packageId>c104dac0c9e7486e8baf5adf4a295cfc</packageId>
+            <startDate>2016-10-25T16:56:42+02:00</startDate>
+            <endDate>2016-11-24T16:56:42+01:00</endDate>
+            <subscriptionFee>499</subscriptionFee>
+            <amount>1024000</amount>
+            <lifeCycleState>A</lifeCycleState>
+            <lifeCycleSubState>R</lifeCycleSubState>
+            <tariffPlanId>B1</tariffPlanId>
+         </subscribePackageResultDto>
+      </ns7:subscribePackageResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="8ddd19be-5a08-4324-951c-fc53802c6a5f" name="Match content of [startDate]">
+          <con:configuration>
+            <path>declare namespace ns6='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns6:subscribePackageResponse[1]/subscribePackageResultDto[1]/startDate[1]>'${#Project#Date_Current}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="8ddd19be-5a08-4324-951c-fc53802c6a5f" name="Match content of [endDate]">
+          <con:configuration>
+            <path>declare namespace ns6='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns6:subscribePackageResponse[1]/subscribePackageResultDto[1]/endDate[1]
+>
+'${1410P_subscribePackage-AllParam#RawRequest#declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //v3:subscribePackage[1]/subscribePackageDto[1]/startDate[1]}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="459ec87a-46af-4dd1-ad55-4a3bc34ae469" name="1420P_subscribePackage-OK">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1420P_subscribePackage-OK" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:subscribePackage>
+         <subscribePackageDto>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <packageId>${#Project#GUID_Moved-}</packageId>
+            <subscriptionFee>${#TestSuite#Rator-subscripFee-Default}</subscriptionFee>
+            
+         </subscribePackageDto>
+      </v3:subscribePackage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d39ae4a8-5789-4911-aeaa-5f15a6d3b857" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="1099debf-0941-4412-bc45-9607881fac12" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="8faae22d-3199-4bc3-be7f-94dcb903e0b1" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="f9c25b3a-6132-453e-90f2-b5f45454031f" name="1430N_subscribePackage-again">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1430N_subscribePackage-again" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request>${1420P_subscribePackage-OK#RawRequest}</con:request>
+        <con:assertion type="SOAP Response" id="d39ae4a8-5789-4911-aeaa-5f15a6d3b857" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="1099debf-0941-4412-bc45-9607881fac12" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="8faae22d-3199-4bc3-be7f-94dcb903e0b1" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="c20c3708-82e1-4106-ae62-d958e12e485a" name="Match content of [subscribePackageResultDto]">
+          <con:configuration>
+            <path>declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]</path>
+            <content>${1420P_subscribePackage-OK#Response#declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="20dbdebb-ef79-42fe-8dac-b92fd38a5ebf" name="1440N_subscribePackage-SameResponse">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1440N_subscribePackage-SameResponse" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request>${1420P_subscribePackage-OK#RawRequest}</con:request>
+        <con:assertion type="SOAP Response" id="d39ae4a8-5789-4911-aeaa-5f15a6d3b857" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="1099debf-0941-4412-bc45-9607881fac12" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="8faae22d-3199-4bc3-be7f-94dcb903e0b1" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="169d5ae2-fcbb-4dcf-88d5-9fe9b96f37d0" name="Match content of [subscribePackageResultDto]">
+          <con:configuration>
+            <path>declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]</path>
+            <content>${1420P_subscribePackage-OK#Response#declare namespace ns7='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/'; //ns7:subscribePackageResponse[1]/subscribePackageResultDto[1]}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo-FinalStep" id="4f88ce7a-923f-43e1-be83-e812857bee8f">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script replace goto-step: go to final step
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+ testRunner.gotoStepByName(["_Delay-FinalStep"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="Assertion_for_NGOCS" id="de9aa90f-ec20-4ffe-b45a-f559d1806bc5" disabled="true">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="1ac0cffb-2fd8-436d-8bbc-bc723dbad492" name="Assertion_for_NGOCS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e5548f4e-a28e-45bc-b5c8-4b999baaeae3" name="1450N_subscribePackage-notSupported">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>subscribePackage</con:operation>
+      <con:request name="1450N_subscribePackage-notSupported" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7ddc66d-6b28-4173-87d2-2910a5416c7d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:subscribePackage>
+         <subscribePackageDto>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <packageId>${#Project#GUID_Moved-}</packageId>
+            <subscriptionFee>${#TestSuite#Rator-subscripFee-Default}</subscriptionFee>
+            
+         </subscribePackageDto>
+      </v3:subscribePackage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d39ae4a8-5789-4911-aeaa-5f15a6d3b857" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="1099debf-0941-4412-bc45-9607881fac12" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="c474fb40-4db4-4109-86fd-eb0a7ef1175e" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="71edb035-32d0-467f-8e2b-5957b8ff43a2" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Action not found</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/fault[1]/originatorMessage[1]</con:xpath>
+              <con:element>originatorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Action not found</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>36</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/fault[1]/message[1]</con:xpath>
+              <con:element>message</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Action not found</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/request[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>4917645223254</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/request[1]/referenceId[1]</con:xpath>
+              <con:element>referenceId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ab5b54f8026b4d618ef8515d01b753eb</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/request[1]/packageId[1]</con:xpath>
+              <con:element>packageId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>df4425003edf48ae86296935e9edbea1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/';
+//detail[1]/ns1:subscribePackageFault[1]/request[1]/subscriptionFee[1]</con:xpath>
+              <con:element>subscriptionFee</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>499</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Action not found</faultstring>
+         <detail>
+            <ns6:subscribePackageFault xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>OCS</originator>
+                  <originatorMessage>Action not found</originatorMessage>
+                  <errorCode>36</errorCode>
+                  <message>Action not found</message>
+               </fault>
+               <request>
+                  <msisdn>4917645223254</msisdn>
+                  <referenceId>ab5b54f8026b4d618ef8515d01b753eb</referenceId>
+                  <packageId>df4425003edf48ae86296935e9edbea1</packageId>
+                  <subscriptionFee>499</subscriptionFee>
+               </request>
+            </ns6:subscribePackageFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/subscribePackage"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="_Delay-FinalStep" id="34f47817-0576-4410-beae-546319e9f4c1">
+    <con:settings/>
+    <con:config>
+      <delay>100</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>510bbaf8-9df8-46d5-bf03-202df7eccae1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ebc2a2d0-d2d5-4da1-86ae-4afa248fb2a0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ddbe0f61-c078-4295-958a-a04d254bca9c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de9aa90f-ec20-4ffe-b45a-f559d1806bc5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e5548f4e-a28e-45bc-b5c8-4b999baaeae3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

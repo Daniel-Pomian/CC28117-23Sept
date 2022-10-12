@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="791db6b3-a507-480d-a3b6-07ff3032ff54" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-SFTP-CopyTo-MFT-CAMT054" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>This test-case copies local file to target path on sftp-server</con:description>
+  <con:settings>
+    <con:setting id="3a36338c-603f-4112-9dd8-394f09709fa7fileName">TestCase-DEV-CopyFileToDRCviaSFTP</con:setting>
+    <con:setting id="791db6b3-a507-480d-a3b6-07ff3032ff54fileName">TestCase-SFTP-CopyTo-MFT-CAMT054</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-CopyLocalFileToSFTP" id="34ddded9-7eff-4be1-bae9-e39ac821f900">
+    <con:settings/>
+    <con:config>
+      <script><![CDATA[/*
+ * This script copy generated files from local machine to drc via sftp
+ * Date: 2020-10-12
+ * Autor: Michael Gordon
+*/
+
+@Grab(group='commons-net', module='commons-net', version='2.0')
+@Grab(group='com.jcraft', module='jsch', version='0.1.51')
+
+import org.apache.commons.net.ftp.FTPSClient
+import com.jcraft.jsch.*;
+
+/////////////////////////Configs/////////////////////////////
+String  ftpdomain = context.expand( '${#TestCase#FTPDomain}' )
+int ftpport = 22
+String  ftpusername = context.expand( '${#TestCase#User}' )
+String  ftppassword  = context.expand( '${#TestCase#Pswd}' )
+String localfilelocation = context.expand( '${#TestCase#inSourcePath}' ).replace('\\','/')
+String remotefilelocation= context.expand( '${#TestCase#TargetPath}' ).replace('\\','/')
+log.info('Source path is '+localfilelocation)
+log.info('Target path is '+remotefilelocation)
+/////////////////////////////////////////////////////////////
+
+// make sure input parameters are not empty or to short
+boolean bParametersOK=ftpdomain!=null && ftpdomain.length()>1 && ftpusername!=null && ftpusername.length()>1 &&
+			 localfilelocation!=null && localfilelocation.length()>1 && remotefilelocation!=null && remotefilelocation.length()>1
+assert bParametersOK
+
+    	Session session = null;
+     Channel channel = null;		
+    try {
+    	log.info("Starting sftp upload process")
+
+        JSch ssh = new JSch();        		
+        session = ssh.getSession(ftpusername, ftpdomain, ftpport);
+        session.setConfig("StrictHostKeyChecking", "no"); //auto accept secure host
+        session.setPassword(ftppassword);
+        session.connect();
+        log.info("Connected to session")
+        		
+        channel = session.openChannel("sftp");
+        channel.connect();
+        log.info("Connected to channel")
+        		
+        ChannelSftp sftp = (ChannelSftp) channel; 
+         // change to target directory. This step is only required to occurs error, if directory doesn't exist.      
+        sftp.cd(remotefilelocation)         
+        // copy file to target destination
+        sftp.put(localfilelocation, remotefilelocation);
+        log.info("File Uploaded " + localfilelocation + " TO " + remotefilelocation)
+        
+     }  catch (Exception e) {
+			log.error("Exception during uploding of '"   + localfilelocation + "' to '" + remotefilelocation +"' - " + e)
+        		 throw e
+        }
+        finally {
+			if (session != null) 
+				try { 
+					session.disconnect()
+					log.info("Disconnected from session") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+					}	
+			if (channel != null) 
+				try { 
+					channel.disconnect()
+					log.info("Disconnected from channel") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+						}
+			log.info("sftp upload process completed")
+		}]]></script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFTPDomain</con:name>
+      <con:value>mucsgdp09.sg.de.pri.o2.com</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inUser</con:name>
+      <con:value>drcbuild</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inPswd</con:name>
+      <con:value>drc09</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inSourcePath</con:name>
+      <con:value>D:\Projects\Telefonica\DirectReCharge\TestOutput\soapUI\CAMT54-Files\20210617124809703-CAMT054-ReportDB.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inTargetPath</con:name>
+      <con:value>/var/MFT/drc3/atm_payment_camt054</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+</con:testCase>

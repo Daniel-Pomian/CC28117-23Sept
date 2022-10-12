@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="7595730d-af59-4ea4-a5f4-2f802381459d" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-CreateLoadDAT" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create new local DAT file with content from template and load to drc-directory on sftp</con:description>
+  <con:settings>
+    <con:setting id="aa1634b1-9921-4c7e-9c2e-0a74292503aafileName">TestCase-DEV-CreateDAT</con:setting>
+    <con:setting id="7595730d-af59-4ea4-a5f4-2f802381459dfileName">TestCase-DEV-CreateLoadDAT</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="d1f3498b-d341-4fdd-bef6-a4f6fe0480b8">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateDAT" id="aa0a6045-1af8-4ede-a121-5bb8f309c8ef">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>aa1634b1-9921-4c7e-9c2e-0a74292503aa</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outPath</con:name>
+          <con:value>/DATQIT/EPS11PROD00420221003160620.DAT</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outFile</con:name>
+          <con:value>EPS11PROD00420221003160620.DAT</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outPath</con:entry>
+        <con:entry>outFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-Pathes" id="a34ea282-5d6b-491b-b506-f82dcf9f74c2">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>filePath</con:name>
+        <con:sourceType>outPath</con:sourceType>
+        <con:sourceStep>Run TestCase-CreateDAT</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>fileName</con:name>
+        <con:sourceType>outFile</con:sourceType>
+        <con:sourceStep>Run TestCase-CreateDAT</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-DownloadDAT" id="6945fb79-65d4-4c17-84ca-6c5297514166">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>32475b0c-4d4d-4243-8f3c-c3458dc22ff2</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#outPath}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>/DATQIT/EPS11PROD00420221003160620.DAT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFile</con:name>
+      <con:value>EPS11PROD00420221003160620.DAT</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>9bd59269-20c5-4ce3-91d9-d53cfb0d7f96</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5ea42e3a-84db-416a-bfd8-80088396f7b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d1f3498b-d341-4fdd-bef6-a4f6fe0480b8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a34ea282-5d6b-491b-b506-f82dcf9f74c2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>aa0a6045-1af8-4ede-a121-5bb8f309c8ef</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6945fb79-65d4-4c17-84ca-6c5297514166</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

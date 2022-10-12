@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="afd6d250-c05a-4bfb-91f6-af0eea25c26b" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-HealthyChecks-Gui" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests activity and stopped/started the server over GUI</con:description>
+  <con:settings>
+    <con:setting id="afd6d250-c05a-4bfb-91f6-af0eea25c26bfileName">TestCase-DEV-HealthyChecks-Gui</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-setURL" id="f94b9549-5f9b-47b7-9283-a73f7a77bfc3">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script copy generated files from local machine to drc via sftp
+ * Date: 18.06.2018
+ * Autor: Michael Gordon
+*/
+
+String drchost = 'http://'+context.expand( '${drc_host}' )
+String drcport = ':9'+context.expand( '${drc_port}' ).toString().substring(1)
+log.info('Port is: '+drcport )
+
+
+// save values to test-case prop
+testRunner.testCase.setPropertyValue('targetURL',  drchost+drcport+'/drc-gui-web/healthy')</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP Request-isActive" id="99b28db9-9407-4aeb-9d08-4209cbc6b223">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="f4728823-224a-40d7-9d50-291e36835b3d" name="HTTP Request-isActive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#TestCase#targetURL}?action=isActive</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="316c8162-2a5b-4375-b706-2e734bf9f726" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="0023bc28-7ffc-43a4-ab4a-35e5b871ffca" name="Contains">
+        <con:configuration>
+          <token>true</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>true</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP Request-deactivate" id="2da311e8-8a5e-438d-888f-c17bdca5eb45">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="f4728823-224a-40d7-9d50-291e36835b3d" name="HTTP Request-deactivate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#TestCase#targetURL}?action=deactivate</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="316c8162-2a5b-4375-b706-2e734bf9f726" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="0023bc28-7ffc-43a4-ab4a-35e5b871ffca" name="Contains">
+        <con:configuration>
+          <token>active=false</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>true</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP Request-isActive-false" id="e6fed17b-c772-4ba0-9ca1-0700c94d99d3">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="f4728823-224a-40d7-9d50-291e36835b3d" name="HTTP Request-isActive-false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#TestCase#targetURL}?action=isActive</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="316c8162-2a5b-4375-b706-2e734bf9f726" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="0023bc28-7ffc-43a4-ab4a-35e5b871ffca" name="Contains">
+        <con:configuration>
+          <token>false</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>true</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP Request-activate" id="9440b6dd-f67e-4e32-b69f-eb52405308a3">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="f4728823-224a-40d7-9d50-291e36835b3d" name="HTTP Request-activate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#TestCase#targetURL}?action=activate</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="316c8162-2a5b-4375-b706-2e734bf9f726" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="0023bc28-7ffc-43a4-ab4a-35e5b871ffca" name="Contains">
+        <con:configuration>
+          <token>active=true</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>true</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP Request-isActive-true" id="87e45753-d154-49f5-8e0b-f608b60aa4c6">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="f4728823-224a-40d7-9d50-291e36835b3d" name="HTTP Request-isActive-true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#TestCase#targetURL}?action=isActive</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="316c8162-2a5b-4375-b706-2e734bf9f726" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="0023bc28-7ffc-43a4-ab4a-35e5b871ffca" name="Contains">
+        <con:configuration>
+          <token>true</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>true</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>targetURL</con:name>
+      <con:value>http://mucsgdp08.sg.de.pri.o2.com:9480/drc-gui-web/healthy</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>f94b9549-5f9b-47b7-9283-a73f7a77bfc3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

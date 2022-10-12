@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="notifyCustomerDirectDebitLimitExceeded" id="9b00df4b-e21a-4307-8be6-624b870a5bcd" interface="PrepaidITCustomerCareServices-SOAPBinding" operation="notifyCustomerDirectDebitLimitExceeded" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="9b00df4b-e21a-4307-8be6-624b870a5bcdfileName">notifyCustomerDirectDebitLimitExceeded</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath>/*
+def project = messageExchange.modelItem.testStep.testCase.testSuite.project
+def wsdlcontext = project.getInterfaceAt(0).getDefinitionContext() def validator = new com.eviware.soapui.impl.wsdl.support.wsdl.WsdlValidator(wsdlcontext);
+def errors = validator.assertRequest(messageExchange, false)
+for( error in errors )   
+  assert false
+*/
+  
+ // copy default values to current values in mock- properties
+ def success = context.expand( '${#MockService#DEFAULT-success}' )
+ def resultCode = context.expand( '${#MockService#DEFAULT-resultCode}' )
+ def reasonMsg = context.expand( '${#MockService#DEFAULT-reasonMsg}' )
+
+ context.mockService.setPropertyValue('success',success)
+ context.mockService.setPropertyValue('resultCode',resultCode)
+ context.mockService.setPropertyValue('reasonMsg',reasonMsg)
+ 
+ // read values from incommning request and set for response
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent)
+ def brandID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:brandID")
+ def tenantID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:tenantID")
+ def transactID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:transactionID")
+ context.mockService.setPropertyValue('brandID',brandID)
+ context.mockService.setPropertyValue('tenantID',tenantID)
+ context.mockService.setPropertyValue('transactID', transactID )
+
+ log.info('PPIT-CustomerCaseServices.notifyCustomerDirectDebitLimitExceeded: Return response for incoming request')
+ 
+ return 'Response-Default'</con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="95f8c2b5-b19e-485a-bbb2-50c0ae24f411" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prep="http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prep:NotifyCustomerDirectDebitLimitExceededResult>
+         <prep:serviceResponse>
+            <prep:brandID>${#MockService#brandID}</prep:brandID>
+            <prep:tenantID>${#MockService#tenantID}</prep:tenantID>
+            <prep:transactionID>${#MockService#transactID}</prep:transactionID>
+            <prep:callingDateTime>${#Project#DateTime_Current_Offset}</prep:callingDateTime>
+            <prep:success>${#MockService#success}</prep:success>
+            <prep:frontendID>${#MockService#CONST-fronendID}</prep:frontendID>
+         </prep:serviceResponse>
+         <prep:resultCode>${#MockService#resultCode}</prep:resultCode>
+         <prep:reasonMsg>${#MockService#reasonMsg}</prep:reasonMsg>
+      </prep:NotifyCustomerDirectDebitLimitExceededResult>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="notifyCustomerDirectDebitLimitExceeded"/>
+  </con:response>
+  <con:response name="Response-soapFault" id="36bff4c8-a126-4c4d-902e-4e686920bd44" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <PrepaidITServiceSystemFault xmlns="http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes">
+               <resultCode>${#MockService#resultCode}</resultCode>
+               <reasonMsg>${#MockService#reasonMsg}</reasonMsg>
+            </PrepaidITServiceSystemFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="notifyCustomerDirectDebitLimitExceeded"/>
+  </con:response>
+</con:mockOperation>

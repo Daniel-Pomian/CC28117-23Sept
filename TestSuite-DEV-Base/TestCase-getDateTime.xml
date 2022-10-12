@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="0e51fc9f-b8ce-47b0-8a14-59dd90282ca9" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-getDateTime" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Return date or datetime from local clock in format from input string.
+Ex.
+inFormat=YYYY-MM-DD
+outDate=2020-12-03
+
+inFormat=YYYYMMDDHHmmss
+outDate=20201203130600</con:description>
+  <con:settings>
+    <con:setting id="0e51fc9f-b8ce-47b0-8a14-59dd90282ca9fileName">TestCase-getDateTime</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="0b3d713e-f19b-4342-8122-3218f809e287">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="false" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>emptyString</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outDate</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-getDateForFormat" id="66536341-23f0-4895-b700-9c0f37a4d3ee">
+    <con:settings/>
+    <con:config>
+      <script><![CDATA[/*
+  * This script return current date and time as string in format from input 
+  * Additional if days or months is not 0, days or monthes will be added or deduct from current date time.
+  * Author: 	Michael Gordon
+  * Date:		2020-12-03
+  */
+
+  // read input values and validate format
+String inFormat = context.expand( '${#TestCase#inFormat}' )
+String  inDays = context.expand( '${#TestCase#inPlusMinusDays}' )
+String  inMonths = context.expand( '${#TestCase#inPlusMinusMonths}' )
+
+// log input values
+log.info('Ordered current date time for format:- ' + inFormat)
+log.info('With difference from current in days:- ' + inDays)
+log.info('With difference from current in months:- ' + inMonths)
+
+// assert values
+assert inFormat!=null && inFormat.length()>2
+assert inDays!=null && inDays.isNumber()
+assert inMonths!=null && inMonths.isNumber()
+// assert !(inDays!='0' && inMonths!='0')
+
+// set string for return
+String returnDT=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(inFormat))
+
+// plus or minus days
+if(inDays!='0')
+	returnDT=java.time.LocalDateTime.now().plusDays(inDays.toInteger()).format(java.time.format.DateTimeFormatter.ofPattern(inFormat))	
+// plus or minus months
+if(inMonths!='0' )
+	returnDT=java.time.LocalDateTime.now().plusMonths(inMonths.toInteger()).format(java.time.format.DateTimeFormatter.ofPattern(inFormat))
+
+log.info('Counted date time for return is:-' + returnDT)
+
+//set date time to prop
+testRunner.testCase.setPropertyValue('outDate', returnDT )]]></script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFormat</con:name>
+      <con:value>dd-MM-yyyy HH:mm:ss</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inPlusMinusDays</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inPlusMinusMonths</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outDate</con:name>
+      <con:value>20-10-2021 14:20:07</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>647b98c2-b10d-4679-b635-4555268fd764</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="ed17981e-981b-496a-ab72-eae9f15b8b96">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+    <con:entry environmentId="9fff31ad-a135-4022-96d1-6e1bc22b9128">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+    <con:entry environmentId="13c408b1-493e-47b2-a147-b979447508ae">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

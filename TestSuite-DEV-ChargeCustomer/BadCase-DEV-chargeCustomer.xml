@@ -1,0 +1,1965 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="320057b9-38fe-49b3-aba4-43d72bcc6142" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-chargeCustomer" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests service with wrong and not allowed values based on interface specification:
+...\src\trunk\SRs\Interfaces\PPIT\ST_TD_R16-4_DRC_PPIT_IFS.doc</con:description>
+  <con:settings>
+    <con:setting id="320057b9-38fe-49b3-aba4-43d72bcc6142fileName">BadCase-DEV-chargeCustomer</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" name="_chargeCustomer_Pack-OverMonthlyLimit-Active" id="01d61397-09fe-412c-8adc-cab696edb9bb" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="_chargeCustomer_Pack-OverMonthlyLimit-Active" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#ContractID-Active}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="bb5cd0ba-83e7-4cc9-8005-1279ac6dfe17"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="04bff425-d79c-4430-92e8-d9d5a7920558">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="85d5e1af-aa24-4c94-b62f-4eb175619932" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="c57d8fff-ece9-4bf8-823b-ff634e460a94" name="Match content of [isDuplicate]=false">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:chargeCustomerResponse[1]/isDuplicate[1]/text()</path>
+            <content>false</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="MessageContentAssertion" id="4c236bbe-0d9d-4cc0-ba5d-fe45befc93b8" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/limitResetDate[1]</con:xpath>
+              <con:element>limitResetDate</con:element>
+              <con:type>XmlDate</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${DataSource-1-UpdateDDParameters-SetMonthlyValidationCycle#ResetDate}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/monetaryLimit[1]/monetaryLimitParameter[1]/name[1]</con:xpath>
+              <con:element>name</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>GENERAL_MONTHLY_MAX_AMOUNT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/monetaryLimit[1]/parameterScope[1]</con:xpath>
+              <con:element>parameterScope</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>BRAND</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/monetaryLimit[1]/remainingLimitAmount[1]</con:xpath>
+              <con:element>remainingLimitAmount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>-${#TestCase#chargeCustomer-remainingLimitAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/validationCycleType[1]</con:xpath>
+              <con:element>validationCycleType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${DataSource-1-UpdateDDParameters-SetMonthlyValidationCycle#ValidationCycle}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/monetaryLimit[1]/monetaryLimitParameter[1]/value[1]</con:xpath>
+              <con:element>value</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#GENERAL_MONTHLY_MAX_AMOUNT}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns1:chargeCustomerResponse[1]/eligibilityCheckFailure[1]/limitExceededInfo[1]/monetaryLimit[1]/monetaryLimitParameter[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:chargeCustomerResponse xmlns:ns2="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+         <isDuplicate>false</isDuplicate>
+         <correlationId>350000010002853</correlationId>
+         <opReference>c07d4a51830744ef9bca82be70ddecce</opReference>
+         <eligibilityCheckFailure>
+            <limitExceededInfo>
+               <limitResetDate>2016-05-12</limitResetDate>
+               <validationCycleType>MONTHLY_FLEX_START_30_DAYS</validationCycleType>
+               <monetaryLimit>
+                  <monetaryLimitParameter>
+                     <name>GENERAL_MONTHLY_MAX_AMOUNT</name>
+                     <value>5000</value>
+                     <currency>EUR</currency>
+                  </monetaryLimitParameter>
+                  <parameterScope>BRAND</parameterScope>
+                  <remainingLimitAmount>-99</remainingLimitAmount>
+               </monetaryLimit>
+            </limitExceededInfo>
+         </eligibilityCheckFailure>
+      </ns2:chargeCustomerResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7000N_chargeCustomer-contractID-Unknown-Error-1104" id="17789f30-86c7-44c4-af2a-9da8d0422447">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7000N_chargeCustomer-contractID-Unknown-Error-1104" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <!--type: string-->
+         <externalContractId>01010101010101</externalContractId>
+         <!--type: int-->
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <!--type: string-->
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <!--type: string-->
+         <referenceId>${#Project#GUID}</referenceId>
+         <!--type: dateTime-->
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <!--Optional:-->          
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="36e7f890-58c9-44e0-a13a-f7c83eb547a5" name="Match content of [retryPossible]=false">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/retryPossible[1]/text()</path>
+            <content>false</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fd7a7a3a-5ec0-4781-8264-9c749ca0781e" name="Match content of [originator]=DRC">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/originator[1]/text()</path>
+            <content>DRC</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="592838c8-816a-47ba-a36f-da88c605e4d1" name="Check for existence of [originatorMessage]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+exists( //detail/ns2:drcFault/originatorMessage)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5a39d66a-f9c8-4b34-8757-e532528a099d" name="Match content of [errorCode]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/errorCode[1]/text()</path>
+            <content>1104</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_subsripManagement_registerForDD_AllOption" id="5e9beb55-4b39-47d6-bcc7-6e3cbc699eba">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>registerForDirectDebit</con:operation>
+      <con:request name="_subsripManagement_registerForDD_AllOption" id="66d9d8f9-7ba5-4176-8f66-e91fce9dac03" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:registerForDirectDebit>
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+         <externalContractId>${#Project#Random10}${#Project#Random5}</externalContractId>
+         <multibrandId>
+            <brandId>${#Project#ChargeCustomer-1-BrandID}</brandId>
+            <tenantId>${#Project#ChargeCustomer-1-TenantID}</tenantId>
+         </multibrandId>
+         <bankData>
+            <iban>${#Project#Customer-IBAN}</iban>
+            <!--Optional:-->
+            <bic>${#Project#Customer-BIC}</bic>
+            <bankAccountOwner>bankAccountOwner</bankAccountOwner>
+            <mandateId>${#Project#Customer-MandantID}</mandateId>
+            <mandateCreationDate>${#Project#DateTime_Current}</mandateCreationDate>
+            <mandateStatus>ACTIVE</mandateStatus>
+            <!--Optional:-->
+            <ultimateDebtor>ultimateDebtor</ultimateDebtor>
+         </bankData>
+         <directDebitState>ACTIVE</directDebitState>
+         <registrationOptions>
+            <registrationOptionOnDemandSms>
+               <rechargeAmount>${#TestSuite#rechargeAmount-Default}</rechargeAmount>
+               <currency>${#Project#Currency_Default}</currency>
+            </registrationOptionOnDemandSms>
+             <registrationOptionThreshold>
+               <thresholdAmount>${#TestSuite#Threshold.thresholdAmount-Min}</thresholdAmount>
+               <rechargeAmount>${#TestSuite#Threshold.thresholdAmount-Min}</rechargeAmount>
+               <currency>${#Project#Currency_Default}</currency>
+            </registrationOptionThreshold>
+            <registrationOptionMonthly>
+               <rechargeDay>${#Project#DAY_OF_MONTH}</rechargeDay>
+               <rechargeAmount>${#TestSuite#rechargeAmount-Default}</rechargeAmount>
+               <currency>${#Project#Currency_Default}</currency>
+            </registrationOptionMonthly>
+            <registrationOptionPack/>
+         </registrationOptions>
+      </cus:registerForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d2e40bcb-b76a-4758-bba3-ee05f2b4b8da"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ab912914-c9d1-4496-9feb-3c793ba23f99">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="81a07465-c296-4676-b2a4-5f809506f213"/>
+        <con:assertion type="XPath Match" name="Match content of [isNewRegistration]=true" id="8fe0435a-35d0-4413-843e-75b3eaa3767b">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:registerForDirectDebitResponse[1]/isNewRegistration[1]/text()</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for [recordId] >0" id="d9c696b0-3fc9-4d2a-8dd0-661d7cabf7dd">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+ //ns2:registerForDirectDebitResponse/recordId>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-MSISDN" id="c0b68e94-956d-40ba-992e-14cb0eb850b9">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>contractID</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>_subsripManagement_registerForDD_AllOption</con:sourceStep>
+        <con:sourcePath>declare namespace cus='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//cus:registerForDirectDebit[1]/externalContractId[1]</con:sourcePath>
+        <con:targetType>contractID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="70010N_chargeCustomer-OptionPack-MissedPackData-Error-102" id="0b4cd0c6-a4fd-4dae-ab27-ce971ad6c026">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="70010N_chargeCustomer-OptionPack-MissedPackData-Error-102" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <!--type: string-->
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <!--type: int-->
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <!--type: string-->
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <!--type: string-->
+         <referenceId>${#Project#GUID}</referenceId>
+         <!--type: dateTime-->
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <!--Optional:-->          
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="36e7f890-58c9-44e0-a13a-f7c83eb547a5" name="Match content of [retryPossible]=false">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/retryPossible[1]/text()</path>
+            <content>false</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fd7a7a3a-5ec0-4781-8264-9c749ca0781e" name="Match content of [originator]=DRC">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/originator[1]/text()</path>
+            <content>DRC</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="592838c8-816a-47ba-a36f-da88c605e4d1" name="Check for existence of [originatorMessage]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+exists( //detail/ns2:drcFault/originatorMessage)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5a39d66a-f9c8-4b34-8757-e532528a099d" name="Match content of [errorCode]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/errorCode[1]/text()</path>
+            <content>102</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7500N_chargeCustomer-contractID-Empty" id="4e1fa738-99a6-4756-bba3-321014368624">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7500N_chargeCustomer-contractID-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <!--type: string-->
+         <externalContractId/>
+         <!--type: int-->
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <!--type: string-->
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <!--type: string-->
+         <referenceId>${#Project#GUID}</referenceId>
+         <!--type: dateTime-->
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+         <!--Optional:-->
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7505N_chargeCustomer-contractID-toLong" id="fb62d14a-4631-4e4d-a9f8-04824ab88579">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7505N_chargeCustomer-contractID-toLong" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>1234567890123456</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7510N_chargeCustomer-Amount-Empty" id="e6497146-0929-40ef-95b6-f7f9ae85e260">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7510N_chargeCustomer-Amount-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount/>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7520N_chargeCustomer-Amount=0-Error-102" id="8680e775-4a5d-414e-93f0-762fc56f6b92">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7520N_chargeCustomer-Amount=0-Error-102" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>0</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="9d5a3ae0-2f4d-48b5-9110-92db7c525953"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2a975b30-d60f-43cb-b926-d034adbfdd1f">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="3691ac6e-a62b-4308-a306-08b29c73d417"/>
+        <con:assertion type="XPath Match" name="Match content of [retryPossible]=false" id="c50df4e8-0775-4e04-8fd4-8b28c4dd8a65">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/retryPossible[1]/text()</path>
+            <content>false</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [originator]=DRC" id="6382e756-5510-4ce9-8ffa-0237159c69ce">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/originator[1]/text()</path>
+            <content>DRC</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for existence of [originatorMessage]" id="63801f78-c9d3-419a-99bb-8cc300ab028d">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+exists( //detail/ns2:drcFault/originatorMessage)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [errorCode]" id="3dcd8099-ee28-4f8c-b350-6061cb5dc034">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/errorCode[1]/text()</path>
+            <content>102</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7530N_chargeCustomer-Amount&lt;0-Error-102" id="1d39efcb-b826-4a9e-8178-f0b581fd9a20">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7530N_chargeCustomer-Amount&lt;0-Error-102" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>-100</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="36e7f890-58c9-44e0-a13a-f7c83eb547a5" name="Match content of [retryPossible]=false">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/retryPossible[1]/text()</path>
+            <content>false</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fd7a7a3a-5ec0-4781-8264-9c749ca0781e" name="Match content of [originator]=DRC">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/originator[1]/text()</path>
+            <content>DRC</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="592838c8-816a-47ba-a36f-da88c605e4d1" name="Check for existence of [originatorMessage]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+exists( //detail/ns2:drcFault/originatorMessage)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5a39d66a-f9c8-4b34-8757-e532528a099d" name="Match content of [errorCode]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns2:drcFault[1]/errorCode[1]/text()</path>
+            <content>102</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7535N_chargeCustomer-Amount>6-Digits" id="9b7eb166-4ff4-46d5-98ab-b04b2a4a7a6d">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7535N_chargeCustomer-Amount>6-Digits" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>1000001</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7540N_chargeCustomer-Currency-Empty" id="1333b3b4-fa5b-4393-b7e2-aa669bce61dc">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7540N_chargeCustomer-Currency-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency/>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7550N_chargeCustomer-Currency-Wrong" id="21d15a03-c4fe-45e4-a471-f8936b76bbe2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7550N_chargeCustomer-Currency-Wrong" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency/>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7560N_chargeCustomer-balanceType-Empty" id="51de4a26-67fe-4d04-a22f-cb1776fa9b80">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7560N_chargeCustomer-balanceType-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType/>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7570N_chargeCustomer-balanceType-Wrong" id="a8b36551-36ab-41b3-9d0f-00700b953509">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7570N_chargeCustomer-balanceType-Wrong" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>10</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="c6c04d19-7caf-4efb-a09e-cbaf8e9086e9"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="6e6de4aa-ad39-42db-a253-608556af1ded">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="645761fb-da73-4167-8675-e4b79955f540"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7580N_chargeCustomer-referenceID-Empty" id="6a4ad532-84cf-4a0e-aec8-e89a77e1f316">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7580N_chargeCustomer-referenceID-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId/>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4bb98ad3-2fed-4e11-b700-8541cafe6ce8"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="23ce1f37-d494-4e5b-ae72-771f62c34eb0">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="eaeeb6c6-580c-4725-984d-334734a98854"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7581N_chargeCustomer-referenceID>50" id="1fed6b82-9d3a-4a1e-a6a0-1aa2692d47ac">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7581N_chargeCustomer-referenceID>50" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}551515151515151</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4bb98ad3-2fed-4e11-b700-8541cafe6ce8"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="23ce1f37-d494-4e5b-ae72-771f62c34eb0">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="eaeeb6c6-580c-4725-984d-334734a98854"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7590N_chargeCustomer-paymentDate-Empty" id="785be57b-8710-4c2f-b4c8-31ea53525362">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7590N_chargeCustomer-paymentDate-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate/>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7600N_chargeCustomer-paymentDate-Wrong" id="b72713d7-1d05-483e-b049-770482cd908a">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7600N_chargeCustomer-paymentDate-Wrong" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>2016-02-30T00:00:00+02:00</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>ON_DEMAND</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7610N_chargeCustomer-paymentUseCase-Empty" id="9e18cab1-971c-4525-9620-4d0e8831ca06">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7610N_chargeCustomer-paymentUseCase-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase/>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7620N_chargeCustomer-paymentUseCase-Wrong" id="3315e9eb-ac3e-4145-8f94-dddcdaaa1cea">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7620N_chargeCustomer-paymentUseCase-Wrong" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>NotExist</paymentUseCase>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="4331434f-7674-48c6-9886-55b02a04fc7c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="2973d19a-a6b8-45eb-9ad9-2692c25a355a">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="921cefbf-4902-4ed3-b51a-95cecddd196c" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7630N_chargeCustomer-packName-Empty" id="c39338e7-15bd-41a4-9b5a-16fde62f9164">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7630N_chargeCustomer-packName-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <pack>
+            <packName/>
+            <packId>${#Project#GUID}</packId>
+         </pack>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7cac17bc-490e-4ef4-aa71-1012bdaf33c7"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="aa91241e-b21e-4cf4-8655-978746fd0ede">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="260573ba-759d-47ac-9416-fa143cc5d070"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7631N_chargeCustomer-packName>64" id="080aaeba-2962-4fc8-a0ac-cbde9d1be797">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7631N_chargeCustomer-packName>64" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <pack>
+            <packName>packName-length-65-packName-length-65-packName-length-65-packName</packName>
+            <packId>${#Project#GUID}</packId>
+         </pack>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7cac17bc-490e-4ef4-aa71-1012bdaf33c7"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="aa91241e-b21e-4cf4-8655-978746fd0ede">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="260573ba-759d-47ac-9416-fa143cc5d070"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7640N_chargeCustomer-packID-Empty" id="a088a230-f20d-4548-bf6c-c9f98a53139f">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7640N_chargeCustomer-packID-Empty" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <pack>
+            <packName>DateTime_Current_String_yyyyMMddHHmmssSSS</packName>
+            <packId/>
+         </pack>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="cf848a06-e5fe-4379-b732-3525b6d4b513"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="47b8557e-70b7-4421-ad20-137e26ddb3b5">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="7f4d3b10-f9ff-4fa6-9983-5fb10f7a567d"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="7641N_chargeCustomer-packID>64" id="a11c32f9-36ba-4e73-8d0b-80ec95c8e499">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>CustomerChargingServiceSoapBinding</con:interface>
+      <con:operation>chargeCustomer</con:operation>
+      <con:request name="7641N_chargeCustomer-packID>64" id="88ae8376-1ef9-4938-a6c3-5828463c9e8f" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-customerChargingService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:chargeCustomer>
+         <externalContractId>${#TestCase#contractID}</externalContractId>
+         <amount>${#TestSuite#rechargeAmount-Default}</amount>
+         <!--type: currency - enumeration: [EUR]-->
+         <currency>${#Project#Currency_Default}</currency>
+         <balanceType>${#TestSuite#chargeCustomer.balanceType}</balanceType>
+         <referenceId>${#Project#GUID}</referenceId>
+         <paymentDate>${#Project#DateTime_Current_Offset}</paymentDate>
+         <!--type: paymentUseCaseEnum - enumeration: [ON_DEMAND,ON_DEMAND_SMS,MONTHLY,PACKPAYMENT]-->
+         <paymentUseCase>PACKPAYMENT</paymentUseCase>
+         <pack>
+            <packName>DateTime_Current_String_yyyyMMddHHmmssSSS</packName>
+            <packId>packId-length-65-packId-length-65-packId-length-65-packId-length-</packId>
+         </pack>
+      </cus:chargeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="cf848a06-e5fe-4379-b732-3525b6d4b513"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="47b8557e-70b7-4421-ad20-137e26ddb3b5">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="7f4d3b10-f9ff-4fa6-9983-5fb10f7a567d"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_subsripManagement_deregisterForDD" id="30732aa8-7352-4ed2-821e-f5caf4d15218">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>deregisterForDirectDebit</con:operation>
+      <con:request name="_subsripManagement_deregisterForDD" id="ab9fb4d0-03bf-4862-a093-44c0056f9228" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:deregisterForDirectDebit>
+         <!--type: string-->
+         <externalContractId>${#TestCase#ContractID}</externalContractId>
+      </cus:deregisterForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2a39e8d9-86ac-42ab-91f3-2e5fe5cb5310"/>
+        <con:assertion type="Schema Compliance" id="6c8f0a33-dd4a-48ce-b396-c88d6fc58732">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="3dbbe5bc-1452-42e5-915d-afedd59836ed"/>
+        <con:assertion type="XPath Match" id="d82c010c-d452-4533-905e-66d353bef3a3" name="Match content of [recordId]>0">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:deregisterForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>contractID</con:name>
+      <con:value>585276967928737</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>6a65b696-3a46-47fa-8445-363d6a644ddc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a6a2280b-fcdd-4489-95f5-1ec722cd48bd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3ddad920-ecdd-4ebc-8a01-7f8247732f29</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>039d6e61-ac5e-4b49-8be6-eb72d6fc4861</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e9beb55-4b39-47d6-bcc7-6e3cbc699eba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c0b68e94-956d-40ba-992e-14cb0eb850b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>01d61397-09fe-412c-8adc-cab696edb9bb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>17789f30-86c7-44c4-af2a-9da8d0422447</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4e1fa738-99a6-4756-bba3-321014368624</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e6497146-0929-40ef-95b6-f7f9ae85e260</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8680e775-4a5d-414e-93f0-762fc56f6b92</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1d39efcb-b826-4a9e-8178-f0b581fd9a20</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1333b3b4-fa5b-4393-b7e2-aa669bce61dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9b7eb166-4ff4-46d5-98ab-b04b2a4a7a6d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fb62d14a-4631-4e4d-a9f8-04824ab88579</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>30732aa8-7352-4ed2-821e-f5caf4d15218</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1fed6b82-9d3a-4a1e-a6a0-1aa2692d47ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>080aaeba-2962-4fc8-a0ac-cbde9d1be797</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a11c32f9-36ba-4e73-8d0b-80ec95c8e499</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="6b70c73c-3d86-4ee0-b0ce-50771a083ae9" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CAMT54File-Create-Credit-BT" searchProperties="true" timeout="0" maxResults="5" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create camt054 file with amount and msisdn from input parameters,
+but with IBAN from allowed IBANS for file transfer BT.
+Set file name in allowed format like: 
+Amount must be in euro-cent</con:description>
+  <con:settings>
+    <con:setting id="bf100c37-eb49-4fe0-999e-f348b49deb7efileName">TestCase-CAMT54File-Create-Credit-BT</con:setting>
+    <con:setting id="6b70c73c-3d86-4ee0-b0ce-50771a083ae9fileName">TestCase-CAMT54File-Create-Credit-BT</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="56740628-3e2e-44cc-85ba-00a0cb71b08a">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTargetFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054File-Create-Credit" id="abcf1d62-2bc3-4a24-8cef-10f23eec2335">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>4abb5551-3547-4925-9cc1-b47551909df1</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20220907220449424-CAMT54-Credit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCount</con:name>
+          <con:value>${#TestCase#inCount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inAmountInCent</con:name>
+          <con:value>${#TestCase#inAmountInCent}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#TestCase#inMSISDN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBool-SkipLoadAndExecSteps</con:name>
+          <con:value>true</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="getSettingChildNodes" id="acb97cd0-348b-49da-aec5-01766dc7f533">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettingChildNodes</con:operation>
+      <con:request name="getSettingChildNodes" id="5359bfc1-fba6-4614-9779-ab8f5f744270">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettingChildNodes>
+         <settingPath>
+            <settingName>com.o2.directrecharge.core.settings.SettingsRootCategoryEnum.FINANCE_DEPARTMENT_ROOT</settingName>
+            <settingName>com.o2.directrecharge.core.settings.FinanceDepartmentName.TEF</settingName>
+            <settingName>com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.BT_IBAN_LIST</settingName>
+         </settingPath>
+      </v1:getSettingChildNodes>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="e99e3749-7e9e-42b9-be97-9cf2d20cb52e"/>
+        <con:assertion type="Schema Compliance" id="737c6b5c-21eb-44ef-8cd1-a332cfd34285">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="93467184-3e38-480b-9560-14cb6804afbb"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-Create-CAMT054-BT-File" id="888343c1-0ac8-40c0-8d8d-77b64fd58e1e">
+    <con:settings/>
+    <con:config>
+      <script><![CDATA[/*
+ * This script create file name in file format for bank transfer like Ex: 2020-11-19_C54_DE73700202700005716977_EUR_000510.xml
+ *  Replace iban in file with alowed ibans for file transfer and rename file
+ *  then set new local path to testcase propery.
+ * Date: 2020-11-19
+ * Autor: Michael Gordon
+*/
+
+ // read required data
+ // local path from valid camt054-credit-file
+String sOldPath = context.expand( '${Run TestCase-CAMT054File-Create-Credit#outTargetFile}' ) 
+// customer iban in valid camt054-credit-file
+String  sOldIban = context.expand( '${#Project#ChargeCustomer-1-1-IBAN}' )
+// first allowed iban for bank transfer from drc-settings.
+String sNewIban = context.expand( '${getSettingChildNodes#Response#declare namespace ns2=\'http://directrecharge.o2.com/ws/common/settings/v1/\'; //ns2:getSettingChildNodesResponse[1]/parentEntry[1]/value[1]}' ).split(';')[0]
+String  sCurrentDate = context.expand( '${#Project#Date_Current_yyyy-MM-dd}' )
+String sRrandom6 = context.expand( '${#Project#Random6}' )
+
+// logging
+log.info('Input local path is-: '+ sOldPath)
+log.info('Iban from camt054-credit file is: '+ sOldIban)
+log.info('Iban for bank transfer  camt054-credit file is: '+ sNewIban)
+
+ // make sure local file  and Iban for bank transfer are exist
+ File fFile=new File(sOldPath)
+ assert fFile.exists() && sNewIban!=null && sNewIban.length()>1  && sOldIban!=null && sOldIban.length()>1
+
+// create new file name and file path
+String sNewFile=sCurrentDate+'_C54_'+sNewIban+'_EUR_'+ sRrandom6+'.xml'
+String sNewPath=(fFile.getParent()+'/'+sNewFile).replace('\\','/')
+log.info('New path is-: '+ sNewPath)
+
+//  if customer iban and Iban for bank transfer are different, replace old iban in file with new iban
+if  (!sOldIban.equalsIgnoreCase(sNewIban)) {
+	  // read file content replace and save
+ 	String sContent=fFile.getText('utf-8')
+ 	fFile.write( sContent.replaceAll( sOldIban,sNewIban), 'utf-8')
+ 	log.info('Replaced:-: ' +sOldIban + ' with ' +sNewIban+ ' in file: '+  fFile.getPath())	
+}
+
+// rename file to bank transfer conform format
+ fFile.renameTo(sNewPath) 
+ log.info('File is renamed')
+ 
+// set value in property
+testRunner.testCase.setPropertyValue('outTargetFile', sNewPath)]]></script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-GoTo-SkipLastSteps" id="dd6e3ced-3a38-49d9-ab6c-8632964b63f7">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script skip last steps based on value in input property
+ * Date: 2020-11-19
+ * Autor: Michael Gordon
+*/
+
+ String isSkip = context.expand( '${#TestCase#inBool-SkipLoadAndExecSteps}' )
+ if( isSkip=='true')
+ 	testRunner.gotoStepByName( "LastStep")</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-LoadFile" id="5891b3a9-dbd0-48b5-b199-7db6443c78e4">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>9aa6253f-f401-4692-9500-e8877d29e24c</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>targetPath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>targetUser</con:name>
+        </con:property>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay" id="04270535-0db6-4719-88e0-2371f122570b">
+    <con:settings/>
+    <con:config>
+      <delay>${#[TestSuite-DEV-GUI-Services]#mft-fileProcess-delay-ms}</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-StartJobs" id="38794a14-e7ac-4916-b9d7-2f23c6459a56">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>9424c137-e7eb-4875-81b5-0b81ef405bcf</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Download</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Recharge</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report</con:name>
+          <con:value>0</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Download</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+        <con:entry>taskCount-Recharge</con:entry>
+        <con:entry>taskCount-Report</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="LastStep" id="fa531d26-7f30-467e-bc84-9919747307c0">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outTargetFile</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/2022-09-07_C54_DE99999999999999999990_EUR_393400.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inCount</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inAmountInCent</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inMSISDN</con:name>
+      <con:value>4917657201393</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inBool-SkipLoadAndExecSteps</con:name>
+      <con:value>false</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3732b0cd-fab8-4ea2-b914-feed3cf8732f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e763faa-cd50-4583-b575-17cdd1a23452</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9f163fc3-5e3c-4bd2-9572-4a07e33193be</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52c3cfd8-ffae-442f-b606-98128b70ceb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27ee7f82-96d6-4563-8f0c-17d9b67814c6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dc88923-d84e-4e21-803c-4e1b0331118d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b4d5788c-fc24-42e1-a64e-f6a9db39f4f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>949f49f3-f5de-42bb-8b63-174425cc8922</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>59099b36-8010-44e1-9fb3-139792d2204b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a966e541-d1e9-4886-84d3-1c52aceb2eac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2465dd6-c29d-4ef3-b401-05e7779c850e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>969606a1-b438-4104-85af-337c32b42d9a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>31013ae6-bea6-447b-bd75-4437e7dd2da7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1ef600b5-cf30-456f-9af2-d6c4d6dc0c34</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0444dbef-788f-46e3-9cec-b2a9b944177c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3194b9f2-11a4-4766-a0fd-2e8770122674</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>280603d3-be83-43b5-a0e4-1988af4ddd78</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0a29c932-cdcc-453d-a67d-b2318dda2c8d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6053feb7-9c11-40d4-9f35-4cc6cfe8e881</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0757e2a0-199a-435b-8fa1-32884b86aec0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9a85bbd4-b663-4230-910f-170c47322251</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c32503ba-30c3-4972-84ff-ee7ccd179346</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bf82e879-3a7e-4c13-ad84-92b57e9de1b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>05f391c6-ef37-4f6b-90e7-5b57fb237b7d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e942f34c-e731-4122-bd28-2210c9c15939</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>25a36332-c206-4a63-8262-6ff4c654bd3a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d36d5bce-6c86-4e36-a64f-5467b723dbeb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a83b9a2-c6e5-4dad-9f11-9acd4dcc57e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>48fde110-6796-46b7-a5c1-10425946e55b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62d0c6f4-1d09-4e24-b1e6-ef582fb21adc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>75ac8a28-0fdb-49a6-b171-8cfa96484b54</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

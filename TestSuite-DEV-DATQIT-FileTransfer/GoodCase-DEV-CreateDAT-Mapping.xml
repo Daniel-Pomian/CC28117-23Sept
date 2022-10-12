@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="fcdec7dc-0bf0-4d10-b4a9-96b654c9da93" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-CreateDAT-Mapping" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>This test-case tests mapping customer and partners from DAT-Files to view in GUI based on implementation in user stories:
+https://www.sg.de.o2.com/jira/browse/DRC-2862
+https://www.sg.de.o2.com/jira/browse/DRC-2868
+
+Values from DAT-Files on GUI are mapped as followed:
+
+·         O2ORA = „1 – TEF OHG“
+·         EPS11   = „3 – EPS“
+·         ORTEL   = “4 – Ortel”
+
+·         PROD004 = „V_ZVD“
+·         PROD005 = „V_SRV“</con:description>
+  <con:settings>
+    <con:setting id="aa1634b1-9921-4c7e-9c2e-0a74292503aafileName">TestCase-DEV-CreateDAT</con:setting>
+    <con:setting id="fcdec7dc-0bf0-4d10-b4a9-96b654c9da93fileName">GoodCase-DEV-CreateDAT-Mapping</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="d490a35a-54bb-4596-93a6-82381e3d0dac">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecJobs" id="e8156012-d749-451c-9c54-92c8e5b4fccd">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>a6848c39-ceaf-49f2-9b95-c1b6c60fbbdc</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-DownloadDat</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-UploadDat</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-DownloadQIT</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-UploadQIT</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getTemplate" id="ead7eb38-6dbb-4ae2-9a12-caf8ac8769fc">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Directory">
+        <con:configuration><directory>TestData/DAT</directory><filter>*.DAT</filter><encoding>UTF-8</encoding></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>fileContent</con:property>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-setTargetPath" id="53909a60-096a-4491-a093-f07481a8f301">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script create target path for dat-file
+ * https://www.sg.de.o2.com/jira/browse/DRC-2843
+ * Athor: Michael Gordon
+ * Date: 2020-03-06
+ */
+/*
+ Values on GUI are mapped as followed:
+
+·         O2ORA = „1 – TEF OHG“
+·         EPS11   = „3 – EPS“
+·         ORTEL   = “4 – Ortel”
+
+·         PROD004 = „V_ZVD“
+·         PROD005 = „V_SRV“
+*/
+
+// build local target path for local 
+// get target directory from local directory for dat files.
+String sTargetDir = context.expand( '${drc_target_dir}/DATQIT/' )
+String sDateTime =java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+String sFileContent= context.expand( '${DataSource-getTemplate#fileContent}' ).toString()
+String  sPrefix =  sFileContent[1..5]
+String  sPartner =  sFileContent[10..12]
+//log.info(sFilePrefix)
+
+// Build file name. Constant length is 26 signs with  extension .DAT
+String sFileName=(sPrefix+'PROD'+sPartner+sDateTime+'.DAT')
+String sPath= (sTargetDir +sFileName).replace('\\','/')
+
+// set to test-case properties
+ testRunner.testCase.setPropertyValue( "outFile",  sFileName )
+ testRunner.testCase.setPropertyValue( "outPath",  sPath )
+ 
+ // log final path
+ log.info('File path from DAT is: -'+  sPath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-saveFile" id="2f200be0-81db-488f-a6e0-6392daed525a">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>false</append><encoding>utf-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>fileContent</con:name>
+          <con:value>${DataSource-getTemplate#fileContent}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-LoadDat" id="69e77c4b-f914-4727-b8e5-8684911910bc">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>32475b0c-4d4d-4243-8f3c-c3458dc22ff2</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#outPath}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-1Sec" id="5910d456-c85a-448a-9d03-45591b5d66f2">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getTemplate" id="ef2eb9eb-0e98-431a-b53e-869f4b6241d1">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getTemplate</dataSourceStep>
+      <targetStep>Groovy Script-setTargetPath</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecJobs" id="227a9a74-15ba-4f8f-b1b9-e8506bd86230">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>a6848c39-ceaf-49f2-9b95-c1b6c60fbbdc</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-DownloadDat</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-UploadDat</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-DownloadQIT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-UploadQIT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-DownloadDat</con:entry>
+        <con:entry>taskCount-UploadDat</con:entry>
+        <con:entry>taskCount-DownloadQIT</con:entry>
+        <con:entry>taskCount-UploadQIT</con:entry>
+        <con:entry>taskCount-Report</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-validateCountTasks" id="2824762e-91e5-439d-9ccf-f2249b4fc468">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ *  This script validate count of task processed with jobs in step before
+ *  Autor : Michael Gordon
+ *  Date:  09.03.20
+ */
+
+// read count of tasks returned in step before
+def taskCountDownloadDat = context.expand( '${Run TestCase-ExecJobs#taskCount-DownloadDat}' ).toInteger()
+def taskCountUploadDat = context.expand( '${Run TestCase-ExecJobs#taskCount-UploadDat}' ).toInteger()
+def taskCountReport = context.expand( '${Run TestCase-ExecJobs#taskCount-Report}' ).toInteger()
+
+// validate
+assert taskCountDownloadDat==3
+assert taskCountUploadDat==3
+assert taskCountReport==3</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="6828df33-04c7-4669-8294-7f5377772ca8" name="GUI_getPosTopupAccounting-ValidateNames">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getPosTopupAccounting</con:operation>
+      <con:request name="GUI_getPosTopupAccounting-ValidateNames" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="3b325c4c-7d5d-4f65-94f5-d40f5ff24160">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getPosTopupAccounting>
+         <first>0</first>
+         <count>3</count>
+         <requestData>
+            <!--type: posTopupAccountingProcessingStatusType - enumeration: [ALL,INITIAL,RETRY_UPLOAD,UPLOAD_FAILED,UPLOADED,QIT_DOWNLOADED,QIT_MISSING,FINAL]-->
+            <processingStatus>ALL</processingStatus>
+            <datUploadDate>
+               <fromDate>${#Project#Date_Current}</fromDate>
+               <toDate>${#Project#DateTime_Current_Offset}</toDate>
+            </datUploadDate>
+         </requestData>
+      </v1:getPosTopupAccounting>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d77189dd-7bd0-47e3-acd3-8d76130209cf"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="a088c6cb-07b5-43a6-9901-4fc6e2472da1">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="f9542150-b50c-4510-aa7b-1e2bcb6090a3"/>
+        <con:assertion type="XPath Match" id="402afbaf-dd4a-4360-a882-a700f1361865" name="Check for existence of [datSourceSystem]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:getPosTopupAccountingResponse/posTopupAccountingEntry/posTopupAccountingEntry/datSourceSystem/text()='1 - TEF OHG'
+and
+//ns2:getPosTopupAccountingResponse/posTopupAccountingEntry/posTopupAccountingEntry/datSourceSystem/text()='3 - EPS'
+and
+//ns2:getPosTopupAccountingResponse/posTopupAccountingEntry/posTopupAccountingEntry/datSourceSystem/text()='4 - Ortel'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="6d516b38-05fe-421c-834b-2f26aa5df5c7" name="Check for existence of [datCashPartnerId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:getPosTopupAccountingResponse/posTopupAccountingEntry/posTopupAccountingEntry/datCashPartnerId/text()='V_SRV'
+and
+//ns2:getPosTopupAccountingResponse/posTopupAccountingEntry/posTopupAccountingEntry/datCashPartnerId/text()='V_ZVD'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getPosTopupAccounting"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>/DATQIT/ORTELPROD00520221003160617.DAT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFile</con:name>
+      <con:value>ORTELPROD00520221003160617.DAT</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>5ea42e3a-84db-416a-bfd8-80088396f7b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0d1149b3-47b2-4cc9-a393-9aaf0d82a29f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e8156012-d749-451c-9c54-92c8e5b4fccd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d490a35a-54bb-4596-93a6-82381e3d0dac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ead7eb38-6dbb-4ae2-9a12-caf8ac8769fc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>69e77c4b-f914-4727-b8e5-8684911910bc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5910d456-c85a-448a-9d03-45591b5d66f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>53909a60-096a-4491-a093-f07481a8f301</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f200be0-81db-488f-a6e0-6392daed525a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ef2eb9eb-0e98-431a-b53e-869f4b6241d1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>227a9a74-15ba-4f8f-b1b9-e8506bd86230</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2824762e-91e5-439d-9ccf-f2249b4fc468</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6828df33-04c7-4669-8294-7f5377772ca8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

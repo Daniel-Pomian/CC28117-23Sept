@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="2537f7f0-d27f-4ee5-b6d4-6c8687101f96" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-CreateAdmin" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" disabled="true" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create new user for first tenant with all roles</con:description>
+  <con:settings>
+    <con:setting id="2537f7f0-d27f-4ee5-b6d4-6c8687101f96fileName">TestCase-DEV-CreateAdmin</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-Clear" id="e2f44e8b-e9e1-4f75-8ce1-f30fd357f1cc">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTenant-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outUser-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-GetTenantName" id="7e08e5a5-9364-42ac-8564-168191f3dd74">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>0c36e0bb-c7a4-433d-90f7-155ed24ab94f</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inTenant-ID</con:name>
+          <con:value>${#TestCase#inTenant-ID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outTenant-Name</con:name>
+          <con:value>TELEFONICA</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTenant-Name</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-tenantsData" id="e1feb1c8-d459-4f23-83ed-74d802661b0c">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>tenantName</con:name>
+        <con:sourceType>outTenant-Name</con:sourceType>
+        <con:sourceStep>Run TestCase-GetTenantName</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTenant-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="createAdmin-Role-SYSTEM_ADMIN" id="ca7f5261-2109-48f8-b79a-3b1dfdb5498e">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>createAdmin</con:operation>
+      <con:request name="createAdmin-Role-SYSTEM_ADMIN" id="e69d999a-a754-406d-9337-c6c0efe03342">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:createAdmin>
+         <adminData>
+            <!--type: string-->
+            <username>SYSTEM-ADMIN-${#Project#DateTime_Current_String_yyyyMMddHHmmssSSS}</username>
+            <!--type: boolean-->
+            <password>${#TestSuite#Password}</password>
+            <adUser>false</adUser>
+            <!--type: guiAdminType - enumeration: [SYSTEM_ADMIN,TENANT_ADMIN]-->
+            <adminType>SYSTEM_ADMIN</adminType>
+            <administratorForTenants>
+               <tenants>
+                  <id>${#TestCase#inTenant-ID}</id>
+                  <name>${#TestCase#outTenant-Name}</name>
+               </tenants>
+            </administratorForTenants>
+         </adminData>
+         <createComment>Create test-user with role system-admin for tests from  ${#Project#Tester}</createComment>
+      </v1:createAdmin>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="7e6eaccd-e5ef-4d0a-bd95-47f3efccf04f"/>
+        <con:assertion type="Schema Compliance" id="63da4cb7-a01d-4f8e-a7e8-f27c6d9d92e5">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c9424ca8-7608-4434-b575-e9fefa06b98b"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-UsersData" id="7107cd70-9123-4508-93b6-b2fb1f691a84">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>userRoleUser-Name</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>createAdmin-Role-SYSTEM_ADMIN</con:sourceStep>
+        <con:sourcePath>declare namespace v1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//v1:createAdmin[1]/adminData[1]/username[1]</con:sourcePath>
+        <con:targetType>outUser-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath xsi:nil="true"/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inTenant-ID</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outTenant-Name</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TELEFONICA</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outUser-Name</con:name>
+      <con:value>SYSTEM-ADMIN-20221004102534007</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>f7b71acb-cc79-4c80-a033-567ec9eeea49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>207bfb4f-f5e2-4022-b2f2-9769a65bb4d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fa0d588c-0988-4e30-a355-51068bb7a996</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>162a8395-0d7e-4453-b181-6e827c58e8cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>79538b51-26a1-430e-9124-6ed12029f23e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7c82fa6a-8c7d-4ef8-bdd8-d65554c5cd1f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dad41b62-8b5a-4257-a03d-c77ee946cc74</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>adb21f22-2a32-44ca-a6bc-f1b94595aa92</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>866199ee-5dfa-4f70-a89f-4f9d7aeef757</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1c262d1e-335c-4b7b-b05f-0067c665f1a1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a53580b6-004f-44e6-8632-c56c53485c26</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c1860b60-2d83-436f-8a9d-6df21254208d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b3805230-5ec3-43ae-84cc-0e31343683d4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ba7aadf7-bbcf-4485-848a-1b33352e21b4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>71363057-8c0a-43e1-a9fb-473a8cfba217</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ed2295ba-a58f-4b97-8de5-cc3e4d4e25af</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1909e23a-4559-461a-86c9-3c97e7f6b5f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>025f44b3-467b-4b65-8274-7ee906c0a7a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1db47c72-6e33-42c2-a6d4-b5d004635287</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>65c90bed-b450-4ffd-9862-a8ace83eade2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>af983493-f396-4482-b529-49d99450e96a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c7fb4725-537a-41e1-ab1e-54f5e5446d06</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>575a1db9-e11f-4829-9a3d-11191a230dc6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>becdfac2-5ab5-4150-a3f0-851b42dec5c2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>41476466-fcec-44fd-837e-d90fc5a45613</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>495e1b21-8116-4f54-85e1-001cd2dc7e9b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2050607-07ab-4102-9959-0fd849fc976b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>14272281-cf69-4cdf-ae2d-35b9f4fbf8da</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fbb13c30-d65d-431b-9b4e-7a72be299fef</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>07f30860-004d-4337-bbc1-7bd77afe004b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c14483f6-9adf-4821-90b8-7bee084a8300</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>49ef349b-e5f8-46cb-a669-de6c406e2d64</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>572fb247-a010-4c30-aef1-88529c2f3732</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e45a5425-69dd-4016-b056-a9b946d5c677</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>082360e2-c242-43bd-8b24-d09321f08077</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f7d1811b-d1f4-4044-96f8-3e21dd344744</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3b11050e-0009-45bc-a8e1-3fc2ce2d9dfc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1105fb48-d9a4-425f-bb80-0eeed4016251</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cbcc6928-e8db-41b5-9534-8ff7ffbf0506</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>638b9407-0443-4aae-9934-7a6d2c452243</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60c63361-7de2-4898-9b6a-a45d8b33fb5e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca7f5261-2109-48f8-b79a-3b1dfdb5498e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

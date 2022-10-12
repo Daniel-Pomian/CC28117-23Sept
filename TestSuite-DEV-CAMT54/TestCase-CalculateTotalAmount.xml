@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="3cb9e453-d08c-4518-9fbf-4b3840441390" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CalculateTotalAmount" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Calculate total amount = amount * count and format result to money format.
+Ex. amount=199, count=10 --> total amount = 19.90</con:description>
+  <con:settings>
+    <con:setting id="3cb9e453-d08c-4518-9fbf-4b3840441390fileName">TestCase-CalculateTotalAmount</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-Cleare" id="4d27c469-14d8-437e-ad45-6c1e84ef6304">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>outParameter</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath xsi:nil="true"/>
+        <con:targetType>outTotalAmount</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath xsi:nil="true"/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-CalculateAmount*Count" id="5576007d-f4f9-47ae-9bd9-95bfbb8c7ff9">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script multiplied amount with count and return result in money format.
+ * Date: 28.06.2016
+ * Autor: Michael Gordon
+*/
+
+ import java.text.DecimalFormat
+ import java.text.DecimalFormatSymbols;
+ // set format for money 
+ def moneyform = new DecimalFormat("#####0.00", new DecimalFormatSymbols(Locale.US))
+ 
+ // get input values
+ def iAmount = context.expand( '${#TestCase#inAmount}' ).toInteger() 
+ def iCount = context.expand( '${#TestCase#inCount}' ).toInteger() 
+  // set convertet value to test-case properties	
+ testRunner.testCase.setPropertyValue('outTotalAmount',moneyform.format(iAmount*iCount/100))</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inAmount</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inCount</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outTotalAmount</con:name>
+      <con:value>10.00</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>4d27c469-14d8-437e-ad45-6c1e84ef6304</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

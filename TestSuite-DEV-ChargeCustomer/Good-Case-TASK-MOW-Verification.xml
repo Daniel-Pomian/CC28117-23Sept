@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="d39a0337-ecf9-4f67-bb08-21c5c9e2fcc3" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="Good Case-TASK-MOW-Verification" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" zephyrTestName="" zephyrTestId="" disabled="true" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Based on requirements in us:
+https://www.sg.de.o2.com/jira/browse/DRC-3755
+
+This test-case tests Maintenance of Workflows for the below JobActions :
+OCS_EXTERNAL_NOTIFICATION
+PPIT_NOTIFY_PAIN008_TRANSACTION
+SEND_EMAIL
+PPIT_NOTIFY_CAMT054_TRANSACTION
+BALANCE_CHECK_AFTER_REGISTRATION
+
+Note: Execution only in suite after all test-cases before are executed.
+
+Precondition:
+1) Execution of Good Case-CAMT054-MOW-Verification and is successful.
+
+
+Test-scenario:
+
+
+WorkFlow maintenance verification for the TASK JobActions
+        Date Source and Loop to verify the Workflow maintenance for the above JobActions
+        Execute the operation getWorkflowMaintenanceData with the required job name and valid date range. Number of modified entries should be 0 before the update
+        Update the Status and the error code for the transaction based on the data from DataSource step.
+        Execute the operation getWorkflowMaintenanceData with the required job name from Data Source step. Number of modified entries count should be 1 in the response.
+        Simulation of resetting as in GUI – Execute operation resetWorkflowMaintenanceData with job  name and valid comments. Success response  should be received.
+        Execute the operation getWorkflowMaintenanceData with the required job name and valid date range. Number of modified entries shown as 0 in the response.
+        Validate that the status and error codes are reset in the database as per the DataSource.
+
+Postcondition:
+The data created is deleted from TASK and CAMT05400102_INPUT_ENTRY tables
+
+
+    
+Acceptance criteria:
+
+    Tests are implemented, executed and passed.
+    All validation from points before are presented for review in review meeting.
+    MOW for the working as reset from DRC GUI.</con:description>
+  <con:settings>
+    <con:setting id="d39a0337-ecf9-4f67-bb08-21c5c9e2fcc3fileName">Good-Case-TASK-MOW-Verification</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="JDBC Request-Verify-DataCreated-Exists" id="3fbcab31-249b-4e22-8a46-ca81ded7da13">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT DISTINCT TASK_TYPE_ID FROM TASK WHERE LAST_PROPAGATION_DATE >= to_date('${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd 00:00:00"))}', 'YYYY-MM-DD HH24:MI:SS') AND ID > ${#TestSuite#MAXIDTASK} ORDER BY TASK_TYPE_ID ASC</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="1b2887b2-c47e-4cbd-b26d-f7aee5d6393d" name="Match content of [TASK_TYPE_ID]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/TASK_TYPE_ID[1]/text() = 3
+and
+//Results[1]/ResultSet[1]/Row[2]/TASK_TYPE_ID[1]/text() = 5
+and
+//Results[1]/ResultSet[1]/Row[3]/TASK_TYPE_ID[1]/text() = 9
+and
+//Results[1]/ResultSet[1]/Row[4]/TASK_TYPE_ID[1]/text() = 10
+and
+//Results[1]/ResultSet[1]/Row[5]/TASK_TYPE_ID[1]/text() = 11</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="Data Source-TASK-JOB" id="42e9f9b2-f57a-428d-8ccd-9860f6965984">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">OCS_EXTERNAL_NOTIFICATION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">5</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">REJECTED_PERMANENT</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">1999999151</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">NEW</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">PPIT_NOTIFY_PAIN008_TRANSACTION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">10</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">UNPROPAGABLE</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/><con:entry xmlns:con="http://eviware.com/soapui/config">NEW</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">SEND_EMAIL</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">9</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">REJECTED_PERMANENT</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/><con:entry xmlns:con="http://eviware.com/soapui/config">NEW</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">PPIT_NOTIFY_CAMT054_TRANSACTION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">11</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">UNPROPAGABLE</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/><con:entry xmlns:con="http://eviware.com/soapui/config">NEW</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">BALANCE_CHECK_AFTER_REGISTRATION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">3</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">REJECTED_PERMANENT</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">1999999151</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">NEW</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>JobAction</con:property>
+      <con:property>TaskType</con:property>
+      <con:property>DRCStatus</con:property>
+      <con:property>DRCCode</con:property>
+      <con:property>NewStatus</con:property>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="af8157ab-843e-45b4-87f3-1c6470b35885" name="resetWorkflowMaintenanceData-TASK-Before">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>resetWorkflowMaintenanceData</con:operation>
+      <con:request name="resetWorkflowMaintenanceData-TASK-Before" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d29d92fb-3196-4cc1-8c40-248430ef7abc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:resetWorkflowMaintenanceData>
+         <!--type: string-->
+         <jobActionId>${Data Source-TASK-JOB#JobAction}</jobActionId>
+         <timeFrame>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'00:00:00"))}</fromDate>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <toDate>${=java.time.LocalDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}</toDate>
+         </timeFrame>
+         <!--type: string-->
+         <comment>per auras</comment>
+      </v1:resetWorkflowMaintenanceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="54513303-e168-4b89-bdce-8da62b3739ad" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Response SLA Assertion" id="c17bd926-a590-4ee7-8f43-5a93c47af3f7" name="Response SLA" disabled="true">
+          <con:configuration>
+            <SLA>200</SLA>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ec6d2a1e-3121-4baf-b68d-33720a5b187e" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="f0df1549-c99d-4af8-a496-e89f7e859906" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="resetWorkflowMaintenanceData"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4fa8b311-e601-4a1e-99fb-e4daa96e04f3" name="getWorkflowMaintenanceData-Entries-Before=0">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getWorkflowMaintenanceData</con:operation>
+      <con:request name="getWorkflowMaintenanceData-Entries-Before=0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6227fac2-11ed-411f-a85d-88890791f662">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getWorkflowMaintenanceData>
+         <!--type: string-->
+         <jobActionId>${Data Source-TASK-JOB#JobAction}</jobActionId>
+         <timeFrame>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss"))}</fromDate><toDate>${=java.time.LocalDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}</toDate>
+         </timeFrame>
+      </v1:getWorkflowMaintenanceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="acb84155-84f7-47fd-a99c-b5f30f1352db" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="d0c8b7a7-1e0a-4d2e-9a62-d05c719a416f" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="8894738e-7032-4733-9380-82f3c6dfd63b" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getWorkflowMaintenanceData"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-TASK-getId" id="0b944428-d1ff-4501-8860-7a31c4530379">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT * FROM TASK WHERE 
+ID >  ${#TestSuite#MAXIDTASK}
+AND TASK_TYPE_ID = ${Data Source-TASK-JOB#TaskType} 
+
+STATUS IN ('SUCCESSFUL', 'NEW')
+AND
+LAST_PROPAGATION_DATE >= to_date('${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd 00:00:00"))}', 'YYYY-MM-DD HH24:MI:SS')
+ORDER BY ID DESC FETCH FIRST 1 ROWS ONLY</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="9bfa7355-7a4d-4285-a2cc-27855567042b" name="Check count of [@rowNumber]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row/@rowNumber)</path>
+          <content>1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="PropertyTransfer-TASK-ID" id="04f80fd2-386a-40f6-abb6-4feea3d50549">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>ID</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-TASK-getId</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/ID[1]</con:sourcePath>
+        <con:targetType>ID</con:targetType>
+        <con:targetStep>Properties-TASK-ID</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="properties" name="Properties-TASK-ID" id="70c233c8-6292-4a96-b386-e06075992062">
+    <con:settings/>
+    <con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:properties>
+        <con:property>
+          <con:name>ID</con:name>
+          <con:value>10010764</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-Generate-SQL-Query" id="a35d296f-204b-448f-8d31-503e270fa7a1">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script Creates a part query to execute to update the required data TASK table
+  * Date: 2021-08-30 
+ * Autor: Vinay Goli
+*/
+
+// Get dRCCode &amp; dRCStatus from Test Step: Data Source-TASK-JOB
+
+String dRCCode = context.expand( '${Data Source-TASK-JOB#DRCCode}')
+
+def dRCStatus = context.expand( '${Data Source-TASK-JOB#DRCStatus}')
+
+//Log the values
+log.info("dRCCode is:"+dRCCode.toString())
+log.info("dRCStatus is: "+dRCStatus)
+
+log.info(dRCCode.length())
+
+//Create a Part query
+String Query1 = "STATUS = '"+dRCStatus+"', ERROR_CODE = "+dRCCode
+String Query2 =  "STATUS = '"+dRCStatus+"'"
+
+//Generate a part query based on the error code value (if it null or specific error code) to add to the TestStep- JDBC Request-update-Staus-Code
+if (dRCCode.length() > 0)
+{
+testRunner.testCase.setPropertyValue('Query',Query1)
+
+}
+
+else
+	testRunner.testCase.setPropertyValue('Query',Query2)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-update-Staus-Code" id="c3c7e459-668c-4963-a818-671eae4712f8">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>UPDATE TASK 
+SET ${#TestCase#Query}
+WHERE ID = ${Properties-TASK-ID#ID}</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="004f1b6e-e8a3-40a3-80f2-33585244c129" name="Check count of [UpdateCount]">
+        <con:configuration>
+          <path>count( //Results/UpdateCount)</path>
+          <content>1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="43cad329-ef59-4e6e-9846-c023a1c3a866" name="getWorkflowMaintenanceData-ImpactedEntries-After=>1">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getWorkflowMaintenanceData</con:operation>
+      <con:request name="getWorkflowMaintenanceData-ImpactedEntries-After=>1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6227fac2-11ed-411f-a85d-88890791f662">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getWorkflowMaintenanceData>
+         <!--type: string-->
+         <jobActionId>${Data Source-TASK-JOB#JobAction}</jobActionId>
+         <timeFrame>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'00:00:00"))}</fromDate>
+            <toDate>${=java.time.LocalDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}</toDate>
+         </timeFrame>
+      </v1:getWorkflowMaintenanceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="acb84155-84f7-47fd-a99c-b5f30f1352db" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Response SLA Assertion" id="b5aa325b-ac07-47b4-9f4d-440ad3bc6265" name="Response SLA" disabled="true">
+          <con:configuration>
+            <SLA>200</SLA>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="d0c8b7a7-1e0a-4d2e-9a62-d05c719a416f" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="8894738e-7032-4733-9380-82f3c6dfd63b" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fc1afdc9-db60-4532-9821-3ff36b4c8e3b" name="Match content of [countImpactedEntries]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getWorkflowMaintenanceDataResponse[1]/WorkflowMaintenanceData[1]/countImpactedEntries[1]/text()</path>
+            <content>1</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getWorkflowMaintenanceData"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="1ae6940a-cacf-4074-833e-071ac43f82b1" name="resetWorkflowMaintenanceData-TASK">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>resetWorkflowMaintenanceData</con:operation>
+      <con:request name="resetWorkflowMaintenanceData-TASK" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d29d92fb-3196-4cc1-8c40-248430ef7abc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:resetWorkflowMaintenanceData>
+         <!--type: string-->
+         <jobActionId>${Data Source-TASK-JOB#JobAction}</jobActionId>
+         <timeFrame>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'00:00:00"))}</fromDate>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <toDate>${=java.time.LocalDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}</toDate>
+         </timeFrame>
+         <!--type: string-->
+         <comment>per auras</comment>
+      </v1:resetWorkflowMaintenanceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="54513303-e168-4b89-bdce-8da62b3739ad" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Response SLA Assertion" id="c17bd926-a590-4ee7-8f43-5a93c47af3f7" name="Response SLA" disabled="true">
+          <con:configuration>
+            <SLA>200</SLA>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ec6d2a1e-3121-4baf-b68d-33720a5b187e" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="f0df1549-c99d-4af8-a496-e89f7e859906" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="resetWorkflowMaintenanceData"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ed4ba1d3-b8fd-4bc1-b3f6-28c2e20efd0b" name="getWorkflowMaintenanceData-AfterReset-Count=0">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getWorkflowMaintenanceData</con:operation>
+      <con:request name="getWorkflowMaintenanceData-AfterReset-Count=0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6227fac2-11ed-411f-a85d-88890791f662">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getWorkflowMaintenanceData>
+         <!--type: string-->
+         <jobActionId>${Data Source-TASK-JOB#JobAction}</jobActionId>
+         <timeFrame>
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <!--Optional:-->
+            <!--type: dateTime-->
+            <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'00:00:00"))}</fromDate>
+            <toDate>${=java.time.LocalDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))}</toDate>
+         </timeFrame>
+      </v1:getWorkflowMaintenanceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="acb84155-84f7-47fd-a99c-b5f30f1352db" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Response SLA Assertion" id="b5aa325b-ac07-47b4-9f4d-440ad3bc6265" name="Response SLA" disabled="true">
+          <con:configuration>
+            <SLA>200</SLA>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="d0c8b7a7-1e0a-4d2e-9a62-d05c719a416f" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="8894738e-7032-4733-9380-82f3c6dfd63b" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="4bf3164b-60d9-497b-867c-2bbadc5f29d3" name="Match content of [countImpactedEntries]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getWorkflowMaintenanceDataResponse[1]/WorkflowMaintenanceData[1]/countImpactedEntries[1]/text()</path>
+            <content>0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getWorkflowMaintenanceData"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-TASK-Verify-Reset-Status" id="a5471b91-3cff-47de-ad7f-2f194435df6d">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT * FROM TASK WHERE ID = ${Properties-TASK-ID#ID}</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="75d6e6dc-7dd7-45e1-8bbd-59d13ac0d085" name="Match content of [STATUS]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/STATUS[1]/text()</path>
+          <content>${Data Source-TASK-JOB#NewStatus}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="fff99653-990a-47fd-a9aa-067578a75b20" name="Match content of [ERROR_CODE]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/ERROR_CODE[1]</path>
+          <content>&lt;ERROR_CODE/></content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="f9b7464d-5775-42ad-a983-551d1093ce6d" name="Match content of [ID]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/ID[1]/text()</path>
+          <content>${Properties-TASK-ID#ID}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="Data Source Loop-TASK" id="4c7fafe3-f9c2-4498-81df-276fece91f24">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>Data Source-TASK-JOB</dataSourceStep>
+      <targetStep>resetWorkflowMaintenanceData-TASK-Before</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-CAMT-DELETE" id="e363e612-2507-4c25-bb6a-4e699c8f8060">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DELETE FROM CAMT05400102_INPUT_ENTRY WHERE ID > ${#TestSuite#MAXIDCAMT} AND ID &lt;= ${#TestSuite#MAXIDCAMT_After}</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-TASK-DELETE" id="7db3a2a3-0beb-4da5-af94-9f545cf2dc67">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DELETE FROM TASK WHERE ID > ${#TestSuite#MAXIDTASK} AND ID &lt;= ${#TestSuite#MAXIDTASK_After}</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Query</con:name>
+      <con:value>STATUS = 'REJECTED_PERMANENT', ERROR_CODE = 1999999151</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MAXIDTASK</con:name>
+      <con:value>10017665</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MAXIDCAMT</con:name>
+      <con:value>4733</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>7f345bb6-38a7-4882-977d-4b19fe037401</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7401be8a-a524-4728-a6c7-69ebfeabb357</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>156dd047-879c-4e62-85fa-ab7381bb29d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>11429eb1-c6e3-47c9-a1a1-b0eb8c5fb834</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>591a6274-e848-4772-9036-2df787775fb0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>14ef61bb-3dea-4ae3-a2bf-ae2d1d3edd83</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e8723a90-2d41-4e79-8def-7e609cc70cc7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6bedfb31-ca09-4af0-8420-abf87c1e6da2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c86a83b5-92f8-4f18-8a60-a9d52e4def5c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties>
+      <con:conditionEnabled>true</con:conditionEnabled>
+      <con:condition xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:properties>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2bb74d72-f5e5-4c8e-9700-bb9c42b126c3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>89b29095-6863-497c-8316-f918e2d947ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0862acbb-096f-42fc-90c5-4e30edad6a48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b083f941-fd41-4f93-9dad-eb69511c9980</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2026b4b7-ffa3-4dc3-83a9-1f8643824abc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c8a1da50-a608-4045-85f3-9f7abcea1a5f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties>
+      <con:conditionEnabled>true</con:conditionEnabled>
+      <con:condition xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:properties>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dc31708e-b263-4377-9636-b316ee1adc12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ae27d72c-a2de-42db-baec-62d8292768e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>153814c0-22c8-4f4d-aa37-3b88c2dc15bc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>202458da-e70b-44bc-88f9-61808c75a74a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>134158a9-69c8-438e-bf6a-9f28a4f742e3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2effc05-8af1-4d73-8532-4e37333597d0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5177d5e0-8a8e-48cb-b4a1-d45b51cb618a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>209a42aa-8bf5-4641-bd26-bacfe436bf8c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties>
+      <con:conditionEnabled>false</con:conditionEnabled>
+      <con:condition xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:properties>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8520bb29-3397-4a7a-89af-f1be73353d98</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>69b9fbcf-75a3-492d-9b12-c08efdf19a83</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>96821da0-1d67-4c3f-84e4-cd2e6ef25b55</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7b5b7cdf-1912-4275-85bf-3da7c82063fc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>226bd222-0bf4-4096-99bc-5275324093b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fb64e0af-8e0c-4c35-ae12-81d0cf269354</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a3e3ff19-069c-400e-839c-41aeff091da4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ff21d153-cb0e-49e5-a8a6-16c89c61a19c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5ebb256c-f594-4c02-bc8d-6c48685a92f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5444ec0a-ec82-4c36-a5f4-4e6a960e42a0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3b466bed-cefd-4ce9-be1f-270ee7018148</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a9d7109d-8c02-42fb-92a2-266fa5c232ea</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60b6bafd-9e03-4486-9374-4da1f474eda0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f1fc09f7-f18f-4f04-8bee-0a16cc15984a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7562f7de-a407-4099-b9c1-2af37c5773d0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6158ea15-f032-4b69-8e36-a9db3c9d2998</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be1fc81b-566f-4f7e-9350-995f4cbd1765</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de963673-ed79-4246-9e69-e5b2572765ae</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>539ee58d-164b-4292-9bb4-1a00bc62892b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2ab712bb-ae29-4027-a60b-4ea935c7cd42</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>07055712-dc80-4680-b66d-258ff1ecc6d7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9ff323b5-1dfb-41c1-8cb3-db283c703ed1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de29b586-eb3e-4bc0-97f9-4a57f139ca3f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5991a2a4-7215-47c9-bed8-8b4248d42f0e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e97915af-6931-4a5e-907c-a0a7f9f4a585</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f93711d-e962-4145-88e9-197aca57f86d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39c67b79-e689-45ba-a49f-6522f07ff42e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e26d1fc6-9ed3-4bcd-8e56-4548e24b8ea8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>268b549f-3e41-4c16-a4d1-e16d5e18561d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1ba67621-b374-4bfc-a316-51d45014c7f7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3b32476b-aea9-4759-accf-686d6c3b9f66</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties>
+      <con:conditionEnabled>false</con:conditionEnabled>
+      <con:condition xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:properties>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>35aaa82d-14e4-4862-910e-61bedb7cc1d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2ea0c933-ce35-4b36-a93b-813fb6bdcdf4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>397e2bc8-9089-4a94-adf8-f21eb2a2f129</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>efe6775d-b982-4b42-b36e-bb0615465aee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>599c564a-766e-45f8-ab38-a350f61d9069</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de4e7748-55b2-4ebe-8a91-e6dcfa195865</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3f9920be-442a-4feb-a999-e1230d80ec93</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>59985ce4-5a49-47c2-b3ad-1373656fc869</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ab075db5-8b4d-47aa-8cde-fe1ff902556f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9725113d-fbf6-4388-ad3d-b3ced0c62f88</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0a7857c7-9b88-4b54-9425-416c6f012eb8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bd05aeea-9bdc-4373-b981-8072fb46bc23</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5078c5b9-54f1-4ec2-b397-03da449e0ef6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a6c20718-66fb-44de-bb35-ab183b32625d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2ae6f29f-db5e-4711-8603-3df3736b8afb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c999f197-c58a-4497-92b0-2d96db47ebe6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>26e3809c-8f04-4495-baed-8781fc6f0d46</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b6fd960b-326f-43b1-adee-cd2d352dc6ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>af4b7ddf-a25d-4d06-9c95-105b191747a5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>29b66bba-66c8-40bd-ba75-eff023d5abf8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>24476012-1c88-44e9-9770-170b41a52bcd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0dc8d00f-50b2-461a-abcb-301f7ec9cd65</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>73754342-03c7-4f43-bfb0-f7bf65bf572f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4149b1a3-7fd3-40c4-a4d2-e8de863ae7d8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c21b718-dbc7-40ed-966d-a43b59e8e2af</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d2b52504-33df-4d9e-9dea-e457b12eb637</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a8b85bd9-5f9e-492c-b160-f06f7d077034</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>015f78b7-e88e-4260-9e1e-e62f75f196e4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a21043f1-735d-472e-9481-e341c0dafdd4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>04d89cfe-69bb-475c-b48e-fa1bba1c485f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d070f380-32fd-4391-8370-333f3728e42d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dc412ff9-d0f8-4bbc-9839-2e10e76bbe75</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3bf59f05-61cf-4bac-8711-ca2626701831</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7caafa57-dab6-4d8a-a969-d0c1d3e84411</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a98fb5d6-6f9f-4435-b9ac-1e3473157b2b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a316f0e0-704f-4388-96e2-984b1fc8b481</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39b7441a-3690-461c-96b1-423c132ca228</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>befb2794-e389-4083-ac8a-b676f1ac04ab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>38fe7918-2d23-45f8-8e99-53e490cde233</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>439799eb-e7f3-4a5a-b011-1e75a95ef868</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>55012398-ffeb-4421-8ffa-0119a0e490e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>80379ca6-96ed-4898-80f1-039101af69bc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>234d004d-2ba9-4311-b64a-7bc34306b35e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c9a8c588-eb07-45c0-8d2e-ad33a37fb815</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>365bc4b5-0818-4002-bb08-340aee35a3ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6c90cf35-842c-4f81-9261-0895139bd274</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1b11ca15-1e77-44a9-a874-b4ca15e3a20d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2067a93e-4430-4308-952b-73b063c338ad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2b095781-45ac-42a0-8efa-f276e3483865</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>76f51331-6e75-4419-bed9-8285849fd2c9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties>
+      <con:conditionEnabled>false</con:conditionEnabled>
+      <con:condition xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:properties>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a7e72cf-3edc-49b5-964d-a56f7b2e9025</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>68059014-8a8f-477b-aa82-39bc44e71dc1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c1987477-94bd-4ccd-9b74-6836ea0ff1c7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93d40244-51a1-4d08-8b8a-f367a2ba9e2b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bc3c0bd1-bba3-4a54-bb44-d4766bd27a8f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b3a3cd97-c124-41aa-bac2-91fd848aa19f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2bec46c0-2d4b-4e74-9d2c-22edf5441a90</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d5f9328f-75ee-4bf7-8a8b-6f9c954d978b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2b92225c-74f2-46cc-827d-cf654397dc82</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>51bdb47f-67a9-416f-b0bb-679308037025</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fd450411-d4a9-4b2e-85d6-0b658c1477f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dfd58b8a-4854-4964-81b6-38175a67d592</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a49df2b4-b34d-4487-8dea-8de379d21c32</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32d52b74-99c1-4b9a-881d-1f6645983ce2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8d50ea9f-9fe8-472e-8a71-a91b8d341d49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52da5de3-057a-473a-a005-dfa972cbb9ee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>af8157ab-843e-45b4-87f3-1c6470b35885</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+</con:testCase>

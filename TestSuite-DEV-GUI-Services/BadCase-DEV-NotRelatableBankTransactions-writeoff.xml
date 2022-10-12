@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="583986d4-97bc-4d2f-bedf-0d8607ea42d1" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-NotRelatableBankTransactions-writeoff" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests writeoff for not relatable bank transaction from type debit based on changes in 
+US-1570
+https://www.sg.de.o2.com/jira/browse/DRC-1570</con:description>
+  <con:settings>
+    <con:setting id="583986d4-97bc-4d2f-bedf-0d8607ea42d1fileName">BadCase-DEV-NotRelatableBankTransactions-writeoff</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="d055e668-66ce-4d2a-af54-2b45648bf73f">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>UserLogin</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Camt054ID-Debit</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateUserAllRoles" id="fcfbff45-29ac-4c80-b1b3-23846f5bbd16">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>2537f7f0-d27f-4ee5-b6d4-6c8687101f96</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inTenant-ID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outTenant-Name</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outUser-Name</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outUser-Name</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-User" id="620ed3b1-f780-4105-8346-34eeb862b235">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>userLogin</con:name>
+        <con:sourceType>outUser-Name</con:sourceType>
+        <con:sourceStep>Run TestCase-CreateUserAllRoles</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>UserLogin</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="47412d04-8f6a-45c6-9099-11899023c291" name="5800N_countNotRelatableBankTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countNotRelatableBankTransactions</con:operation>
+      <con:request name="5800N_countNotRelatableBankTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="31abc64f-506f-42e3-b11e-5a5c5647ebc4">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:countNotRelatableBankTransactions>\r
+         <timeFrame>\r
+            <fromDate>${#Project#Date_Current_yyyy-MM-dd}T00:00:00</fromDate>\r
+         </timeFrame>\r
+      </v1:countNotRelatableBankTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="8316ef63-ed63-4fda-9d62-78b7b908087f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8a7a94c0-e3dd-4236-a2b1-628bb8fa9326" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="df69a9b4-2e0f-40d7-8114-c5209fe8ef57" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countNotRelatableBankTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="5810N_Run TestCase_CAMT054-Debit-WrongE2EID" id="58e5c8dc-db5d-4b53-bf29-97c78aec911c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>f54bc061-d844-49d6-9378-d92b8a4cd604</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>/CAMT54-Files/20221003155724066-CAMT54-Debit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inEndToEndID</con:name>
+          <con:value>${#Project#Random10}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBool-SkipLoadAndExecSteps</con:name>
+          <con:value>false</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCount</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inAmount</con:name>
+          <con:value>${#TestCase#Amount}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4fd4d364-da91-4825-8997-20b65ce0d64a" name="5820N_countNotRelatableBankTransactions+1">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countNotRelatableBankTransactions</con:operation>
+      <con:request name="5820N_countNotRelatableBankTransactions+1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="31abc64f-506f-42e3-b11e-5a5c5647ebc4">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:countNotRelatableBankTransactions>\r
+         <timeFrame>\r
+            <fromDate>${#Project#Date_Current_yyyy-MM-dd}T00:00:00</fromDate>\r
+         </timeFrame>\r
+      </v1:countNotRelatableBankTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="8316ef63-ed63-4fda-9d62-78b7b908087f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8a7a94c0-e3dd-4236-a2b1-628bb8fa9326" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="df69a9b4-2e0f-40d7-8114-c5209fe8ef57" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="93208123-2d97-458b-a16b-ec95b01c81e1" name="Match content of [countResult]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countNotRelatableBankTransactionsResponse[1]/countResult[1]=
+${5800N_countNotRelatableBankTransactions#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:countNotRelatableBankTransactionsResponse[1]/countResult[1]}
++1</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countNotRelatableBankTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="99173e9d-734e-41cd-b743-07e63ecd8ae5" name="5830N_getNotRelatableBankTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getNotRelatableBankTransactions</con:operation>
+      <con:request name="5830N_getNotRelatableBankTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="898bc1b5-1f0b-4625-ba01-e05de4f08a64">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getNotRelatableBankTransactions>
+         <first>0</first>
+         <count>20</count>
+         <timeFrame>
+            <fromDate>${#Project#Date_Current_yyyy-MM-dd}T00:00:00</fromDate>
+         </timeFrame>
+      </v1:getNotRelatableBankTransactions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a9e7a204-f08f-4f0a-89c1-bec9b7639eaa" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="918e4807-1d40-4d39-a340-1d0555e699bf" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="6ebc0317-4ddc-4845-8f1c-49c5b1d60607" name="Not SOAP Fault"/>
+        <con:assertion type="Simple Contains" id="99fe19c9-ad7c-4a80-a45e-bf41b4b5824e" name="Contains-E2E-Id">
+          <con:configuration>
+            <token>${#TestCase#EndToEndID}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="99fe19c9-ad7c-4a80-a45e-bf41b4b5824e" name="Contains-UnknownMSISDN">
+          <con:configuration>
+            <token>${#TestCase#MSISDNUnknown}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getNotRelatableBankTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="5840N_Property Transfer-Camt054IDs" id="81979089-52f6-4198-bd69-71fe99639722">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>camtID-Debit</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>5830N_getNotRelatableBankTransactions</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[1]/camt05400102InputEntyId[1]</con:sourcePath>
+        <con:targetType>Camt054ID-Debit</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="1c44dfb1-bcb8-4eea-8791-41c047101b68" name="5850N_writeOffCamt054Transaction">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>writeOffCamt054Transaction</con:operation>
+      <con:request name="5850N_writeOffCamt054Transaction" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9dfad13a-0aa4-4857-be53-8f886d74457d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:writeOffCamt054Transaction>\r
+         <!--type: long-->\r
+         <camt05400102InputEntyId>${#TestCase#Camt054ID-Debit}</camt05400102InputEntyId>\r
+         <!--type: string-->\r
+         <comment>Test write back transaction for camt054ID=Test skip transaction for camt054 ID = ${#TestCase#Camt054ID-2-Debit}</comment>\r
+      </v1:writeOffCamt054Transaction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="c7444a45-cb31-40b7-8da5-690ddfb8bac0" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="4621a432-2803-4fe3-99d7-9253fe68482b" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="b0135bdf-6254-4672-8c00-10b1eec3d302" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="d39f9cd9-2642-4d92-861a-6e0484425e5f" name="Check for existence of [ns2:writeOffCamt054TransactionResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+exists( //ns2:writeOffCamt054TransactionResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/writeOffCamt054Transaction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="f8177f39-efaa-4bbd-af3b-34a6b2b30521" name="5860P_getNotRelatableBankTransaction-Debit">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getNotRelatableBankTransaction</con:operation>
+      <con:request name="5860P_getNotRelatableBankTransaction-Debit" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d57f51f9-c480-4e48-b716-b7af6b829b06">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getNotRelatableBankTransaction>\r
+         <!--type: long-->\r
+         <camt05400102InputEntyId>${#TestCase#Camt054ID-Debit}</camt05400102InputEntyId>\r
+      </v1:getNotRelatableBankTransaction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="776b2f6f-98e5-496f-913e-0968e03b1149" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="c208ce60-3cb0-41aa-8544-cd9f2ad9e4a6" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c912c5cd-49be-4275-ab78-8e52ec2b434d" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="24ae413e-aacc-4689-9e53-9bdbcf403e73" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/sepaFileData[1]/exchangeDirection[1]</con:xpath>
+              <con:element>exchangeDirection</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>EBANKING_TO_DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/sepaFileData[1]/fileType[1]</con:xpath>
+              <con:element>fileType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>CAMT_054_001_02</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/sepaFileData[1]/fileStatus[1]</con:xpath>
+              <con:element>fileStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PROCESSED</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/creditorBankAccountData[1]/accountOwner[1]</con:xpath>
+              <con:element>accountOwner</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-1-CreditorName}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/creditorBankAccountData[1]/iban[1]</con:xpath>
+              <con:element>iban</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-1-IBAN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/creditorBankAccountData[1]/bic[1]</con:xpath>
+              <con:element>bic</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-1-BIC}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/debtorBankAccountData[1]/iban[1]</con:xpath>
+              <con:element>iban</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Customer-IBAN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/debtorBankAccountData[1]/bic[1]</con:xpath>
+              <con:element>bic</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Customer-BIC}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#Amount-Gui}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/additionalTransactionText[1]</con:xpath>
+              <con:element>additionalTransactionText</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>SEPA Reject</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionResponse[1]/notRelatableBankTransactionData[1]/secificCamt05400102Data[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#Camt054ID-Debit}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:getNotRelatableBankTransactionResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <notRelatableBankTransactionData>
+            <sepaFileData>
+               <fileId>1694</fileId>
+               <fileName>20160801173700499-CAMT54-Credit.xml</fileName>
+               <fileType>CAMT_054_001_02</fileType>
+               <exchangeDirection>EBANKING_TO_DRC</exchangeDirection>
+               <creationDate>2016-08-01T17:37:03+02:00</creationDate>
+               <fileStatus>PROCESSED</fileStatus>
+            </sepaFileData>
+            <secificCamt05400102Data>
+               <id>1778</id>
+               <sepaTransactionType>BANK_TRANSFER_TRANSACTION</sepaTransactionType>
+               <amount>400</amount>
+               <currency>EUR</currency>
+               <endToEndId>ZV9aLFmIMGGJy5GB8Vzi4P01</endToEndId>
+               <transactionId>CTC9aLFmIMGGJy5GB8Vzi4P0002</transactionId>
+               <messageId>CTX2016040203145531401</messageId>
+               <creditorBankAccountData>
+                  <accountOwner>Telefonica Germany GmbH  +  Co. OHG</accountOwner>
+                  <iban>DE99999999999999999990</iban>
+                  <bic>TEFXXXXXXXX</bic>
+               </creditorBankAccountData>
+               <debtorBankAccountData>
+                  <accountOwner>Azalia Farmer - Testüberweisung CAMT54 Credit</accountOwner>
+                  <iban>DE02ZZZ01234567890</iban>
+                  <bic>BELADEBEXXX</bic>
+               </debtorBankAccountData>
+               <bookingDate>2016-08-01T00:00:00+02:00</bookingDate>
+               <bankTransactionCode>NTRF+166+100</bankTransactionCode>
+               <bankTransactionCodeIssuer>ZKA</bankTransactionCodeIssuer>
+               <remittanceInformation>-Wrong MSISDN -  DRC Testaufladung. Credit</remittanceInformation>
+               <additionalTransactionText>SEPA-Gutschrift</additionalTransactionText>
+            </secificCamt05400102Data>
+         </notRelatableBankTransactionData>
+      </ns2:getNotRelatableBankTransactionResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getNotRelatableBankTransaction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="87290c94-a188-4b8e-a4c2-98315910c2b5" name="5870N_countNotRelatableBankTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countNotRelatableBankTransactions</con:operation>
+      <con:request name="5870N_countNotRelatableBankTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="31abc64f-506f-42e3-b11e-5a5c5647ebc4">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#UserLogin}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:countNotRelatableBankTransactions>\r
+         <timeFrame>\r
+            <fromDate>${#Project#Date_Current_yyyy-MM-dd}T00:00:00</fromDate>\r
+         </timeFrame>\r
+      </v1:countNotRelatableBankTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="8316ef63-ed63-4fda-9d62-78b7b908087f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8a7a94c0-e3dd-4236-a2b1-628bb8fa9326" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="df69a9b4-2e0f-40d7-8114-c5209fe8ef57" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="93208123-2d97-458b-a16b-ec95b01c81e1" name="Match content of [countResult]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countNotRelatableBankTransactionsResponse[1]/countResult[1]=
+${5800N_countNotRelatableBankTransactions#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:countNotRelatableBankTransactionsResponse[1]/countResult[1]}</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countNotRelatableBankTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Amount</con:name>
+      <con:value>400</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Amount-Gui</con:name>
+      <con:value>40000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>UserLogin</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>Camt054ID-Debit</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>70f6613c-6de3-49ba-a27d-54c6628ea9cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c23adc00-91b1-4aa6-aff1-998e14298d3d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>91966984-0613-452a-9406-b6bc7c3671c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8fce6e3e-54f0-4b57-941d-f3209c92882e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a91a1aa-9da1-4318-9930-dd11f912b0dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>87079cf6-5c1a-4aad-b8a0-ff4121ab76cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8ce51e6a-8cb3-4f28-a550-6d96031eddf2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a540ba87-5dc2-4d7e-ab22-7d5c64ac74a6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>957496bf-2e8e-4549-bf79-abba0648c7ce</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cfd958ac-2c42-4b89-8409-428623c23449</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f627ba93-18bc-4dab-b247-b23b1352b828</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca042ced-9ec2-4337-aaa1-2f33c1699cc9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a44184d-b305-4cb1-9682-b3abbad41fb5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c10d7512-d7b5-43b7-a97e-062eb3581885</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0d862a9b-3b6d-4a2d-baac-d2d1465ecad0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>06cd3fcd-b62e-4aee-89e2-efa9f6cf222b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>98d763f1-d96a-48be-8aba-7b768ec7d3de</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>147a3fc6-ebd6-4785-9c2d-013671975a12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b22d81c-7246-468e-a423-12a0e21e011d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d5943a42-79f9-47b4-bd71-fe63b017eb97</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>075b3517-619d-46aa-86d9-b6f6636e8cb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c8fe8060-a65d-4c72-a7bd-3c8d2740c41f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>14afccab-c802-45f0-92da-79a002c19b7f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f656559-b097-400b-ad2d-48fe93087f3c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2926b6e6-f1b3-4e82-bace-cd432f89ed1a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a00851cc-680a-4237-9787-3374050f2c1b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be47a5a4-c4e5-4d4e-96e9-7557b6df7550</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4b701a11-9699-404a-947d-2714629d8989</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>86034cf6-4990-4a96-82b4-ec616c20d7ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de36b9a6-1592-47c4-b782-daf4a3db813f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>65f9cd23-fb1b-4d6f-a6b0-baeb79eeb245</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a33a537-7a76-466d-b314-bce3b2ed4c38</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e6857c78-edd0-42f6-b67c-a556ea9d4e83</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4755ef21-cd37-4c6a-a136-07001a9c0e14</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c141bfa-61d2-483f-9b93-0aacda194526</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eb0e0f80-2655-4e70-98cd-5d244a9f1a49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e77c2c70-5d70-4683-852d-26d190edb7d1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a521a970-15ec-4016-bfdb-99ed60993bb3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1c3ad560-6821-4190-a672-ed085066d31f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>664971e9-14ec-49bf-a0fc-ea3944e59ff3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3994f63a-02cf-44d2-ba2d-86ddcaf5f5b8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>76fce87d-ba42-4771-a4ab-27174a2422a9</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>769ead74-426f-4948-8b46-ad42fa5ac5d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de238133-a67c-4123-922a-e212eb44d315</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>296ff8bb-80ad-4443-bc7a-343f4ada7478</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>455540e6-0948-46c5-b718-97fe04de9dac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d6c81ab2-1287-4b68-b228-ab38ace1633c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9128e57e-a7bc-4fdc-bbcf-e8f12cd594e4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a2a058d-eda4-40da-945a-bf4f2a25b8b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f58107e5-59fa-4a30-bb0f-1651923a5183</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>177d890b-384d-42be-b58a-368fb6e16b67</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a9404a3-350e-4c7c-b982-6d92b2abcc20</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>abd08c21-4a64-474b-8d47-6df5c8b9b0f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7fedd0f1-0507-41d0-aca4-80801884c3a7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b07d1ecb-5a3b-4fa6-a83f-4d1877b256d6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9e13d3de-ed7b-4638-9096-52a28381e51b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27f3dc94-f2d5-4862-aa15-4632becde561</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c5196721-0095-41eb-8687-0ca5206283b3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>97308c22-7fc8-47cc-a7db-70cbdddde5bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>68c2cb01-1c05-477e-86ee-bef3450b3d49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4c59d69b-3c1d-4aa0-b339-0e67416eb8fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b29f13e4-87f2-4c73-98c0-17ab0fa15f07</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3bf374cc-e8ed-4d6f-8611-787dca39e66d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f3182dc4-f222-4b26-a7a1-643d413cef4b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1161816f-4da9-44f0-89d4-677151b18565</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a35ffb3-fb8f-4c61-a639-1b4e5df561f7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>41c0270c-10a3-429c-a116-dcd7d15ed46d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fb2f9bad-de21-43b7-8cdb-766b5b6f2274</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>afd63423-8a05-46a9-8f4e-d86e5254b442</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c1221af8-4ebc-4be3-8cfa-5c4a04e2e559</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1c44dfb1-bcb8-4eea-8791-41c047101b68</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d055e668-66ce-4d2a-af54-2b45648bf73f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fcfbff45-29ac-4c80-b1b3-23846f5bbd16</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>620ed3b1-f780-4105-8346-34eeb862b235</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>47412d04-8f6a-45c6-9099-11899023c291</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>58e5c8dc-db5d-4b53-bf29-97c78aec911c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4fd4d364-da91-4825-8997-20b65ce0d64a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>99173e9d-734e-41cd-b743-07e63ecd8ae5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>81979089-52f6-4198-bd69-71fe99639722</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f8177f39-efaa-4bbd-af3b-34a6b2b30521</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>87290c94-a188-4b8e-a4c2-98315910c2b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="QueryBalance" id="399c93c8-fc34-40c5-8045-b1139e9f5dc0" interface="ArServicsBinding" operation="QueryBalance" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="399c93c8-fc34-40c5-8045-b1139e9f5dc0fileName">QueryBalance</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig xsi:type="con:MockOperationQueryMatchDispatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Date: 06.12.2018 + 20.12.18
+ * Autor: Youssef Hadj Mansour, Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using ngOCS mock service.
+
+## Mock service returns default response for all requests.
+## For wrong requests and msisdn<1 or msisdn>15 signs in request --> soupFault-Exception is returned
+## For MSISDN in request with präfix: 
+${#Project#MOCK-Prefix-NgOCS-queryBalance-CustomException}
+--> custom response will be send back.
+Custom response special response or default response with parameters,
+ordered in MSISDN on Position 6:
+	1 - Response with all parameters mandatory and optional
+	2 - Response with only mandatory parameters
+	3 - default response with Negative-Balance 
+	4 - default response with Invalid-CurrencyId
+	5 - default response with wrong Main-Balances
+	6 - response with many Balances
+	7 - default response with wrong Version
+	8 - response with error-category
+	x - for for any error code in response, where:	
+- last 8 digit as ResultCode (number '1' will be added before those 8 digit in resultCode)
+	02050176 -->102050176
+	Ex. MSISDN = 49116X02050176(X= any number from 1 to 9) returns 
+	<cbs:ResultCode>102050176</cbs:ResultCode>
+     <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>
+        
+## Example Response-Custom-Exception for MSISDN above: 
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:QueryBalanceResultMsg>
+         <ResultHeader>
+            <cbs:Version>1</cbs:Version>
+            <cbs:ResultCode>102050176</cbs:ResultCode>
+            <cbs:MsgLanguageCode/>
+            <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>           
+         </ResultHeader>
+      </ars:QueryBalanceResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+ End of documentation 
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+// read default values from project properties
+def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-NgOCS-queryBalance-CustomException}' ) 
+def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+
+// set default values from virt properties
+def DEFAULT_Version = context.expand('${#MockService#DEFAULT-Version}')
+def DEFAULT_ResultCode = context.expand('${#MockService#DEFAULT-ResultCode}')
+def DEFAULT_ResultDesc = context.expand('${#MockService#DEFAULT-ResultDesc}')
+def DEFAULT_BalanceType = context.expand('${#MockService#DEFAULT-BalanceType}')
+def DEFAULT_BalanceTypeName = context.expand('${#MockService#DEFAULT-BalanceTypeName}')
+def DEFAULT_Currency = context.expand('${#MockService#DEFAULT-Currency}')
+def DEFAULT_Balance = context.expand('${#MockService#DEFAULT-Balance}')
+def DEFAULT_USDollar = context.expand('${#MockService#Currency-USDollar}')
+
+ // read values from incommning request
+def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+def sBeId=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:QueryBalanceRequestMsg[1]/RequestHeader[1]/cbs:OwnershipInfo[1]/cbs:BEID[1]")
+def sLoginSystemCode=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:QueryBalanceRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:LoginSystemCode[1]") 
+def sPassword = holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:QueryBalanceRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:Password[1]")
+def sMSISDN = holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:QueryBalanceRequestMsg[1]/QueryBalanceRequest[1]/ars:QueryObj[1]/ars:SubAccessCode[1]/arc:PrimaryIdentity[1]")
+log.info('ngOCS.BalanceManagement.queryBalance: Return response for request with msisdn ' + sMSISDN)
+
+// check msissdn
+if(sMSISDN==null || sMSISDN.length()<1 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	context.mockService.setPropertyValue('ResultDesc','MSISDN is to short or to lonng. Must be between 1 and 15 signs')
+	return 'Response-SoapFault-Exception'
+ }
+
+// set current values for response to default values
+context.mockService.setPropertyValue('Version',DEFAULT_Version)
+context.mockService.setPropertyValue('Resultcode',DEFAULT_ResultCode)
+context.mockService.setPropertyValue('ResultDesc',DEFAULT_ResultDesc)
+
+// if msisd=constant msisdn unknown, return permanent errorcode=118013013
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	context.mockService.setPropertyValue('Resultcode','118013013')
+	context.mockService.setPropertyValue('ResultDesc','Subscriber identification failed because the reported number is unknown.')
+ 	return 'Response-Custom-Exception'
+ }
+
+// check beid,loginbeid and password
+if(sBeId==null || sBeId.length()<1 || sLoginSystemCode==null || sLoginSystemCode.length()<1 || sPassword==null || sPassword.length()<1){	
+	context.mockService.setPropertyValue('Resultcode','118040195')
+	context.mockService.setPropertyValue('ResultDesc','Failed to authenticate the LoginSystemCode, Password , and RemoteIp in the WebService message.')
+	return 'Response-Custom-Exception'
+}
+
+// set current values for response to default values
+context.mockService.setPropertyValue('BalanceType',DEFAULT_BalanceType)
+context.mockService.setPropertyValue('BalanceTypeName',DEFAULT_BalanceTypeName)
+context.mockService.setPropertyValue('Currency',DEFAULT_Currency)
+context.mockService.setPropertyValue('Balance',DEFAULT_Balance)
+
+// if custom response is not ordered --> return defaul response
+if (sMSISDN[0..4]!=sMSISDNPrefixException){	
+	return 'Response-Default'
+}
+ // choose reponse depend on first value after prefix for custom response
+ switch ( sMSISDN[5] ) {
+ 	 case '1':		// return response with all parameters and default values 		
+         	return 'Response-AllParams' 
+ 	 case '2':		// return response with mandatory parameters and default values 		
+         	return 'Response-MandParams'          	 
+    case '3':		// negativ balance 	
+    		context.mockService.setPropertyValue('Balance','-'+DEFAULT_Balance)	
+         	return 'Response-Default' 
+    case '4':		// Invalid-CurrencyId  
+    		context.mockService.setPropertyValue('Currency',DEFAULT_USDollar) 
+          return 'Response-Default' 
+    case '5':		// missed required balance type
+        	context.mockService.setPropertyValue('BalanceType',context.expand('${#MockService#BalanceType-Wrong}')) 
+        	return 'Response-Default'   
+    case '6':		// response with many balances     	        	
+        	return 'Response-Many-Balances'  
+    case '7':		// response with wrong version
+   	     context.mockService.setPropertyValue('Version','1.01')
+   	     return 'Response-Default' 
+    case '8':		// response with error cattegory
+   	     context.mockService.setPropertyValue('Resultcode','2'+sMSISDN.substring(6).toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'   	    
+    default:
+    		context.mockService.setPropertyValue('Resultcode','1'+sMSISDN.substring(6).toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'
+ }]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="a52c6f52-999f-406a-89d8-aa06c5df32fc" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ars:QueryBalanceResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon">
+			<ResultHeader>
+				<cbs:Version>${#MockService#Version}</cbs:Version>
+				<cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+				<cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+				<cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+			</ResultHeader>
+			<QueryBalanceResult>
+				<!--Main balance 1-->
+				<ars:AcctList>
+					<ars:AcctKey>AcctKey226848439104</ars:AcctKey>
+					<ars:BalanceResult>
+						<arc:BalanceType>${#MockService#BalanceType}</arc:BalanceType>
+						<arc:BalanceTypeName>${#MockService#BalanceTypeName}</arc:BalanceTypeName>
+						<arc:TotalAmount>${#MockService#Balance}</arc:TotalAmount>
+						<arc:ReservedAmount>0</arc:ReservedAmount>
+						<arc:DepositFlag>N</arc:DepositFlag>
+						<arc:RefundFlag>1</arc:RefundFlag>
+						<arc:CurrencyID>${#MockService#Currency}</arc:CurrencyID>
+						<arc:BalanceDetail>
+							<arc:BalanceInstanceID>118000000000063320</arc:BalanceInstanceID>
+							<arc:Amount>${#MockService#Balance}</arc:Amount>
+							<arc:InitialAmount>0</arc:InitialAmount>
+							<arc:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:EffectiveTime>
+							<arc:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</arc:ExpireTime>
+							<arc:LastUpdateTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:LastUpdateTime>
+						</arc:BalanceDetail>
+					</ars:BalanceResult>
+					<ars:AccountCredit>
+						<ars:TotalCreditAmount>0</ars:TotalCreditAmount>
+						<ars:TotalUsageAmount>0</ars:TotalUsageAmount>
+						<ars:TotalRemainAmount>0</ars:TotalRemainAmount>
+						<ars:CurrencyID>${#MockService#Currency}</ars:CurrencyID>
+					</ars:AccountCredit>
+				</ars:AcctList>				
+			</QueryBalanceResult>
+		</ars:QueryBalanceResultMsg>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+  <con:response name="Response-Custom-Exception" id="220e7207-81bc-443a-9e34-e3c2e1fead49" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <ars:QueryBalanceResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon">
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:QueryBalanceResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+  <con:response name="Response-SoapFault-Exception" id="9656b063-55cb-4f37-bbf8-d160ec533740" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <soapenv:Fault>
+         <faultcode>soapenv:Server</faultcode>
+         <faultstring>${#MockService#ResultDesc}</faultstring>
+      </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+  <con:response name="Response-Many-Balances" id="9363bc59-cd36-4855-a085-b0fcfacd1c46" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"> 
+   <soapenv:Body> 
+      <ars:QueryBalanceResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon"> 
+         <ResultHeader> 
+            <cbs:Version>${#MockService#DEFAULT-Version}</cbs:Version> 
+            <cbs:ResultCode>${#MockService#DEFAULT-ResultCode}</cbs:ResultCode> 
+            <cbs:ResultDesc>${#MockService#DEFAULT-ResultDesc}</cbs:ResultDesc> 
+         </ResultHeader> 
+         <QueryBalanceResult> 
+            <!--Main balance 1-->
+            <ars:AcctList> 
+               <ars:AcctKey>13800010005</ars:AcctKey> 
+               <ars:BalanceResult> 
+                  <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType> 
+                  <arc:BalanceTypeName>${#MockService#DEFAULT-BalanceTypeName}</arc:BalanceTypeName> 
+                  <arc:TotalAmount>${#MockService#DEFAULT-Balance}</arc:TotalAmount> 
+                  <arc:DepositFlag>N</arc:DepositFlag> 
+                  <arc:RefundFlag>1</arc:RefundFlag> 
+                  <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID> 
+                  <arc:BalanceDetail> 
+                     <arc:BalanceInstanceID>701000000000000004</arc:BalanceInstanceID> 
+                     <arc:Amount>${#MockService#DEFAULT-Balance}</arc:Amount> 
+                     <arc:InitialAmount>10000</arc:InitialAmount> 
+                     <arc:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:EffectiveTime> 
+                     <arc:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</arc:ExpireTime> 
+                  </arc:BalanceDetail> 
+               </ars:BalanceResult> 
+               <ars:AccountCredit> 
+                  <ars:TotalCreditAmount>0</ars:TotalCreditAmount> 
+                  <ars:TotalUsageAmount>0</ars:TotalUsageAmount> 
+                  <ars:TotalRemainAmount>0</ars:TotalRemainAmount> 
+                  <ars:CurrencyID>${#MockService#DEFAULT-Currency}</ars:CurrencyID> 
+               </ars:AccountCredit> 
+            </ars:AcctList> 
+            <!--Main balance 2-->
+                       <ars:AcctList> 
+               <ars:AcctKey>13800010005</ars:AcctKey> 
+               <ars:BalanceResult> 
+                  <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType> 
+                  <arc:BalanceTypeName>${#MockService#DEFAULT-BalanceTypeName}</arc:BalanceTypeName> 
+                  <arc:TotalAmount>${#MockService#DEFAULT-Balance}</arc:TotalAmount> 
+                  <arc:DepositFlag>N</arc:DepositFlag> 
+                  <arc:RefundFlag>1</arc:RefundFlag> 
+                  <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID> 
+                  <arc:BalanceDetail> 
+                     <arc:BalanceInstanceID>701000000000000004</arc:BalanceInstanceID> 
+                     <arc:Amount>${#MockService#DEFAULT-Balance}</arc:Amount> 
+                     <arc:InitialAmount>10000</arc:InitialAmount> 
+                     <arc:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:EffectiveTime> 
+                     <arc:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</arc:ExpireTime> 
+                  </arc:BalanceDetail> 
+               </ars:BalanceResult> 
+               <ars:AccountCredit> 
+                  <ars:TotalCreditAmount>0</ars:TotalCreditAmount> 
+                  <ars:TotalUsageAmount>0</ars:TotalUsageAmount> 
+                  <ars:TotalRemainAmount>0</ars:TotalRemainAmount> 
+                  <ars:CurrencyID>${#MockService#DEFAULT-Currency}</ars:CurrencyID> 
+               </ars:AccountCredit> 
+            </ars:AcctList> 
+         </QueryBalanceResult> 
+      </ars:QueryBalanceResultMsg> 
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+  <con:response name="Response-AllParams" id="ab34dcd7-558e-4337-9a2f-27df1b11ffd7" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:QueryBalanceResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#DEFAULT-Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#DEFAULT-ResultCode}</cbs:ResultCode>
+            <!--Optional:-->
+            <cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+            <cbs:ResultDesc>${#MockService#DEFAULT-ResultDesc}</cbs:ResultDesc>
+            <!--Zero or more repetitions:-->
+            <cbs:AdditionalProperty>
+               <cbs:Code>C_COLLECTION_SCORE</cbs:Code>
+               <cbs:Value>C3</cbs:Value>
+            </cbs:AdditionalProperty>
+         </ResultHeader>
+         <!--Optional:-->
+         <QueryBalanceResult>
+            <!--1 to 2 repetitions:-->
+            <ars:AcctList>
+               <ars:AcctKey>13800010005</ars:AcctKey>
+               <!--1 or more repetitions:-->
+               <ars:BalanceResult>
+                  <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType>
+                  <!--Optional:-->
+                  <arc:BalanceTypeName>${#MockService#DEFAULT-BalanceTypeName}</arc:BalanceTypeName>
+                  <arc:TotalAmount>${#MockService#DEFAULT-Balance}</arc:TotalAmount>
+                  <!--Optional:-->
+                  <arc:ReservedAmount>0</arc:ReservedAmount>
+                  <arc:DepositFlag>N</arc:DepositFlag>
+                  <arc:RefundFlag>1</arc:RefundFlag>
+                  <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID>
+                  <!--1 or more repetitions:-->
+                  <arc:BalanceDetail>
+                     <arc:BalanceInstanceID>701000000000000004</arc:BalanceInstanceID>
+                     <arc:Amount>${#MockService#DEFAULT-Balance}</arc:Amount>
+                     <arc:InitialAmount>${#MockService#DEFAULT-Balance}</arc:InitialAmount>
+                     <arc:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:EffectiveTime>
+                     <arc:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</arc:ExpireTime>
+                     <!--Optional:-->
+                     <arc:AcctBalOriginal>
+                        <arc:OriginalType>OriginalType</arc:OriginalType>
+                        <arc:OriginalID>${#MockService#DEFAULT-Balance}</arc:OriginalID>
+                     </arc:AcctBalOriginal>
+                     <!--Optional:-->
+                     <arc:LastUpdateTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:LastUpdateTime>
+                  </arc:BalanceDetail>
+               </ars:BalanceResult>
+               <!--Zero or more repetitions:-->
+               <ars:OutStandingList>
+                  <ars:BillCycleID>20190101</ars:BillCycleID>
+                  <ars:BillCycleBeginTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</ars:BillCycleBeginTime>
+                  <ars:BillCycleEndTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</ars:BillCycleEndTime>
+                  <ars:DueDate>20193101</ars:DueDate>
+                  <!--1 or more repetitions:-->
+                  <ars:OutStandingDetail>
+                     <ars:OutStandingAmount>${#MockService#DEFAULT-Balance}</ars:OutStandingAmount>
+                     <ars:CurrencyID>${#MockService#Currency}</ars:CurrencyID>
+                  </ars:OutStandingDetail>
+               </ars:OutStandingList>
+               <!--Zero or more repetitions:-->
+               <ars:AccountCredit>
+                  <!--Optional:-->
+                  <ars:CreditLimitType>C_DAY_CUTOFF_LIMIT</ars:CreditLimitType>
+                  <!--Optional:-->
+                  <ars:CreditLimitTypeName>Daily cutoff limit.</ars:CreditLimitTypeName>
+                  <ars:TotalCreditAmount>${#MockService#DEFAULT-Balance}</ars:TotalCreditAmount>
+                  <ars:TotalUsageAmount>${#MockService#DEFAULT-Balance}</ars:TotalUsageAmount>
+                  <ars:TotalRemainAmount>${#MockService#DEFAULT-Balance}</ars:TotalRemainAmount>
+                  <ars:CurrencyID>${#MockService#DEFAULT-Currency}</ars:CurrencyID>
+                  <!--Zero or more repetitions:-->
+                  <ars:CreditAmountInfo>
+                     <ars:CreditInstID>6</ars:CreditInstID>
+                     <ars:LimitClass>T</ars:LimitClass>
+                     <ars:Amount>${#MockService#DEFAULT-Balance}</ars:Amount>
+                     <ars:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</ars:EffectiveTime>
+                     <ars:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</ars:ExpireTime>
+                  </ars:CreditAmountInfo>
+               </ars:AccountCredit>
+            </ars:AcctList>
+         </QueryBalanceResult>
+      </ars:QueryBalanceResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+  <con:response name="Response-MandParams" id="3c3afb43-af59-4754-b646-a54d579d9068" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:QueryBalanceResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#DEFAULT-Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#DEFAULT-ResultCode}</cbs:ResultCode>
+            <cbs:ResultDesc>${#MockService#DEFAULT-ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+         <!--Optional:-->
+         <QueryBalanceResult>
+            <!--1 to 2 repetitions:-->
+            <ars:AcctList>
+               <ars:AcctKey>13800010005</ars:AcctKey>
+               <!--1 or more repetitions:-->
+               <ars:BalanceResult>
+                  <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType>
+                  <arc:TotalAmount>${#MockService#DEFAULT-Balance}</arc:TotalAmount>
+                  <arc:DepositFlag>N</arc:DepositFlag>
+                  <arc:RefundFlag>1</arc:RefundFlag>
+                  <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID>
+                  <!--1 or more repetitions:-->
+                  <arc:BalanceDetail>
+                     <arc:BalanceInstanceID>701000000000000004</arc:BalanceInstanceID>
+                     <arc:Amount>${#MockService#DEFAULT-Balance}</arc:Amount>
+                     <arc:InitialAmount>${#MockService#DEFAULT-Balance}</arc:InitialAmount>
+                     <arc:EffectiveTime>${#Project#DateTime_Current_String_yyyyMMddHHmmss}</arc:EffectiveTime>
+                     <arc:ExpireTime>${#Project#DateTime_NextDay_String_yyyyMMddHHmmss}</arc:ExpireTime>
+                  </arc:BalanceDetail>
+               </ars:BalanceResult>
+            </ars:AcctList>
+         </QueryBalanceResult>
+      </ars:QueryBalanceResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="QueryBalance"/>
+  </con:response>
+</con:mockOperation>

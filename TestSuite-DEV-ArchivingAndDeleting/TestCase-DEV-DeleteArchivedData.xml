@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="fd3828cd-2950-4ef8-b41a-67d6f4961baa" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-DeleteArchivedData" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests data archivation based on:
+https://www.sg.de.o2.com/jira/browse/DRC-1922
+https://www.sg.de.o2.com/jira/browse/DRC-2004
+and Requirements in SVN:
+http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-1/SR-82726_NOVA_Data_Deletion_2.0/SR82726_U-036_DRC_ASRI.docx
+§ 2.1.4 
+
+
+
+All data from archive tables: with names + suffix arch
+must be deleted.
+Followed data must be updated separatly in table:
+•	Start and end timestamp 
+•	number of data to be archived
+•	number of archived data
+•	number of data could not be archived</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@errors_only">true</con:setting>
+    <con:setting id="fd3828cd-2950-4ef8-b41a-67d6f4961baafileName">TestCase-DEV-DeleteArchivedData</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="_JDBC Request_CleanMaintainRequestDeletion" id="dd39f553-68a1-43b1-ac89-67f4e1f3318c">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>-- Types 100-150 are for deletion reserved
+delete from MAINTAIN_REQUEST
+WHERE MAINTAIN_TYPE BETWEEN 100 AND 150</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="b7639a03-57b0-4bff-8445-b5076b3e18e7" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="7460f7c0-93b4-4f28-8842-71923c763456" name="Check for existence of [UpdateCount]">
+        <con:configuration>
+          <path>exists( //Results/UpdateCount)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaxID" id="ac68545a-6f30-47fc-936f-0f40c0b6edd4">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT MAX(ID) as MaxID FROM MAINTAIN_REQUEST</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_CreateBlockingData" id="30f29c72-d6f3-4858-8ba9-cddf42f113db">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>3a9b4088-ea61-480f-9d41-29490cb9a592</con:targetTestCase>
+      <con:properties/>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-1sec" id="32deb8ac-485e-4041-97d1-aec51923b622">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-Archiving" id="06b6868a-b9e7-492e-abfe-8a82f6a965f4">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>f38044ff-88ad-431e-be7a-2a3db8cf728d</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Create-Transaction</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Transaction</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-SepaFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-SepaFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-FileUpload</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-FileUpload</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Create-Transaction</con:entry>
+        <con:entry>taskCount-Process-Transaction</con:entry>
+        <con:entry>taskCount-Create-SepaFile</con:entry>
+        <con:entry>taskCount-Process-SepaFile</con:entry>
+        <con:entry>taskCount-Create-FileUpload</con:entry>
+        <con:entry>taskCount-Process-FileUpload</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request_CreateMaintainRequest" id="82751b12-95fd-4c0f-8671-6adc3e9e21a9">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>CREATE_DELETION_REQUESTS(${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy"))}, 'TestCase-DEV-ArchiveAndDeleteData', '${#Project#Tester}')</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="703f0643-efdf-4b6b-abac-d245276508ae" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="3a661411-876e-46f1-b135-1f248e25db30" name="Check for existence of [UpdateCount]">
+        <con:configuration>
+          <path>exists( //Results/UpdateCount)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-1sec-again" id="9d0ac9f8-c9a5-4309-87eb-37a426d27316">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-Deleting" id="94a51412-dabe-4126-9e4a-f5994d6164fe">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>61e1c22d-e947-46b3-b459-4b6f5e3debe6</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Transactions</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-SepaFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-HousKeeping</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Fileupload</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Transactions</con:entry>
+        <con:entry>taskCount-SepaFile</con:entry>
+        <con:entry>taskCount-HousKeeping</con:entry>
+        <con:entry>taskCount-Fileupload</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaintain-Request" id="526f4e27-8306-4270-ab9f-c6e93f8d30a2">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT mt.*, mr.AFFECTED_ENTRIES
+FROM MAINTAIN_REQUEST mt join MAINTAIN_RESULT mr
+on mt.ID=mr.REQUEST_ID
+-- ready max ID from step before
+WHERE mt.ID>'${JDBC Request-getMaxID#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/MAXID[1]}'</con:query>
+      <con:assertion type="JDBC Status" id="04f39fcc-2f1c-443d-b23d-1ef800e912e7" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="e3b83538-1be6-4458-9457-405a585b89e4" name="Check for existence of [STATUS]&lt;>30">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/STATUS!=30</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="462e2b88-ab36-46bd-8230-b2d9adf60a47" name="Match content of [ERROR_CODE]">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/ERROR_CODE!=''</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="1870c15c-add7-4d0f-bf02-88d84a51fa1f" name="Check for existence of [REQUESTED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/REQUESTED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="7eee4804-af1a-442d-b95f-843d5edf4176" name="Check for existence of [CREATED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/CREATED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="12234c77-4e24-4e06-a6c1-e0ab28d55fc3" name="Check for existence of [LAST_CHANGED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/LAST_CHANGED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="ede8b46e-9224-45ab-aa2a-d6cd643ce32c" name="Check for existence of [ENTRIES_EXPECTED]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/ENTRIES_EXPECTED)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="707f0331-acf5-4cb6-8b14-3b560d9ef473" name="Check for existence of [AFFECTED_ENTRIES]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/AFFECTED_ENTRIES)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource_getArchiveTables" id="2b19ef55-6326-40ad-985f-9310e46a40d4">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">ATM_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">BANKTRANSFER_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">DIRECTDEBIT_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">DRSERVICE_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">MANUAL_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PACK_SUBSCRIPTION_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORDS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TOPUPS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">OCS_BALANCE_REQUEST_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">TRANSACTION_REQUEST_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORD_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TRANSACTION_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE_CONTENT_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">POS_TOPUP_ACCOUNTING&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:preload>true</con:preload>
+      <con:property>tableName</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:failOnEmpty>false</con:failOnEmpty>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>true</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request_checkTablesEmpty" id="25bd84c9-17d3-465c-a6e2-ee677aed8b51">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT *
+FROM ${DataSource_getArchiveTables#tableName}</con:query>
+      <con:assertion type="JDBC Status" id="087e6bd8-8ccf-46d3-9000-bcb0928d9872" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="32de1446-f530-4755-ae31-64ff7db27fe2" name="Check count of [ResultSet]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop_getArchiveTables" id="1e63f225-ddf8-4683-9ada-b4e92f8247b0">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource_getArchiveTables</dataSourceStep>
+      <targetStep>JDBC Request_checkTablesEmpty</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getJobs" id="1ceb564f-81d3-4d89-be80-2e7b78710b2b">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_DELETE_TRANSACTION_REQUESTS&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_DELETE_SEPA_FILE_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">POS_TOPUP_ACCOUNTING_HOUSEKEEPING&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_DELETE_FILEUPLOAD_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>job_name</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_Validate-JobMonitor-OK" id="4e729ede-79b1-40b2-8e01-3fca1742fc9a">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>aef0f6ae-5942-4c5b-9ff4-00f4644fddfd</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inJobName</con:name>
+          <con:value>${DataSource-getJobs#job_name}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getJobs" id="28fcd42d-b3cc-4459-89b4-974ef7ea476b">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getJobs</dataSourceStep>
+      <targetStep>Run TestCase_Validate-JobMonitor-OK</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>f7e45e8c-44f2-462d-85fe-f1c0fcb94cda</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9cee18ce-9d9e-4436-bcde-ffd932a453f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>35a9d72f-544f-4b67-a97d-1bf364762705</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b024b2c-4fe4-49a1-913e-2012c2c60bee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0b4a5e3-04e4-4785-a45a-aecda0a05c6b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b25fc34-1382-43d7-9499-f968cce87b81</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>813943e4-2518-479f-ac44-702771bedc99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3227c406-73f2-4869-9b94-50cf7f550703</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9b44d08d-52cd-426a-ae55-1e1f85104822</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e724211-cb10-40d3-8e72-22aad1d71a4f</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4e5c9913-0ee3-45c8-9604-c56615588a9d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a0d5ba62-3002-4898-9fb3-0876f8c2de99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d97cd464-c68b-49bd-a829-12940266f2ba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6160a813-f2ac-4df7-adcc-2be512e898ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>74298e3d-8eff-40ff-9dc9-05a13ff3d5ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03879d16-868d-4720-a664-1b4789bfceab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a527db10-d68b-4926-aa21-c556d7a86a4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>909b346c-657c-442d-a5a1-4e35e089ddfc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d8c5f3e5-603f-4ff7-afe5-b76748cb3e59</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ccc95bda-a709-4bfb-96cf-a9bab0075e36</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>386e2d57-de2a-4147-b442-2dae249498f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b3eb8fed-7534-473a-9caf-21937cae4815</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

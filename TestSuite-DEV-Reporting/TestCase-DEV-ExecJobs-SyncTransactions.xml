@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="04bc5242-757a-4b76-9b4b-2bba40775a70" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-ExecJobs-SyncTransactions" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Exec jobs for sync topup data in drc and drc-reporting dbs.</con:description>
+  <con:settings>
+    <con:setting id="b501dca9-bffd-4723-be42-3c85f090e6d9fileName">TestCase-DEV-ExecActions-Pain008</con:setting>
+    <con:setting id="04bc5242-757a-4b76-9b4b-2bba40775a70fileName">TestCase-DEV-ExecJobs-SyncTransactions</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="35ef32d8-97b4-42b6-a9b6-1c42805c9572">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>taskCount-GPS-DATA</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>taskCount-DRC-Data</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>taskCount-ISO</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>taskCount-BT</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>taskCount-Manual</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="98936096-0795-4004-b298-6a4a96f9c40d" name="Report_SELECT_CREDIT_CARD_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_SELECT_CREDIT_CARD_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_CREDIT_CARD_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="743b150e-e653-4f14-9f09-cf8a2cd6abdc" name="Report_.SELECT_MIPAY_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_.SELECT_MIPAY_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_MIPAY_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ac8cb108-3c57-4ed6-8fd0-51d5bddfccfc" name="Report_SELECT_ATM_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_SELECT_ATM_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_ATM_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="123c32b3-bcce-4049-9604-fd1ff971322f" name="Report_SELECT_POS_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_SELECT_POS_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_POS_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="831990d4-8696-4134-9c6c-2ed80e43fbdf" name="Report_SELECT_BT_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_SELECT_BT_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_BT_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b450954e-4fd5-40e5-a034-a365aeeb2650" name="Report_SELECT_MANUAL_TOPUPS_TO_SYNC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_SELECT_MANUAL_TOPUPS_TO_SYNC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.SELECT_MANUAL_TOPUPS_TO_SYNC</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0200670f-3ce9-48fa-87bf-55850423c004" name="Report_LOAD_GPS_TOPUP_DATA">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_LOAD_GPS_TOPUP_DATA" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.LOAD_GPS_TOPUP_DATA</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4becf41e-d0ab-4881-972f-e48572ba93d3" name="Report_LOAD_DRS_TOPUP_DATA">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_LOAD_DRS_TOPUP_DATA" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.LOAD_DRS_TOPUP_DATA</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="dce44c0e-4f40-479a-bc3d-43f026b1602a" name="Report_LOAD_ISO8583_TOPUP_DATA">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_LOAD_ISO8583_TOPUP_DATA" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.LOAD_ISO8583_TOPUP_DATA</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="58cb2e5b-1bed-415e-a736-f81065c55f07" name="Report_LOAD_BT_TOPUP_DATA">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_LOAD_BT_TOPUP_DATA" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.LOAD_BT_TOPUP_DATA</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ea5e2018-4a24-47e5-bf5e-60e580a7f4f3" name="Report_LOAD_MANUAL_TOPUP_DATA">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>ReportingAdminPortImplServiceSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="Report_LOAD_MANUAL_TOPUP_DATA" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="bfae6559-38ef-4df5-8b3d-6ed88adc5292">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <!--type: string-->
+         <jobName>com.o2.directrecharge.reporting.job.JobAction.LOAD_MANUAL_TOPUP_DATA</jobName>
+         <!--type: boolean-->
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="327785b3-8bbd-470c-b675-41c9a7507f8a" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="4cb6722b-4996-435a-a2e7-b87f0bc7b558" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="02069084-0bdc-48ec-b8d1-f0df72d15526" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="1b145ff9-3ad7-4581-9235-5c0f91734fcf" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://admin.service.reporting.directrecharge.o2.com/ReportingAdminV1PortType/triggerJobManager"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-TaskCount" id="142ae4a1-bd54-40b7-a26e-d70dd32c83dc">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>GPSData</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>Report_LOAD_GPS_TOPUP_DATA</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</con:sourcePath>
+        <con:targetType>taskCount-GPS-DATA</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>DrcData</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>Report_LOAD_DRS_TOPUP_DATA</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</con:sourcePath>
+        <con:targetType>taskCount-DRC-Data</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>IsoData</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>Report_LOAD_ISO8583_TOPUP_DATA</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</con:sourcePath>
+        <con:targetType>taskCount-ISO</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>ManualData</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>Report_LOAD_MANUAL_TOPUP_DATA</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</con:sourcePath>
+        <con:targetType>taskCount-Manual</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>BTData</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>Report_LOAD_BT_TOPUP_DATA</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</con:sourcePath>
+        <con:targetType>taskCount-BT</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>taskCount-GPS-DATA</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:property>
+    <con:property>
+      <con:name>taskCount-DRC-Data</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:property>
+    <con:property>
+      <con:name>taskCount-ISO</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>taskCount-BT</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>taskCount-Manual</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>873f21ae-4f09-4e81-836b-7c2db65e53f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>030edbd4-0cf9-44de-8827-b3608bd883fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c0844c82-d2c1-406f-8525-7754def4102e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>906f7ad1-8a21-4c84-b922-99a1ebc6a0a5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0c8b7b6c-2792-4191-92b8-af4bcbefaa6c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>16d96131-4f7e-4693-a162-4ed2ac725d37</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9ce2765f-7a48-433c-a7bc-8a6701e18ab7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6e9f4850-8a27-48aa-9368-7bab120e3754</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bc92827c-c3aa-4e36-8ed1-1b1c1f9f3e5e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b75fa4e8-1e22-4c67-8f36-2cf2d4b2fdbc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a198082c-6fa3-4c72-9bde-16e3a2a22620</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5b528cf7-a19e-444b-b3e1-4761ea3a3fb8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7c0f0fbe-621d-40de-967c-ebcc6c329923</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4ee3248f-64d7-4563-9967-b04c4c5c8f37</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0632b8a8-c914-4e99-a2bd-a1272384b9ab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ecb1c1e4-4a6f-482b-bb68-248bae225b7d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>00a590f5-d6c8-4ab1-a59c-490a1578d55b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7d56d5de-913f-4782-b9d4-79cd0d89b707</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dbb8c00-fa23-4463-b4b5-b7548609a068</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>acb730af-4802-456b-86e0-2c25e7fedb49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>148b4ca6-faaf-4f8b-b098-4982aa2fd23c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f8fc195-2342-40e3-9903-6b781814c861</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f1275ca6-88e4-4972-8798-5a38457c0d42</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6c60c226-b1d2-4792-8ef0-fcd623817dc0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c2510a4-d1de-4c06-a3c3-fcd42f2b4cb7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>466d6170-165c-49f8-9840-90f54d3650d1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>048ca756-439c-45fc-bc98-e5c2cd550add</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fd71f96a-bbb6-40d2-9c63-b06d82361294</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61f0c353-837b-4396-9223-4527b802af8d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e1d833f2-930a-4c3e-9758-e4bc671c73c7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7985eec0-24c2-452c-82ba-d484f1dd0c00</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2823dbfb-a335-4fa1-877e-9c53844f7b0c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>66ceffd6-2c24-4c94-9796-0c7189556225</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b33fa261-0cb2-45e2-ab11-f8371bfd823e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7f23ff6b-e4bb-480f-9d11-8f6f0f55e0d6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>00e2c3e9-0658-462b-af52-e47dbe113a3e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>125fe012-690a-4670-b476-f18dff9a596a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8faa6b8f-7718-4e1e-b0e9-a26d31efc1ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>36571e3e-2fc7-4ee8-a5e0-7bb4e2e31cd1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cbd9e371-395c-4684-bf4a-2dcfc66961ca</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4ecf6cd8-8d4e-4e87-b546-708df9b965b6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2853ad1e-fa29-4a3f-9d1f-823389af16d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7ed07c9-3b36-4e2a-82ef-8441e590f5b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>15106594-fcb5-40e5-8a1e-351c8aaa4e66</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c74965b8-13be-4a6e-8ad3-e8f0597977f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3654871a-5714-4e1b-8127-629087ded72b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32ced04c-68f5-4e8d-9fad-df386dc51a4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61aa3578-3415-4866-a165-104574785e88</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8fec0719-bed0-4c2d-ae25-4ca73a6291a8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e2c407a1-389f-4704-946b-e0558c33db62</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5dd5aacd-9a09-4928-a2a5-9383b4ae5894</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a22e21d8-f536-44e9-b8b4-0987a8e94b6b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ceef7c1c-ac0e-496b-ab99-16b43466ab28</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d15082bb-1bf6-4bb3-9b3f-7009aa2982f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5d53d383-995c-46f8-bffd-f37864972d4c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>33d59fd0-a180-4243-b2ed-06fefbe7a9dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5faaa9ee-2840-407e-ac57-57205267e1de</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7c5aa5cd-5106-4d25-842a-6c4096bc3f58</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d898e1ce-c537-4aaa-a87d-9da57128eb33</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>98936096-0795-4004-b298-6a4a96f9c40d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>743b150e-e653-4f14-9f09-cf8a2cd6abdc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0200670f-3ce9-48fa-87bf-55850423c004</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4becf41e-d0ab-4881-972f-e48572ba93d3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ac8cb108-3c57-4ed6-8fd0-51d5bddfccfc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>123c32b3-bcce-4049-9604-fd1ff971322f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>831990d4-8696-4134-9c6c-2ed80e43fbdf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b450954e-4fd5-40e5-a034-a365aeeb2650</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dce44c0e-4f40-479a-bc3d-43f026b1602a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>58cb2e5b-1bed-415e-a736-f81065c55f07</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea5e2018-4a24-47e5-bf5e-60e580a7f4f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="a2bd8ac2-69e2-41ea-947d-b38c6f0abb3d" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-DeleteTasksAndAccounts" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests deletion tasks and account history 
+https://www.sg.de.o2.com/jira/browse/DRC-2005
+and Requirements in SVN:
+http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-1/SR-82726_NOVA_Data_Deletion_2.0/SR82726_U-036_DRC_ASRI.docx
+
+Requirements from ASRI:
+
+2.1.1 Automated Data Deletion
+
+Dev Stories: DRC-1928
+Automated Data Deletion
+
+As an application owner / data protection officer
+I want that customer data is deleted in an automated, periodically way
+so that I can assure compliance with BDSG and DSGVO.
+
+2.1.1.1 Cyclic deletion of tasks
+As Application Owner DRC
+I want that tasks (relevant only technically for background processing) in DRC database are deleted after 180 days so that no tasks with personal data are stored in DRC database which are not necessary for DRC functionality.
+The retention period of 180 days should be configurable using a setting in DB.</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@errors_only">true</con:setting>
+    <con:setting id="a2bd8ac2-69e2-41ea-947d-b38c6f0abb3dfileName">TestCase-DEV-DeleteTasksAndAccounts</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearProperties" id="ca12ee3e-4d8b-4f77-bc0d-1b7aba7659ed">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Account_before</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>History_before</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-DelTasksHistory" id="98cf6e87-4a7b-4776-9dae-2a23e1a0991b">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>2a3b220b-d32c-48e0-b564-e69ac5d98dc2</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Tasks</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Account</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Tasks</con:entry>
+        <con:entry>taskCount-Account</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_TASKS=0" id="cdc5792d-971e-4e63-b547-f2bb683e1747">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM TASK</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="6a0d9652-3cd7-414b-a7cf-42f5726c8ca4" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]/text()</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT" id="c44791ce-da62-4746-b706-6faa643c7870">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="905265b3-22c0-4a71-abf9-34dd3939c814" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]>=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT_HISTORY" id="be09c342-b05c-4be6-825b-43470e7d89ae">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT_HISTORY</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="d1fc9f42-7d1a-44c9-b9fe-b3bf6b4d557d" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]>=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer_CountsBefore" id="9cc3962a-d63f-4351-b339-25544bb50684">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>account</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getCount_ACCOUNT</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]</con:sourcePath>
+        <con:targetType>Account_before</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>history</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getCount_ACCOUNT_HISTORY</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]</con:sourcePath>
+        <con:targetType>History_before</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_CreateBlockingData" id="f42b76d1-54e9-4470-bc4a-fdb0a1c3a516">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>3a9b4088-ea61-480f-9d41-29490cb9a592</con:targetTestCase>
+      <con:properties/>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_TASKS>0" id="fd1f9480-de94-44b2-8226-25810d0cd4c2">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM TASK</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="2d4872fb-2cbd-40f0-af8e-d7ef8c11a6d4" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]>0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT>before" id="95db69f7-5162-4379-a7a1-3b4e0b1eec5d">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="44fedebe-9a1b-4c35-91e1-bb8ba66e3daf" name="Check for existence of [COUNT]">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/COUNT>${#TestCase#Account_before}</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT_HISTORY>before" id="1b1731fc-af86-4537-acc9-e90455c0fb9c">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT_HISTORY</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="f719d02b-7fed-4afb-bf6f-6ca8fad42c28" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]>${#TestCase#History_before}</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-DelTasksHistory-again" id="c3484242-ca2a-4731-80ba-a6d869986957">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>2a3b220b-d32c-48e0-b564-e69ac5d98dc2</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Tasks</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Account</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Tasks</con:entry>
+        <con:entry>taskCount-Account</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_TASKS=0-again" id="a6a7616e-1d31-48a6-946e-ed487087d59d">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM TASK</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="6a0d9652-3cd7-414b-a7cf-42f5726c8ca4" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]/text()</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT=before" id="fd8e7c8a-6ae6-4666-8bb9-8d550ff5803a">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="f3057d4e-47ea-4fc6-9f83-2bc7a7c11933" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]</path>
+          <content>${#TestCase#Account_before}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_ACCOUNT_HISTORY=before" id="06c6341e-6395-4992-bbc9-8327498f3c45">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*) FROM ACCOUNT_HISTORY</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="a3ecc21b-e0e9-4b0d-b642-d9ac7986d06d" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]</path>
+          <content>${#TestCase#History_before}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getJobs" id="933e658b-08c9-40a4-a987-7827c4faadb3">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">DELETE_OUTDATED_TASKS&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">ACCOUNT_HOUSEKEEPING&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>job_name</con:property>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_Validate-JobMonitor-OK" id="fbd2dcf6-2096-4f71-8a87-138851f4b0b2">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>aef0f6ae-5942-4c5b-9ff4-00f4644fddfd</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inJobName</con:name>
+          <con:value>${DataSource-getJobs#job_name}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getJobs" id="24bac5ae-f032-4235-97fb-e7c1c4f072d0">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getJobs</dataSourceStep>
+      <targetStep>Run TestCase_Validate-JobMonitor-OK</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Account_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>History_before</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>f7e45e8c-44f2-462d-85fe-f1c0fcb94cda</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9cee18ce-9d9e-4436-bcde-ffd932a453f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>35a9d72f-544f-4b67-a97d-1bf364762705</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b024b2c-4fe4-49a1-913e-2012c2c60bee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0b4a5e3-04e4-4785-a45a-aecda0a05c6b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b25fc34-1382-43d7-9499-f968cce87b81</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>813943e4-2518-479f-ac44-702771bedc99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3227c406-73f2-4869-9b94-50cf7f550703</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9b44d08d-52cd-426a-ae55-1e1f85104822</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e724211-cb10-40d3-8e72-22aad1d71a4f</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4e5c9913-0ee3-45c8-9604-c56615588a9d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a0d5ba62-3002-4898-9fb3-0876f8c2de99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d97cd464-c68b-49bd-a829-12940266f2ba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6160a813-f2ac-4df7-adcc-2be512e898ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>74298e3d-8eff-40ff-9dc9-05a13ff3d5ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03879d16-868d-4720-a664-1b4789bfceab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a527db10-d68b-4926-aa21-c556d7a86a4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>909b346c-657c-442d-a5a1-4e35e089ddfc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d8c5f3e5-603f-4ff7-afe5-b76748cb3e59</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ccc95bda-a709-4bfb-96cf-a9bab0075e36</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>386e2d57-de2a-4147-b442-2dae249498f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b3eb8fed-7534-473a-9caf-21937cae4815</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52e69d23-60de-4e3a-9102-abfaa15d3343</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ac2fd771-5897-46c9-81b8-65f37eef6df2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>382a58d9-5e78-44ea-bcb4-b5f84ae00c81</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7bbe50e4-d9e9-4f52-beb5-20db84b0eb8f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea9663a8-ed05-4eb4-afff-c49e267444f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>794ad64f-08ad-42f8-a322-1e57dede0523</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e85ccb38-e36a-48a4-9fa8-b7ab0e84aa69</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b0eb45fd-7692-4963-a852-b02b89549369</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32cfc4cd-c720-4c5b-ab5c-f00d72ae48e8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>47bac228-b7bd-4ecd-aa6b-5cb8c08038a9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c08b2d8b-d4ac-43e2-a15f-38b12fe87572</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9846e74d-33ef-4af3-ab6d-119f3e90a04f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b16175fc-d061-4d93-a715-7432f4088add</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9d58bf38-1f2c-4d5a-90b3-174a0e2059b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

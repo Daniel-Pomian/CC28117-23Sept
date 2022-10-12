@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="Recharge" id="50e2f1c1-d65d-474b-982a-8dcb36f9ebf7" interface="ArServicsBinding" operation="Recharge" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="50e2f1c1-d65d-474b-982a-8dcb36f9ebf7fileName">Recharge</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Additional values in request are validated against specification for DRC in SVN:
+ * http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-5/SR-78280_NT-Enabler_Integration_of_NGOCS_with_legacy_prepaid_IT_systems_Drop_3/SR78280_U-036_DRC_ASRI.docx
+ * Date: 26.02.2018
+ * Autor: Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using ngOCS mock service.
+
+## Mock service returns default response for all requests.
+## For wrong requests and msisdn<1 or msisdn>15 signs in request --> soupFault-Exception is returned
+## For MSISDN in request with präfix:
+${#Project#MOCK-Prefix-NgOCS-recharge-CustomException}
+--> custom response will be send back.
+Custom response is special response with parameters,
+ordered in MSISDN on Position 6:		
+	1 - default response with Invalid-CurrencyId
+	2 - default response with wrong Main-Balances	
+	3 - default response with wrong Version
+	4 - response with error-code, behind position 7 in msisdn (for error codes between 40000 and 50000 in specification)
+		Ex. MSISDN = 49117404115 --> return error-code=4115
+	5 - RechargeSerialNo in response != RechargeSerialNo in request
+	x - for any error code in response, where:	
+- last 8 digit as ResultCode (number '1' will be added before those 8 digit in resultCode)
+	02050176 -->102050176
+	Ex. MSISDN = 49117X02050176(X= any number from 1 to 9) returns 
+	<cbs:ResultCode>102050176</cbs:ResultCode>
+     <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>
+        
+## Example Response-Custom-Exception for MSISDN above: 
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:RechargeResultMsg>
+         <ResultHeader>
+            <cbs:Version>1</cbs:Version>
+            <cbs:ResultCode>102050176</cbs:ResultCode>
+            <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:RechargeResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+ End of documentation 
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+// read default values from project properties
+def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-NgOCS-recharge-CustomException}') 
+def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+
+// set default values from virt properties
+def DEFAULT_Version = context.expand('${#MockService#DEFAULT-Version}')
+def DEFAULT_ResultCode = context.expand('${#MockService#DEFAULT-ResultCode}')
+def DEFAULT_ResultDesc = context.expand('${#MockService#DEFAULT-ResultDesc}')
+def DEFAULT_BalanceType = context.expand('${#MockService#DEFAULT-BalanceType}')
+def DEFAULT_BalanceTypeName = context.expand('${#MockService#DEFAULT-BalanceTypeName}')
+def DEFAULT_Currency = context.expand('${#MockService#DEFAULT-Currency}')
+def DEFAULT_Balance = context.expand('${#MockService#DEFAULT-Balance}')
+def DEFAULT_USDollar = context.expand('${#MockService#Currency-USDollar}')
+
+// read values from incommning request
+// read from soapHeader 
+def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+def sMsgSec=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:RechargeRequestMsg[1]/RequestHeader[1]/cbs:MessageSeq[1]")
+def sBeId=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:RechargeRequestMsg[1]/RequestHeader[1]/cbs:OwnershipInfo[1]/cbs:BEID[1]")
+def sLoginSystemCode=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:RechargeRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:LoginSystemCode[1]") 
+def sPassword = holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices'; //ars:RechargeRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:Password[1]")
+// read from soapBody
+def sMSISDN = holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:RechargeRequestMsg[1]/RechargeRequest[1]/ars:RechargeObj[1]/ars:SubAccessCode[1]/arc:PrimaryIdentity[1]")
+def sAmount= holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:RechargeRequestMsg[1]/RechargeRequest[1]/ars:RechargeInfo[1]/ars:CashPayment[1]/ars:Amount[1]")
+def sSerialNo=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:RechargeRequestMsg[1]/RechargeRequest[1]/ars:RechargeSerialNo[1]")
+
+// log info to mock gui
+log.info('ngOCS.BalanceManagement.recharge: Return response for request with msisdn ' + sMSISDN)
+
+// check msissdn
+if(sMSISDN==null || sMSISDN.length()<11 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	context.mockService.setPropertyValue('ResultDesc','MSISDN is to short or to lonng. Must be between 11 and 15 signs')
+	return 'Response-SoapFault-Exception'
+ }
+// check balance
+if(sAmount==null || sAmount.length()<1 || !sAmount.toString().isNumber() ){
+	context.mockService.setPropertyValue('ResultDesc','Balance in request is missed or not numeric')
+	return 'Response-SoapFault-Exception'
+ }
+
+// set current values for response to default values
+context.mockService.setPropertyValue('Version',DEFAULT_Version)
+context.mockService.setPropertyValue('Resultcode',DEFAULT_ResultCode)
+context.mockService.setPropertyValue('ResultDesc',DEFAULT_ResultDesc)
+context.mockService.setPropertyValue('BalanceType',DEFAULT_BalanceType)
+context.mockService.setPropertyValue('BalanceTypeName',DEFAULT_BalanceTypeName)
+context.mockService.setPropertyValue('Currency',DEFAULT_Currency)
+context.mockService.setPropertyValue('recharge.SerialNo',sSerialNo)
+// set balance to: default balance + amount from request
+context.mockService.setPropertyValue('Balance',
+	(DEFAULT_Balance.toInteger()+sAmount.toInteger()).toString())
+ 
+// check login data from request
+if(sBeId==null || sBeId.length()<1 || sLoginSystemCode==null || sLoginSystemCode.length()<1 || sPassword==null || sPassword.length()<1){	
+	context.mockService.setPropertyValue('Resultcode','118040195')
+	context.mockService.setPropertyValue('ResultDesc','Failed to authenticate the LoginSystemCode, Password and RemoteIp in the WebService message.')
+	return 'Response-Custom-Exception'
+}
+
+// if msisd=constant msisdn unknown, return permanent errorcode=118013013
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	context.mockService.setPropertyValue('Resultcode','118013013')
+	context.mockService.setPropertyValue('ResultDesc','Subscriber identification failed because the reported number is unknown.')
+ 	return 'Response-Custom-Exception'
+ }
+
+// read values from optional parameters in incomming request. Some of them are mandatory for DRC
+def sAddInfo3=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:RechargeRequestMsg/RechargeRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF03']/arc:Value[1]")
+def sAddInfo4=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:RechargeRequestMsg/RechargeRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF04']/arc:Value[1]")
+def sAddInfo5=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:RechargeRequestMsg/RechargeRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF05']/arc:Value[1]")
+def sAddInfo6=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:RechargeRequestMsg/RechargeRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF06']/arc:Value[1]")
+log.info('ngOCS.BalanceManagement.recharge: Amount='+sAmount)
+log.info('ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF03='+sAddInfo3)
+log.info('ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF04='+sAddInfo4)
+log.info('ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05='+sAddInfo5)
+log.info('ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF06='+sAddInfo6)
+
+// /* START validation values in request
+// check input parameters from request
+String sResultCode='118045014'
+String sResultDesc='Invalid input parameter:-'
+def lstMediaType = ['23','25','27','28','35','38','39','40','43','44','60','61','70','71']
+def lstTopup=['M0','M1','M2','M3','M4','M5','M6']
+// check: MessageSeq and RechargeSerialNo. Must be uuid and 36 signs long
+if (sMsgSec==null || sMsgSec.length()!=36)
+	sResultDesc=sResultDesc + 'MessageSeq is missed or not uuid!'
+else if (sSerialNo==null || sSerialNo.length()!=36)
+	sResultDesc=sResultDesc + 'RechargeSerialNo is missed or not uuid!'
+// check key-value paire 3. If not empty, only smsOff is allowed
+else if (sAddInfo3!=null && sAddInfo3.toString()!='smsOff')
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF03 is not empty and not smsOff!'
+// check key-value paire 4. Only mediaType+topup-original is allowed.
+else if (sAddInfo4==null || sAddInfo4.length()<4 || 
+	!lstMediaType.contains(sAddInfo4[0..1]) || !lstTopup.contains(sAddInfo4[2..3]))
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF04 is emtpy or contains not allowed value!'
+// check key-value paire 5 for correlcation id. Started with mediaType and from 9 to 64 signs long
+else if (sAddInfo5==null ||  sAddInfo5.length()<9 ||  sAddInfo5.length()>64 ||
+	!lstMediaType.contains(sAddInfo5[0..1]))
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF05 is emtpy, not 9 till 64 signs long or contains not allowed value!'
+// check key-value paire 6. D+mediaType
+else if (sAddInfo6==null ||  sAddInfo6.length()<3 || 
+	!lstMediaType.contains(sAddInfo6[1..2]) || sAddInfo6[0]!='D')
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF06 is emtpy or contains not allowed value! Must be D + media type'
+else	// all values in request are valid, clear error description.
+	sResultDesc=''
+
+// if error description is not empty, send error response with error-message
+if(sResultDesc!=''){
+	context.mockService.setPropertyValue('Resultcode',sResultCode)
+	context.mockService.setPropertyValue('ResultDesc',sResultDesc)
+	return 'Response-Custom-Exception'  
+}
+// */ FINISH validation values in request
+	
+// if custom response is not ordered --> return defaul response
+if (sMSISDN[0..4]!=sMSISDNPrefixException){	
+	// return response based on random integer 0, 1, 2	
+	switch (new Random().nextInt(3)) {
+    		case 1:
+    			return 'Response-AllParams'
+    		case 2:
+    			return 'Response-MandParams'		
+	default:
+		return 'Response-Default'
+	}
+}
+ // choose reponse depend on first value after prefix for custom response
+ switch ( sMSISDN[5] ) {
+    case '1':		// Invalid-CurrencyId  
+    		context.mockService.setPropertyValue('Currency',DEFAULT_USDollar) 
+          return 'Response-Default' 
+    case '2':		// missed required balance type
+        	context.mockService.setPropertyValue('BalanceType',context.expand('${#MockService#BalanceType-Wrong}')) 
+        	return 'Response-Default'     
+    case '3':		// response with wrong version
+   	     context.mockService.setPropertyValue('Version','1.01')
+   	     return 'Response-Default' 
+    case '4':		// response with error cattegory
+   	     context.mockService.setPropertyValue('Resultcode',sMSISDN.substring(7).toInteger().toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'  
+	case '5':	  // response with serialnumber not from request
+		context.mockService.setPropertyValue('recharge.SerialNo',new Date().format( "yyyyMMddHHmmssSSS"))
+		return 'Response-Default'  		 	    
+    default:
+    		context.mockService.setPropertyValue('Resultcode','1'+sMSISDN.substring(6).toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'
+ }]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="a34dcc5d-a41b-4857-9aaa-70ac80cb4675" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <ars:RechargeResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon">
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+         <RechargeResult>
+            <ars:RechargeSerialNo>${#MockService#recharge.SerialNo}</ars:RechargeSerialNo>
+            <ars:BalanceChgInfo>
+               <arc:BalanceType>${#MockService#BalanceType}</arc:BalanceType>
+               <arc:BalanceID>${#MockService#DEFAULT-recharge-BalanceID}</arc:BalanceID>
+               <arc:BalanceTypeName>${#MockService#BalanceTypeName}</arc:BalanceTypeName>
+               <arc:OldBalanceAmt>${#MockService#DEFAULT-Balance}</arc:OldBalanceAmt>
+               <arc:NewBalanceAmt>${#MockService#Balance}</arc:NewBalanceAmt>
+               <arc:CurrencyID>${#MockService#Currency}</arc:CurrencyID>
+            </ars:BalanceChgInfo>
+         </RechargeResult>
+      </ars:RechargeResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Recharge"/>
+  </con:response>
+  <con:response name="Response-MandParams" id="b7852e1a-9ac4-4d61-a612-f2ccedffc145" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <ars:RechargeResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon">
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+         <RechargeResult>
+            <ars:RechargeSerialNo>${#MockService#recharge.SerialNo}</ars:RechargeSerialNo>
+            <ars:BalanceChgInfo>
+               <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType>
+               <arc:BalanceID>${#MockService#DEFAULT-recharge-BalanceID}</arc:BalanceID>
+               <arc:BalanceTypeName>${#MockService#DEFAULT-BalanceTypeName}</arc:BalanceTypeName>
+               <arc:OldBalanceAmt>${#MockService#DEFAULT-Balance}</arc:OldBalanceAmt>
+               <arc:NewBalanceAmt>${#MockService#Balance}</arc:NewBalanceAmt>
+               <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID>
+            </ars:BalanceChgInfo>
+         </RechargeResult>
+      </ars:RechargeResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Recharge"/>
+  </con:response>
+  <con:response name="Response-AllParams" id="cf8cefd8-448c-476d-b6fb-8f0480ae963c" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <ars:RechargeResultMsg xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon">
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+            <cbs:AdditionalProperty>
+               <cbs:Code>MainOfferingID</cbs:Code>
+               <cbs:Value>1077</cbs:Value>
+            </cbs:AdditionalProperty>
+         </ResultHeader>
+         <RechargeResult>
+            <ars:RechargeSerialNo>${#MockService#recharge.SerialNo}</ars:RechargeSerialNo>
+            <ars:BalanceChgInfo>
+               <arc:BalanceType>${#MockService#DEFAULT-BalanceType}</arc:BalanceType>
+               <arc:BalanceID>${#MockService#DEFAULT-recharge-BalanceID}</arc:BalanceID>
+               <arc:BalanceTypeName>${#MockService#DEFAULT-BalanceTypeName}</arc:BalanceTypeName>
+               <arc:OldBalanceAmt>${#MockService#DEFAULT-Balance}</arc:OldBalanceAmt>
+               <arc:NewBalanceAmt>${#MockService#Balance}</arc:NewBalanceAmt>
+               <arc:CurrencyID>${#MockService#DEFAULT-Currency}</arc:CurrencyID>
+            </ars:BalanceChgInfo>
+            <ars:LoanChgInfo>
+               <arc:OldLoanAmt>10000</arc:OldLoanAmt>
+               <arc:NewLoanAmt>10000</arc:NewLoanAmt>
+               <arc:LoanPaymentAmt>10000</arc:LoanPaymentAmt>
+               <arc:LoanInterestAmt>10000</arc:LoanInterestAmt>
+               <arc:CurrencyID>1049</arc:CurrencyID>
+            </ars:LoanChgInfo>
+            <ars:RechargeBonus>
+               <ars:FreeUnitItemList>
+                  <ars:FreeUnitID>123456789</ars:FreeUnitID>
+                  <ars:FreeUnitType>C_VOICE_ONNET_DURATION</ars:FreeUnitType>
+                  <ars:FreeUnitTypeName>Intra-network free call duration</ars:FreeUnitTypeName>
+                  <ars:MeasureUnit>1003</ars:MeasureUnit>
+                  <ars:MeasureUnitName>MeasureUnitName_Minute</ars:MeasureUnitName>
+                  <ars:BonusAmt>10000</ars:BonusAmt>
+                  <ars:EffectiveTime>20210101000000</ars:EffectiveTime>
+                  <ars:ExpireTime>20210101000000</ars:ExpireTime>
+               </ars:FreeUnitItemList>
+               <ars:BalanceList>
+                  <ars:BalanceType>C_BONUS_FUND</ars:BalanceType>
+                  <ars:BalanceID>123456789</ars:BalanceID>
+                  <ars:BalanceTypeName>Reward balance</ars:BalanceTypeName>
+                  <ars:BonusAmt>10000</ars:BonusAmt>
+                  <ars:CurrencyID>1049</ars:CurrencyID>
+                  <ars:EffectiveTime>20210101000000</ars:EffectiveTime>
+                  <ars:ExpireTime>20210101000000</ars:ExpireTime>
+               </ars:BalanceList>
+               <ars:Bonusofferlist>
+                  <ars:Offeringid>
+                     <arc:OfferingID>600001</arc:OfferingID>
+                     <arc:PurchaseSeq>975139</arc:PurchaseSeq>
+                  </ars:Offeringid>
+                  <ars:OwnerType>C</ars:OwnerType>
+                  <ars:OwnerKey>ownerKay</ars:OwnerKey>
+                  <ars:EffectiveTime>20210101000000</ars:EffectiveTime>
+                  <ars:ExpireTime>20210101000000</ars:ExpireTime>
+               </ars:Bonusofferlist>
+            </ars:RechargeBonus>
+            <ars:LifeCycleChgInfo>
+               <ars:OldLifeCycleStatus>
+                  <ars:StatusName>Idle</ars:StatusName>
+                  <ars:StatusExpireTime>20210101000000</ars:StatusExpireTime>
+                  <ars:StatusIndex>123456789</ars:StatusIndex>
+               </ars:OldLifeCycleStatus>
+               <ars:NewLifeCycleStatus>
+                  <ars:StatusName>Idle</ars:StatusName>
+                  <ars:StatusExpireTime>20210101000000</ars:StatusExpireTime>
+                  <ars:StatusIndex>123456789</ars:StatusIndex>
+               </ars:NewLifeCycleStatus>
+               <ars:AddValidity>2</ars:AddValidity>
+            </ars:LifeCycleChgInfo>
+            <ars:CreditChgInfo>
+               <arc:CreditLimitID>12345678</arc:CreditLimitID>
+               <arc:CreditLimitType>12345678</arc:CreditLimitType>
+               <arc:CreditLimitTypeName>CreditLimitTypeName</arc:CreditLimitTypeName>
+               <arc:OldLeftCreditAmt>10000</arc:OldLeftCreditAmt>
+               <arc:NewLeftCreditAmt>10000</arc:NewLeftCreditAmt>
+               <arc:MeasureUnit>1004</arc:MeasureUnit>
+            </ars:CreditChgInfo>
+         </RechargeResult>
+      </ars:RechargeResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Recharge"/>
+  </con:response>
+  <con:response name="Response-SoapFault-Exception" id="309d1e70-172c-4c7b-a4d3-adfd2ac258ce" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <soapenv:Fault>
+         <faultcode>soapenv:Server</faultcode>
+         <faultstring>${#MockService#ResultDesc}</faultstring>
+      </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Recharge"/>
+  </con:response>
+  <con:response name="Response-Custom-Exception" id="6aef294f-054a-4a59-92f4-d0cb9dd5e9c8" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:RechargeResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:RechargeResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Recharge"/>
+  </con:response>
+</con:mockOperation>

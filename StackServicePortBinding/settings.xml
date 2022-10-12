@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:interface xsi:type="con:WsdlInterface" id="8e70cd57-4411-4fa5-87ec-7b27b288064a" wsaVersion="NONE" name="StackServicePortBinding" type="wsdl" bindingName="{http://stackservice.pa.o2.de/}StackServicePortBinding" soapVersion="1_1" anonymous="optional" definition="../WSDLs/Piranha/StackService.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="8e70cd57-4411-4fa5-87ec-7b27b288064afileName">StackServicePortBinding</con:setting>
+  </con:settings>
+  <con:definitionCache type="TEXT" rootPart="file:/D:/Projects/Telefonica/DirectReCharge/soapUI-NG-Pro/WSDLs/Piranha/StackService.wsdl">
+    <con:part>
+      <con:url>file:/D:/Projects/Telefonica/DirectReCharge/soapUI-NG-Pro/WSDLs/Piranha/StackService.wsdl</con:url>
+      <con:content><![CDATA[<wsdl:definitions targetNamespace="http://stackservice.pa.o2.de/" name="StackService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://stackservice.pa.o2.de/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import namespace="http://stackservice.pa.o2.de/" schemaLocation="StackService_types.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getStackDetailsRequest">
+    <wsdl:documentation>Contains the Msisdn</wsdl:documentation>
+    <wsdl:part name="getStackDetailsRequest" element="tns:getStackDetailsRequest"/>
+  </wsdl:message>
+  <wsdl:message name="getStackDetailsResponse">
+    <wsdl:documentation>Contains the Stack details</wsdl:documentation>
+    <wsdl:part name="getStackDetailsResponse" element="tns:getStackDetailsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="isAliveRequest">
+    <wsdl:documentation>Empty request</wsdl:documentation>
+    <wsdl:part name="isAliveRequest" element="tns:isAliveRequest"/>
+  </wsdl:message>
+  <wsdl:message name="isAliveResponse">
+    <wsdl:documentation>The Server Status (should be 'OK')</wsdl:documentation>
+    <wsdl:part name="isAliveResponse" element="tns:isAliveResponse"/>
+  </wsdl:message>
+  <wsdl:message name="UnknownMsisdn">
+    <wsdl:documentation>If the msisdn is unknown</wsdl:documentation>
+    <wsdl:part name="UnknownMsisdn" element="tns:UnknownMsisdn"/>
+  </wsdl:message>
+  <wsdl:portType name="StackServiceInft">
+    <wsdl:operation name="getStackDetails">
+      <wsdl:input message="tns:getStackDetailsRequest"/>
+      <wsdl:output message="tns:getStackDetailsResponse"/>
+      <wsdl:fault message="tns:UnknownMsisdn" name="UnknownMsisdn"/>
+    </wsdl:operation>
+    <wsdl:operation name="isAlive">
+      <wsdl:input message="tns:isAliveRequest"/>
+      <wsdl:output message="tns:isAliveResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="StackServicePortBinding" type="tns:StackServiceInft">
+    <wsdl:documentation>Returns the Stack Details for a Msisdn.
+            Throws an Unknown Msisdn Fault if msisdn does not exist in Piranha.
+            StackDetails consist of:
+            - virtualStack = RCS | BCS | PREPAID | SPAIN | HERMES
+            - paymentType = PREPAID | POSTPAID
+            The payment type is really the payment type and has nothing to do with the stack.
+            Do not derive the stack from the payment type!
+            - subscriptionStatus = ACTIVE | DEACTIVATION_PENDING | DEACTIVATING | INACTIVE
+            When a subscription is not in status ACTIVE, the contract is finished and piranha has got the deactivation order from the CRM system.
+            Only subscriptions in status INACTICE can not access the portal.
+            - sasName = "Enterprise Name" of the subscription's service provider (e.g. SP001 for mobilcom, SP103 for Alice/Hansenet)
+            For o2 is the returned sasName "O2". This includes the o2 msisdns on the rcs stack and on the bcs stack.
+			For o2 premium prepaid user SP901 will be returned ("Loop" subscriptions).
+			For o2 low-value prepaid user SP902 will be returned ("Blau" subscriptions).
+            For Tchibo/hermes customers "SP903" will be returned.
+            For all other service Providers the defind SP-Number is returned.
+            - brandId = 1,2,3 
+			1 for the brand o2online, 2 for blau /value brand), 3 for Tchibo
+			
+			In case multiple subscriptions exist with the same msisdn, always the active msisdn is returned.
+			There is always only one active msisdn (elsewise a phone call would not work).
+			There are no pack bookings or other CRM events based on not active msisdns.
+			In case multiple not active subscriptions exists the one with the youngest subscriptionState is returned
+			
+			Authentication is done using Basic Auth.
+			
+            For the Versioning see please Rational clearcase:
+            \is_docs\general\apps\Piranha\03_Analysis_Design\IF_stackService</wsdl:documentation>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getStackDetails">
+      <wsdl:documentation>The stack details request</wsdl:documentation>
+      <soap:operation soapAction="getStackDetails" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="UnknownMsisdn">
+        <soap:fault name="UnknownMsisdn" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="isAlive">
+      <wsdl:documentation>Simple "Ping-Method" to be checked by a load balancer.</wsdl:documentation>
+      <soap:operation soapAction="isAlive" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="StackService">
+    <wsdl:documentation>Service to Query a the Stack data for a specific Msisdn.</wsdl:documentation>
+    <wsdl:port name="StackServicePortBinding" binding="tns:StackServicePortBinding">
+      <soap:address location="http://10.97.200.10:8082/jaxws/services/StackService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content>
+      <con:type>http://schemas.xmlsoap.org/wsdl/</con:type>
+    </con:part>
+    <con:part>
+      <con:url>file:\D:\Projects\Telefonica\DirectReCharge\soapUI-NG-Pro\WSDLs\Piranha\StackService_types.xsd</con:url>
+      <con:content><![CDATA[<xs:schema version="1.0" targetNamespace="http://stackservice.pa.o2.de/" xmlns:tns="http://stackservice.pa.o2.de/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="UnknownMsisdn" type="tns:UnknownMsisdnException"/>
+  <xs:element name="getStackDetailsRequest" type="tns:getStackDetailsRequest"/>
+  <xs:element name="getStackDetailsResponse" type="tns:getStackDetailsResponse"/>
+  <xs:element name="isAliveRequest" type="tns:isAliveRequest"/>
+  <xs:element name="isAliveResponse" type="tns:isAliveResponse"/>
+  <xs:complexType name="getStackDetailsRequest">
+    <xs:sequence>
+      <xs:element name="msisdn" type="tns:msisdn"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getStackDetailsResponse">
+    <xs:sequence>
+      <xs:element name="virtualStack" type="tns:virtualStack"/>
+      <xs:element name="paymentType" type="tns:paymentType"/>
+      <xs:element name="subscriptionStatus" type="tns:subscriptionStatus"/>
+      <xs:element name="sasName" type="tns:sasName"/>
+      <xs:element name="brandId" type="tns:brandIdType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="isAliveRequest"/>
+  <xs:simpleType name="isAliveResponse">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="2"/>
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="UnknownMsisdnException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="msisdn">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="7"/>
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="virtualStack">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="RCS"/>
+      <xs:enumeration value="BCS"/>
+      <xs:enumeration value="PREPAID"/>
+      <xs:enumeration value="SPAIN"/>
+      <xs:enumeration value="HERMES"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="paymentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="POSTPAID"/>
+      <xs:enumeration value="PREPAID"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="subscriptionStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ACTIVE"/>
+      <xs:enumeration value="DEACTIVATION_PENDING"/>
+      <xs:enumeration value="DEACTIVATING"/>
+      <xs:enumeration value="INACTIVE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="sasName">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="2"/>
+      <xs:maxLength value="30"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--A Brand ID consists of 1 to 4 digits-->
+  <xs:simpleType name="brandIdType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="9999"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>]]></con:content>
+      <con:type>http://www.w3.org/2001/XMLSchema</con:type>
+    </con:part>
+  </con:definitionCache>
+  <con:endpoints>
+    <con:endpoint>http://10.97.200.10:8082/jaxws/services/StackService</con:endpoint>
+    <con:endpoint>http://localhost:8080/Piranha/StackService</con:endpoint>
+    <con:endpoint>http://mucsgdp08.sg.de.pri.o2.com:8181/mocks/Piranha/StackService</con:endpoint>
+    <con:endpoint>http://mucsgdp08.sg.de.pri.o2.com:8381/mocks/Piranha/StackService</con:endpoint>
+    <con:endpoint>http://mucsgdp08.sg.de.pri.o2.com:8581/mocks/Piranha/StackService</con:endpoint>
+  </con:endpoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:interface>

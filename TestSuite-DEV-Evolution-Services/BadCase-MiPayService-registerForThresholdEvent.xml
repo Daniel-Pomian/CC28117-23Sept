@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="9d1e688e-194f-44c6-b284-43e9e9aabbdb" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-MiPayService-registerForThresholdEvent" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests positive business cases fror mipay  evolution service based on documentation in svn:
+ ...src\trunk\SRs\Interfaces\MIPAY\ST_TD_DRC_U-036_Mipay_Interface_Specification-V2.0.2.docx
+
+Please note:
+MiPay is not a brand, but partner.
+Based on R16-6b_multibrand_matrix.xlsx from GID:
+https://mucsggit02.sg.de.pri.o2.com/directrecharge/drc-complete/blob/R16-6b/develop/server/core-server/src/test/specification/R16-6b_multibrand_matrix.xlsx
+only followed brand is allowed to use mipay service:
+SP_NAME	SP_SAS_CODE	Limit_Cycle	SP_Internal_Code	SP_Active	BRAND_ID	Brand_Name	TENANT_ID	Tenant_Name	Partner_*	Partner_KLMTA	Partner_MIPAY	Partner_SPAIN	Partner_RATOR	Partner_TCHIB	Partner_MO_DE	Partner_STARC	Partner_DRILL	Partner_TUI_C	Partner_PPIT	Partner_V SRV	Partner_V ZVD	Partner_1006	Partner_98765	Partner_65432	Partner_54321	Partner_01004	Partner_01005	Partner_GAD M	Partner_01002	Partner_01006	Partner_FAG M	Partner_01003	Partner_01009	Partner_FINIT	Partner_01001	Partner_01007	Partner_MCE	Channel_atm	Channel_directdebit	Channel_banktransfer	Channel_voucherredemtion	Channel_creditcard	Channel_drservice	Channel_operationinfo	Channel_driso8583service	Payusecase_ID_ON_DEMAND	Payusecase_ID_Monthly	Payusecase_ID_ON_DEMAND_SMS	Payusecase_ID_LOW_BALANCE_THRESHOLD	Payusecase_ID_PACK_PAYMENT	
+Loop	SP901	30Days	LO	Yes	1	o2	1	TEF	Yes	No	Yes	Yes	Yes	Yes	No	No	No	No	Yes	Yes	Yes	Yes	Yes	Yes	Yes	No	No	Yes	No	No	Yes	No	No	Yes	No	No	Yes	Yes	Yes	Yes	Yes	No	Yes	Yes	No	Yes	Yes	Yes	Yes	Yes</con:description>
+  <con:settings>
+    <con:setting id="9d1e688e-194f-44c6-b284-43e9e9aabbdbfileName">BadCase-MiPayService-registerForThresholdEvent</con:setting>
+  </con:settings>
+  <con:testStep type="request" id="b0dbff2e-fee5-45f1-8cee-944a20b81921" name="3400N_registerForThresholdEvent-MSISDN-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>registerForThresholdEvent</con:operation>
+      <con:request name="3400N_registerForThresholdEvent-MSISDN-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7ab0002a-7079-4113-9b07-e7d30c208943">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:reg="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <reg:registerForThresholdEvent>
+         <registerForThresholdEvent>
+            <msisdn/>
+         </registerForThresholdEvent>
+      </reg:registerForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="13b88940-2894-4463-82f8-799d1de4c327" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="11929fc1-8cd4-4e95-980f-5f63eb29dff2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="7217029e-6f6d-49c9-8d03-381a704926be" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="818f4ec4-1f5c-42ea-ad1f-6809f88a1d89" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Wrong format of the MSISDN -</faultstring>
+         <detail>
+            <ns4:registerForThresholdEventFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+            </ns4:registerForThresholdEventFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/registerForThresholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="698cd3ca-a065-4ee2-875a-9eb974b29f57" name="3410N_registerForThresholdEvent-MSISDN&lt;11">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>registerForThresholdEvent</con:operation>
+      <con:request name="3410N_registerForThresholdEvent-MSISDN&lt;11" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7ab0002a-7079-4113-9b07-e7d30c208943">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:reg="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <reg:registerForThresholdEvent>
+         <registerForThresholdEvent>
+            <msisdn>49178${#Project#Random5}</msisdn>
+         </registerForThresholdEvent>
+      </reg:registerForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="13b88940-2894-4463-82f8-799d1de4c327" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="11929fc1-8cd4-4e95-980f-5f63eb29dff2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="7217029e-6f6d-49c9-8d03-381a704926be" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="818f4ec4-1f5c-42ea-ad1f-6809f88a1d89" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Wrong format of the MSISDN -</faultstring>
+         <detail>
+            <ns4:registerForThresholdEventFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+            </ns4:registerForThresholdEventFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/registerForThresholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2f540c82-cdc2-4880-9053-fad47dd64fba" name="3420N_registerForThresholdEvent-MSISDN>16">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>registerForThresholdEvent</con:operation>
+      <con:request name="3420N_registerForThresholdEvent-MSISDN>16" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7ab0002a-7079-4113-9b07-e7d30c208943">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:reg="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <reg:registerForThresholdEvent>
+         <registerForThresholdEvent>
+            <msisdn>49178101${#Project#Random10}</msisdn>
+         </registerForThresholdEvent>
+      </reg:registerForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="13b88940-2894-4463-82f8-799d1de4c327" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="11929fc1-8cd4-4e95-980f-5f63eb29dff2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="7217029e-6f6d-49c9-8d03-381a704926be" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="818f4ec4-1f5c-42ea-ad1f-6809f88a1d89" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Wrong format of the MSISDN -</faultstring>
+         <detail>
+            <ns4:registerForThresholdEventFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+            </ns4:registerForThresholdEventFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/registerForThresholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b9c45909-3b6f-47e7-b8dc-b4d7236b7e1c" name="3430N_registerForThresholdEvent-regargeValue>6">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>registerForThresholdEvent</con:operation>
+      <con:request name="3430N_registerForThresholdEvent-regargeValue>6" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7ab0002a-7079-4113-9b07-e7d30c208943">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:reg="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <reg:registerForThresholdEvent>
+         <registerForThresholdEvent>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn><recurringRechargeValue>1000000</recurringRechargeValue>
+         </registerForThresholdEvent>
+      </reg:registerForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="13b88940-2894-4463-82f8-799d1de4c327" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="11929fc1-8cd4-4e95-980f-5f63eb29dff2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="7217029e-6f6d-49c9-8d03-381a704926be" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="818f4ec4-1f5c-42ea-ad1f-6809f88a1d89" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//detail[1]/ns1:registerForThresholdEventFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Wrong format of the MSISDN -</faultstring>
+         <detail>
+            <ns4:registerForThresholdEventFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+            </ns4:registerForThresholdEventFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/registerForThresholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>120bde4a-3284-4861-8701-57ab2a7146a4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a297bbb-222d-43bf-88f0-2484508aafdd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3588172d-4a7c-48b7-951f-d0b92b43e8a9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e9701d4-e757-4635-a89a-19b90d479c5d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9be2dab5-4b3c-47f3-b8c7-5950aaff2392</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>10858c7a-ddf6-49ec-abe9-67020d600159</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>18c958de-3c99-4ba1-8c8a-27c24fa0d3c8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d3af3887-1981-4453-8eec-5c2c4312f5c3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c712dbe4-011d-4f33-a258-5645478c02ce</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>45590d8d-0556-4454-96de-1be9f4c2f404</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4c048d17-3149-4607-b974-dbce107c6539</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>199ac2b7-e470-42b1-8049-4e1b77a0ecbc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>54609960-ed84-4615-aa58-90e91055f3db</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>766f42f0-33f3-443e-bc8d-e996359c218e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>72fc066e-ad65-4139-97fa-fff1e0bb364f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>44c2efc7-708e-4510-bb3a-065e6ba40789</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>096744b1-1aaf-41ca-a07f-e6d6f50d84cd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>24bd47c6-b604-46fc-8385-207954b4ae60</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5f20bc3f-29d2-4eb3-afd7-2dfdc43e38fe</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d93b86dc-2954-4a3b-a4df-1bb475311e65</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a2cb5f1-6e28-412c-85ea-a5886e959dbd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9d4cab96-52c4-45e8-a617-121588b753b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

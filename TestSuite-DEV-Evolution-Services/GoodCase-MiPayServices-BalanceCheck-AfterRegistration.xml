@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="b756b339-bd8b-43f7-842d-4a5cfe7df16f" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-MiPayServices-BalanceCheck-AfterRegistration" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>https://www.sg.de.o2.com/jira/browse/DRC-3048
+
+Followed test-scenario is implemented:
+- MSISDN registration for MiPay with Balance under 3.99,-EUR.
+- exec job: BALANCE_CHECK_AFTER_REGISTRATION
+- validate, that drc inform mipay about charge</con:description>
+  <con:settings>
+    <con:setting id="b756b339-bd8b-43f7-842d-4a5cfe7df16ffileName">GoodCase-MiPayServices-BalanceCheck-AfterRegistration</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearValues" id="c814266d-9d4a-4a49-b52a-246fe8a4b51b">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType xsi:nil="true"/>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_DRCGUI-BALANCE_CHECK_AFTER_REGISTRATION" id="c7340ed4-ce9e-4418-a5da-af90647d471d">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="_DRCGUI-BALANCE_CHECK_AFTER_REGISTRATION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.BALANCE_CHECK_AFTER_REGISTRATION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_DRCGUI-PSP_THRESHOLD_NOTIFICATION" id="a8afd951-00dd-4050-b9dc-cafa9040b0c2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="_DRCGUI-PSP_THRESHOLD_NOTIFICATION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.PSP_THRESHOLD_NOTIFICATION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="_HTTP-ClearMock" id="feef6e44-acf4-4c17-ab00-6bc48476b58e">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="_HTTP-ClearMock" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log?clear</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="153285f9-6e44-4544-a2fc-7890d817d456" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="6239d4f2-316b-42b0-b970-edf835e82564" name="registerForThresholdEvent">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>registerForThresholdEvent</con:operation>
+      <con:request name="registerForThresholdEvent" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7ab0002a-7079-4113-9b07-e7d30c208943">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:reg="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <reg:registerForThresholdEvent>
+         <registerForThresholdEvent>
+            <!--type: string-->
+            <msisdn>${#Project#MOCK-Prefix-OCS10-queryBalance-CustomBalance}1000398</msisdn>
+         </registerForThresholdEvent>
+      </reg:registerForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="13b88940-2894-4463-82f8-799d1de4c327" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="11929fc1-8cd4-4e95-980f-5f63eb29dff2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="6e100da0-2ee7-4b2c-9c12-eeb33261fba4" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" name="Check for existence of [ns2:registerForThresholdEventResponse]" id="67599a14-337a-41be-89b7-0695ccb8a3c9">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+exists( //ns2:registerForThresholdEventResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/registerForThresholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer_MSISDN" id="b0127dd2-38d0-4a10-bf6e-71968742a7f7">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>msisdn1</con:name>
+        <con:sourceType xsi:nil="true"/>
+        <con:sourceStep>registerForThresholdEvent</con:sourceStep>
+        <con:sourcePath>declare namespace reg='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//reg:registerForThresholdEvent[1]/registerForThresholdEvent[1]/msisdn[1]</con:sourcePath>
+        <con:targetType xsi:nil="true"/>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>msisdn2</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>registerForThresholdEvent</con:sourceStep>
+        <con:sourcePath>declare namespace reg='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/';
+//reg:registerForThresholdEvent[1]/registerForThresholdEvent[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DRCGUI-BALANCE_CHECK_AFTER_REGISTRATION" id="6596e393-43ad-4209-bcd5-f624ae813e9c">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="DRCGUI-BALANCE_CHECK_AFTER_REGISTRATION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.BALANCE_CHECK_AFTER_REGISTRATION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="8012c0ad-9110-4fc9-8283-495faba7d8e2" name="Check count of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DRCGUI-PSP_THRESHOLD_NOTIFICATION" id="43b5a525-8a62-4ffa-b6a2-b6ce2f5435cb">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="DRCGUI-PSP_THRESHOLD_NOTIFICATION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.PSP_THRESHOLD_NOTIFICATION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="d0bd8740-b299-4b86-98c2-e66d92fb2c9c" name="Check count of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="HTTP-ValidateResponsefromMock" id="1d6164e0-35c1-4a61-bce7-f441d2980942">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="HTTP-ValidateResponsefromMock" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="153285f9-6e44-4544-a2fc-7890d817d456" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="afa70299-217d-47f6-9015-86e9e32888e2" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath xsi:nil="true"/>
+            <con:element>#text</con:element>
+            <con:type>XmlObject</con:type>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/meta[1]</con:xpath>
+            <con:element>meta</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/meta[1]/@http-equiv</con:xpath>
+            <con:element>@http-equiv</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>refresh</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/meta[1]/@content</con:xpath>
+            <con:element>@content</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>15</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/link[1]</con:xpath>
+            <con:element>link</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/link[1]/@type</con:xpath>
+            <con:element>@type</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>text/css</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/link[1]/@rel</con:xpath>
+            <con:element>@rel</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>stylesheet</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/head[1]/link[1]/@href</con:xpath>
+            <con:element>@href</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>stylesheet.css</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/p[1]/b[1]</con:xpath>
+            <con:element>b</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Groovy Log output</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath xsi:nil="true"/>
+            <con:element>#text</con:element>
+            <con:type>XmlObject</con:type>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/p[1]/a[1]</con:xpath>
+            <con:element>a</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Refresh</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/p[1]/a[1]/@href</con:xpath>
+            <con:element>@href</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>log</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/p[1]/a[2]</con:xpath>
+            <con:element>a</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Clear</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/p[1]/a[2]/@href</con:xpath>
+            <con:element>@href</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>log?clear</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/@border</con:xpath>
+            <con:element>@border</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[1]/td[1]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[1]/td[2]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Timestamp</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[1]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Message</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[1]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[2]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Tue Jun 23 12:07:55 CEST 2020</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 491191000398</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[1]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[2]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Tue Jun 23 12:07:55 CEST 2020</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 491191000398</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[4]/td[1]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[4]/td[2]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>Tue Jun 23 12:07:56 CEST 2020</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[4]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>MiPay.reachedMVNOLowBalanceThreshold: Return response for request with msisdn ${#TestCase#MSISDN}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<html>
+   <head>
+      <title>Virt Groovy Log</title>
+      <meta http-equiv="refresh" content="15"/>
+      <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+   </head>
+   <body>
+      <p>
+         <b>Groovy Log output</b>
+         : [
+         <a href="log">Refresh</a>
+         ] [
+         <a href="log?clear">Clear</a>
+         ]
+      </p>
+      <table border="1">
+         <tr>
+            <td/>
+            <td>Timestamp</td>
+            <td>Message</td>
+         </tr>
+         <tr>
+            <td>1</td>
+            <td>Tue Jun 23 12:07:55 CEST 2020</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 491191000398</td>
+         </tr>
+         <tr>
+            <td>2</td>
+            <td>Tue Jun 23 12:07:55 CEST 2020</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 491191000398</td>
+         </tr>
+         <tr>
+            <td>3</td>
+            <td>Tue Jun 23 12:07:56 CEST 2020</td>
+            <td>MiPay.reachedMVNOLowBalanceThreshold: Return response for request with msisdn 491191000398</td>
+         </tr>
+      </table>
+   </body>
+</html>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8bafe660-d1c7-4fa8-ac49-b3d1a2e9bd8b" name="deregisterForThresholdEvent">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>deregisterForThresholdEvent</con:operation>
+      <con:request name="deregisterForThresholdEvent" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d3384c8a-ab18-4e4d-bdc8-18bbd04764b5">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:der="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/" xmlns:quer="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <der:deregisterForThresholdEvent>
+         <deregisterForThresholdEvent>
+            <!--type: string-->
+            <msisdn>${registerForThresholdEvent#RawRequest#declare namespace reg='http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/'; //reg:registerForThresholdEvent[1]/registerForThresholdEvent[1]/msisdn[1]}</msisdn>
+         </deregisterForThresholdEvent>
+      </der:deregisterForThresholdEvent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="4d24492e-0778-45b1-a334-eaf81e48150b" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="0a0e832a-fd6a-484d-8388-49ae1109a94f" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="9f772d1b-1865-4b22-b9be-53b8f1590fcb" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cbf91a78-799a-4318-a91a-b663047def7a" name="Check for existence of [ns5:deregisterForThresholdEventResponse]">
+          <con:configuration>
+            <path>declare namespace ns5='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/';
+exists( //ns5:deregisterForThresholdEventResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/queryStatusRegisterForThesholdEvent"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>120bde4a-3284-4861-8701-57ab2a7146a4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3588172d-4a7c-48b7-951f-d0b92b43e8a9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e9701d4-e757-4635-a89a-19b90d479c5d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9be2dab5-4b3c-47f3-b8c7-5950aaff2392</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>10858c7a-ddf6-49ec-abe9-67020d600159</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>199ac2b7-e470-42b1-8049-4e1b77a0ecbc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d279a8f9-6fdd-45e7-8ef0-9418bf2f603f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>250a8f3b-241e-4711-9b10-86a05f78c4ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0c253c3e-1ab6-4e3c-93da-cea4d27114bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c3335cba-7e91-485d-b1a3-0b3567278221</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>243811dc-9b88-4470-a915-6e0a29fe10fc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da49178f-3aeb-4547-b1c5-153605ada28c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ad5cfaaf-9f39-4091-abc2-219d1efdd949</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2bdb91c4-8f92-4644-88c9-ca2523c1ecdc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c81494c1-1e07-488e-924e-94abfe4a9fcd</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>db465d1c-a947-4d65-8767-b2839c279e58</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4989fa79-97f9-4fc6-9133-8170730b7eef</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ac1f5c51-245f-42c6-87df-50c84a1b49a0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>701cbf4f-3c00-4bde-8b7e-f22eae9be575</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de8175e7-0958-42b7-b3e9-4b3d522c62c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>02364aae-142a-48eb-b423-e945ef12642c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e580e9a2-ea80-4adb-97ff-a97e5eec8dc6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1fee7e1b-ac7b-48d7-be01-832a9510e3ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da66af18-b6b1-40c9-a130-3a8abac02785</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c6f457ce-7a74-4b8e-a4fc-11deca7c53fc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>51874b3a-9776-4ff0-a505-c084a8dbd1b4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>100ba65b-b1d9-454b-b134-5158cf94f3a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ed03520a-ae5d-4ac6-a85d-a5d92b6877ad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cc83c812-0f0e-4cd0-ad07-16d9c7022924</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>602f1636-7823-4437-bb08-e3bb5aaec54e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cf129687-ca14-41b9-9f53-997dae4e772f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>551cf7b5-2dbc-4ea9-ab96-3348972298a8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e91eab2a-d085-4832-bfe7-47119b599f61</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>95ed795d-8a9d-42a5-a815-f25289341925</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5781140a-649f-4c53-aabd-1cf134b45468</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>88df4685-891f-45af-b121-f948f9496b76</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a2cf0cc-34ca-4f88-8ad0-1232d9a520ee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bb056d3b-2171-42f4-bcab-51178f679702</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>396b6d1c-d4de-4f62-b01a-a01d3908bcc3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0dc34924-a92c-400d-b4d3-1d3ddce893c2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03073300-77ca-4e15-a773-7054efab5001</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>216ef379-e810-46df-867e-c556d25ff049</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e6724818-3958-4ef0-93a5-4956e706eaab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62696d2f-fcf3-4e0f-b62a-d444ffe8c104</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>36d8a293-5c95-483a-b410-25013ae0ca59</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a8afd951-00dd-4050-b9dc-cafa9040b0c2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6596e393-43ad-4209-bcd5-f624ae813e9c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>43b5a525-8a62-4ffa-b6a2-b6ce2f5435cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

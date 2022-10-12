@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="c0e14ab8-a1ce-447e-9b84-92cce1d52d04" discardOkResults="true" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase-Virt-Piranha-getMSISDNForCustomResponse" searchProperties="true" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Generate and return msisdn for defined piranha mock response with const:
+virtualStack=prepaid
+paymentType=prepaid 
+subscriptionStatus=active
+, and service provider + optional brandid based on documentation from piranha mock
+
+Note! MSISDN length will be either 11 signs without brand id or 13 with brand id = 2 signs</con:description>
+  <con:settings>
+    <con:setting id="c0e14ab8-a1ce-447e-9b84-92cce1d52d04fileName">TestCase-Virt-Piranha-getMSISDNForCustomResponse</con:setting>
+  <con:setting id="GeneratableJUnitReport@Folder">D:\SmartBear\ReadyAPI\CC Projects\DirectReCharge-soapui-project (1)-Telefonica-10Oct\Report-TestCase-Virt-Piranha-getMSISDN</con:setting></con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="b361c864-22ae-455d-b7ff-4605f36cc5d3">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outProviderName</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDNLength</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outSASCode</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request - GetBrandData" id="01a506d6-2ba5-4ff2-940d-c361e716d41c">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>Select Conf.Tenant_ID, Conf.Brand_ID, 
+		Conf.Name, Conf.SAS_CODE
+-- Conf.Tenant_ID, Conf.Brand_ID, Conf.Name
+From SERVICEPROVIDER_CONF Conf
+where Tenant_ID='${#TestCase#inTenantID}' 
+AND Brand_ID='${#TestCase#inBrandID}'
+Order By Conf.TENANT_ID, Conf.BRAND_ID</con:query>
+      <con:assertion type="JDBC Status" id="b8963a92-4a8f-46d1-8a2a-6de983d95b23" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-SetValuse" id="8173c525-ac99-4c6d-bf1f-1e4d6cbe7bcd">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>providerName</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request - GetBrandData</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/NAME[1]</con:sourcePath>
+        <con:targetType>outProviderName</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>sasCode</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request - GetBrandData</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/SAS_CODE[1]</con:sourcePath>
+        <con:targetType>outSASCode</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-CreateMSISDN" id="99c1d6de-478c-4b77-b998-cfbab88db3a1">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script generate msisdn for custom response from piranha mock
+ * Date: 04.08.2016
+ * Autor: Michael Gordon
+*/
+ String sPiranhaPrefix = context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}' ) 
+ String sPiranhaMiddle='321'
+ String sSASCode = context.expand( '${#TestCase#outSASCode}' )
+ String sBrandID = context.expand( '${#TestCase#inBrandID}' )
+ String sNoBrand = context.expand( '${#TestCase#inBoolNoBrand}' )
+ // first set error message in msisdn variable
+ String sMSISDN =testRunner.testCase.name+': Can not generate msisdn. Wrong ' 
+
+ // check input parameters
+ if (sSASCode==null || sSASCode=='' || sSASCode.length()!=5){
+ 	testRunner.testCase.setPropertyValue( "outMSISDN", sMSISDN+ 'SASCode for tenant and brand' )
+ 	return
+ }
+  if (sBrandID==null ||sBrandID=='' || sBrandID.length()&lt;1 || sBrandID.length()>2 ){
+ 	testRunner.testCase.setPropertyValue( "outMSISDN", sMSISDN+ 'brandID. Must be 1-2 signs' )
+ 	return	
+ }
+
+ // format values
+ sSASCode=sSASCode.substring(2) 
+ if (sBrandID.length()==1) { sBrandID='0'+sBrandID}
+ // log.info(sSASCode + '=Sascode - brandid='+sBrandID)
+
+ // set generated msisdn
+ if (sNoBrand=='true')
+ 	sMSISDN=sPiranhaPrefix+sPiranhaMiddle+sSASCode 
+ else
+ 	sMSISDN=sPiranhaPrefix+sPiranhaMiddle+sSASCode+sBrandID
+ // set in properties
+ testRunner.testCase.setPropertyValue( "outMSISDN", sMSISDN)
+ testRunner.testCase.setPropertyValue( "outMSISDNLength", sMSISDN.length().toString())</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inBrandID</con:name>
+      <con:value>51</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inTenantID</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inBoolNoBrand</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDN</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>outProviderName</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:property>
+    <con:property>
+      <con:name>outSASCode</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDNLength</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

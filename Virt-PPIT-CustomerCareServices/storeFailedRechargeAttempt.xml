@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="storeFailedRechargeAttempt" id="f7ad0218-b322-40ea-bd06-30ece580666e" interface="PrepaidITCustomerCareServices-SOAPBinding" operation="storeFailedRechargeAttempt" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="f7ad0218-b322-40ea-bd06-30ece580666efileName">storeFailedRechargeAttempt</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath>/*
+ * This script send default response, if msisdn prefixt doesn't contains prefix for soa fault. 
+ * In this case soa-fault response with error-code from msisdn is sent back 
+ * based on documentation ins svn: src\trunk\SRs\Interfaces\SOA\ST_TD_U-550_SOA_Infrastructure_IFS.docx § 3.2.1.2 Error Codes
+ * Date: 03.11.2016
+ * Autor: Michael Gordon
+*/
+
+  String sDocumentation='''
+ Documentation for ordering soap fault response for soa tunneling with error code from msisdn in request and specification.
+ Please set msisdn in request = ${#Project#MOCK-Prefix-PPIT-CustomCareService-soapFault}[ErrorCode-6 digits]
+ Ex: ${#Project#MOCK-Prefix-PPIT-CustomCareService-soapFault}100001 
+
+ For return special PPIT soapFault responses please set error-code to:
+  - 000001 - to recieve PPPIT soapFault response without detail information
+   
+ End of documentation  
+  '''
+ // Set documentation in virt property. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+ context.mockService.setPropertyValue('Doc-StoreFailedRechargeAttempt', sDocumentation)
+
+	
+ // copy default values to current values in mock- properties
+ def success = context.expand( '${#MockService#DEFAULT-success}' )
+ def resultCode = context.expand( '${#MockService#DEFAULT-resultCode}' )
+ def reasonMsg = context.expand( '${#MockService#DEFAULT-reasonMsg}' )
+ def sMSISDNPrefix=context.expand( '${#Project#MOCK-Prefix-PPIT-CustomCareService-soapFault}')
+
+ context.mockService.setPropertyValue('success',success)
+ context.mockService.setPropertyValue('resultCode',resultCode)
+ context.mockService.setPropertyValue('reasonMsg',reasonMsg)
+ 
+ // read values from incommning request and set for response
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent)
+ def brandID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:brandID")
+ def tenantID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:tenantID")
+ def transactID = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:transactionID")
+ def sMSISDN = holder.getNodeValue("declare namespace prep='http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes'; //prep:StoreFailedRechargeAttemptRequest[1]/prep:msisdn[1]")
+ 
+ context.mockService.setPropertyValue('brandID',brandID)
+ context.mockService.setPropertyValue('tenantID',tenantID)
+ context.mockService.setPropertyValue('transactID', transactID )
+
+ log.info('PPIT-CustomerCaseServices.storeFailedRechargeAttempt: Return response for incoming request with MSISDN: '+sMSISDN)
+
+ if(sMSISDN!=null &amp;&amp; sMSISDN.length()==11 &amp;&amp; sMSISDN[0..4]==sMSISDNPrefix){
+	 switch (sMSISDN[5..10]) {
+            case '000001': 
+            	return 'Response-soapFault-noDetails'
+               break;            
+            default: 
+ 			context.mockService.setPropertyValue('resultCode',sMSISDN[5..10])
+ 			context.mockService.setPropertyValue('reasonMsg','Please see error description in interface specification')
+ 			return 'Response-soapFault-SOA'
+               break;
+        }
+ }
+ else
+ 	return 'Response-Default'</con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="0812b716-2bfb-4b0f-87b2-4feb86e0ad9c" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prep="http://version15.prepaid.de.telefonica.com/prepaiditcustomercareservicetypes">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prep:StoreFailedRechargeAttemptResult>
+         <prep:serviceResponse>
+            <prep:brandID>${#MockService#brandID}</prep:brandID>
+            <prep:tenantID>${#MockService#tenantID}</prep:tenantID>
+            <prep:transactionID>${#MockService#transactID}</prep:transactionID>
+            <prep:callingDateTime>${#Project#DateTime_Current_Offset}</prep:callingDateTime>
+            <prep:success>${#MockService#success}</prep:success>
+            <prep:frontendID>${#MockService#CONST-fronendID}</prep:frontendID>
+         </prep:serviceResponse>
+         <prep:resultCode>${#MockService#resultCode}</prep:resultCode>
+         <prep:reasonMsg>${#MockService#reasonMsg}</prep:reasonMsg>
+      </prep:StoreFailedRechargeAttemptResult>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="storeFailedRechargeAttempt"/>
+  </con:response>
+  <con:response name="Response-soapFault-SOA" id="464aae71-4baa-45ec-ba1b-75fd9ca6537a" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soapenv:Fault>
+         <faultcode>soapenv:Server</faultcode>
+         <faultstring>SOA-${#MockService#resultCode}:${#MockService#reasonMsg}</faultstring>
+         <detail>
+            <con:fault xmlns:con="http://www.bea.com/wli/sb/context">
+               <con:errorCode>SOA-${#MockService#resultCode}</con:errorCode>
+               <con:reason>${#MockService#reasonMsg}</con:reason>
+               <con:location>
+                  <con:node>Final Route</con:node>
+                  <con:pipeline>_onErrorHandler-${#Project#GUID_Moved-}</con:pipeline>
+                  <con:path>response-pipeline</con:path>
+                  <con:error-handler>true</con:error-handler>
+               </con:location>
+            </con:fault>
+         </detail>
+      </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="storeFailedRechargeAttempt"/>
+  </con:response>
+  <con:response name="Response-soapFault-noDetails" id="871989f2-34be-4208-b1d8-ef0f8a246e84" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header/>
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>More than one existing request in state FINISHED found!</faultstring>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="storeFailedRechargeAttempt"/>
+  </con:response>
+</con:mockOperation>

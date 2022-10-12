@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="1d7e4bc9-a484-45c9-96bd-843bdc51d9b6" discardOkResults="true" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-CleanupTaskStates" searchProperties="true" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Set in data base all transient states
+PROPAGATION_FAILED
+REJECTED_TRANSIENT
+to 
+UNPROPAGABLE
+to finish repeat transaction.</con:description>
+  <con:settings>
+    <con:setting id="1d7e4bc9-a484-45c9-96bd-843bdc51d9b6fileName">TestCase-DEV-CleanupTaskStates</con:setting>
+  </con:settings>
+  <con:testStep type="jdbc" name="JDBC_cleanupTasks" id="8fc55ce2-e6f8-44f3-add6-24e28e682280">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_CLEANUP_PKG.cleanupTasks</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="5ed9ca1f-afc0-4815-8f14-91ca4b5cbec8" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="bcda4fbe-c4aa-4712-96e9-ca9186e2da9f" name="Match content of [UpdateCount]=-1">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>49150321913869</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

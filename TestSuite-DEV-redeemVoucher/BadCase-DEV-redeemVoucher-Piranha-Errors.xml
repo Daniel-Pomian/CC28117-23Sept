@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="1ed296c5-3e68-4d75-a058-8abe03581b6a" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-redeemVoucher-Piranha-Errors" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests correct error codes derived from specification in SVN:
+svn://svn.sg.de.pri.o2.com/DealerPortal/DirectRecharge/trunk/SRs/Interfaces/MCE/ST_OVD_Portal_DP_DRC_U-036_MCE_IFS.pdf
+§ 3.4.3 3.4.3 and combined with errors in piranha responses</con:description>
+  <con:settings>
+    <con:setting id="e37a4fe3-434a-47f3-966a-fcef88fc66c4fileName">BadCase-DEV-redeemVoucher-DRC-Errors</con:setting>
+    <con:setting id="1ed296c5-3e68-4d75-a058-8abe03581b6afileName">BadCase-DEV-redeemVoucher-Piranha-Errors</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" name="450N_redeemVoucher_MSISDN-Unknown-Error=1002" id="fd2a36e4-4aa3-4766-b408-7e6ff9ae9663">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="450N_redeemVoucher_MSISDN-Unknown-Error=1002" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}999${#Project#Random5}</msisdn>
+         <voucherCode>${#TestSuite#voucher-Pack-OK}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1c0367f3-2a65-43fc-974a-65e559731c57"/>
+        <con:assertion type="Schema Compliance" id="8c854cff-f1f0-4d59-8566-b53c1c678fe3">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c5e1e49d-7245-4e77-8b7b-49dc0e146fb4"/>
+        <con:assertion type="MessageContentAssertion" id="b4d89871-426f-4f32-9313-80f58ee10419" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1002</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>20070</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/sourceName[1]</con:xpath>
+              <con:element>sourceName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Piranha</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <Action xmlns="http://www.w3.org/2005/08/addressing">urn:tefo2de:VoucherRedemptionEvolutionService:VoucherRedemptionEvolutionServicePort:redeemVoucherResponse</Action>
+      <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:e3b93744-4715-48cc-a383-372a6b29187c</MessageID>
+      <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+      <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:39bf8697-7e09-4a26-a1b3-1df5cad13e37</RelatesTo>
+   </soap:Header>
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>false</success>
+            <resultCode>1002</resultCode>
+            <resultMessage>Msisdn unknown</resultMessage>
+            <externalError>
+               <errorCode>20070</errorCode>
+               <errorMessage>Msisdn unknown</errorMessage>
+               <sourceName>Piranha</sourceName>
+            </externalError>
+         </result>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="914ab428-e0f3-445b-bf9a-0f8cd028b710" name="Check for existence of [resultMessage]">
+          <con:configuration>
+            <path>declare namespace ns2='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+exists( //ns2:RedeemVoucherResponse/result/resultMessage)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>intf_mce</con:username>
+          <con:password>pwdmcedrc</con:password>
+          <con:selectedAuthProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:U-323" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="460N_redeemVoucher_MSISDN-Inactive-Error=1002" id="a39c957f-6bda-4b63-ad27-ed0545f72585">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="460N_redeemVoucher_MSISDN-Inactive-Error=1002" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}32490101</msisdn>
+         <voucherCode>${#TestSuite#voucher-Money-OK}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1c0367f3-2a65-43fc-974a-65e559731c57"/>
+        <con:assertion type="Schema Compliance" id="8c854cff-f1f0-4d59-8566-b53c1c678fe3">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c5e1e49d-7245-4e77-8b7b-49dc0e146fb4"/>
+        <con:assertion type="MessageContentAssertion" id="e634d44c-39c0-466a-91c0-10d9a6b372ab" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1002</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>20071</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/sourceName[1]</con:xpath>
+              <con:element>sourceName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Piranha</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <Action xmlns="http://www.w3.org/2005/08/addressing">urn:tefo2de:VoucherRedemptionEvolutionService:VoucherRedemptionEvolutionServicePort:redeemVoucherResponse</Action>
+      <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:f6b70488-a8d7-45bb-b4ac-58b5c6277cd6</MessageID>
+      <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+      <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:7ed230a0-f785-4a9a-a2dd-fdc51b33ecf5</RelatesTo>
+   </soap:Header>
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>false</success>
+            <resultCode>1002</resultCode>
+            <resultMessage>Msisdn not active</resultMessage>
+            <externalError>
+               <errorCode>20071</errorCode>
+               <errorMessage>Msisdn not active</errorMessage>
+               <sourceName>Piranha</sourceName>
+            </externalError>
+         </result>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>intf_mce</con:username>
+          <con:password>pwdmcedrc</con:password>
+          <con:selectedAuthProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:U-323" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="470N_redeemVoucher_MSISDN-Deactivating-Error=1002" id="148006b7-8d09-4ba7-ab74-ca4aa5c02f2c">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="470N_redeemVoucher_MSISDN-Deactivating-Error=1002" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}32390101</msisdn>
+         <voucherCode>${#TestSuite#voucher-Money-OK}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1c0367f3-2a65-43fc-974a-65e559731c57"/>
+        <con:assertion type="Schema Compliance" id="8c854cff-f1f0-4d59-8566-b53c1c678fe3">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c5e1e49d-7245-4e77-8b7b-49dc0e146fb4"/>
+        <con:assertion type="MessageContentAssertion" id="e634d44c-39c0-466a-91c0-10d9a6b372ab" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1002</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>20071</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/externalError[1]/sourceName[1]</con:xpath>
+              <con:element>sourceName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Piranha</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <Action xmlns="http://www.w3.org/2005/08/addressing">urn:tefo2de:VoucherRedemptionEvolutionService:VoucherRedemptionEvolutionServicePort:redeemVoucherResponse</Action>
+      <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:f6b70488-a8d7-45bb-b4ac-58b5c6277cd6</MessageID>
+      <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+      <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:7ed230a0-f785-4a9a-a2dd-fdc51b33ecf5</RelatesTo>
+   </soap:Header>
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>false</success>
+            <resultCode>1002</resultCode>
+            <resultMessage>Msisdn not active</resultMessage>
+            <externalError>
+               <errorCode>20071</errorCode>
+               <errorMessage>Msisdn not active</errorMessage>
+               <sourceName>Piranha</sourceName>
+            </externalError>
+         </result>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>intf_mce</con:username>
+          <con:password>pwdmcedrc</con:password>
+          <con:selectedAuthProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:U-323" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>a818a801-d02a-43a3-9050-4d48a82dd0b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>702d0073-cc23-4f8f-913a-7e88e7cbeda5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>40eafab8-2846-4930-9163-f9b1631cd75f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93879d5a-50d9-4852-afaf-0d4f12a72365</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5943333b-36db-471d-b9d3-49697fa60773</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a5f603e4-5e7a-4259-abb7-5d4665063fb7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2a9a6e75-e5ee-46bb-9d15-964af9b73161</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e5519e68-5932-489b-a0f9-4407c5833829</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4d5a6a18-7771-45f5-8952-20bdcd4458b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b622206-f27f-44f9-af4f-e3ca7607e059</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eaf81b43-c569-479c-b399-d938f4b95904</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b266ea94-cfd0-4737-8d04-841424210fae</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f8396a5f-4994-4ba9-9316-4e9db23dae88</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4d9174ba-8ba6-4c41-ac03-b4ae60bdefb9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ed583693-8590-467e-8c43-1f2051b4b1c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b492f013-2e3e-4c7c-9f2c-13268854a7f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>94919e44-7b2b-43a7-afd9-f218d66a5952</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5ec80f2e-02e3-4630-843e-5b6d37462d8b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>49f988ea-0806-4370-a0e3-bc83d5bdf5f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3c788290-3fc6-4659-afcb-44e617586aa9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ae20e194-aaf8-4957-af10-538b3000cbb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a27aac0c-d8bd-4964-8b88-04e752ef22a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fc2589e9-7575-4b96-9286-478473e78f07</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>66db4c68-df9a-4b83-a6cf-5c9df682c7ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39345c50-0f25-46fa-a8ea-27a6270e4831</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3f4411cd-d868-4b09-8322-f6fd8034ab13</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>99a88376-8c07-4554-bc3e-f4c9debc67f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7949b2be-571a-428b-b481-ee081195674c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fa4fbcd2-a573-485c-a5e3-2fa4dbcc7cb1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2845e3ef-cae8-4287-b2e6-975eaec4351d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0373a144-dd57-42ad-a8b4-33c3fa98e31d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea2cf277-f159-411a-afad-bbaebf63a086</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a04b894-e7c0-4d92-b6c1-93aed7f6996f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60a4ff29-44a9-470e-8eeb-daf703a965cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f917f39e-d06f-43ab-8a7d-fad7f0f4ac1e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b2db8ce-30e6-45e9-977d-e3c549a05756</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fd2a36e4-4aa3-4766-b408-7e6ff9ae9663</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

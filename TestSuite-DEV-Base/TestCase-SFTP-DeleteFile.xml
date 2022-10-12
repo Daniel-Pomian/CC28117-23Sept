@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="f8f1e92d-236c-46a3-9852-5e025c9ad9cd" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-SFTP-DeleteFile" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Delete remote file on smtp server.
+Input paramter is relative path to file started from environment directory on sftp server.
+Example:
+Rel. path is: 
+ - core/catalina.2019-08-30.log
+will be extended based on value in global variables to full path 
+ - /var/log/drclog0/core/catalina.2019-08-30.log</con:description>
+  <con:settings>
+    <con:setting id="f8f1e92d-236c-46a3-9852-5e025c9ad9cdfileName">TestCase-SFTP-DeleteFile</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-DeleteFiles" id="28413ddc-6fff-46bf-b252-7f3b67a9f6d3">
+    <con:settings/>
+    <con:config>
+      <script><![CDATA[/*
+ * This script delete files on remote maschine via sftp
+ * If input parameter filename contains correct file name, only one file on target directory will be deleted.
+ * If input parameter filename contains defined signs like * (for all files), all files in target directory will be deleted.
+ * Date: 2020-11-12
+ * Autor: Michael Gordon
+*/
+
+@Grab(group='commons-net', module='commons-net', version='2.0')
+@Grab(group='com.jcraft', module='jsch', version='0.1.51')
+
+import org.apache.commons.net.ftp.FTPSClient
+import com.jcraft.jsch.*;
+
+/////////////////////////Configs/////////////////////////////
+String  ftpdomain = context.expand( '${#TestCase#inFTPDomain}' )
+int ftpport = 22
+String  ftpusername = context.expand( '${#TestCase#inUser}' )
+String  ftppassword  = context.expand( '${#Project#drc-sftp-password}' )
+String remotefilelocation= context.expand( '${#TestCase#inTargetPath}' ).replace('\\','/')
+String sFileName = context.expand( '${#TestCase#inFileName}' )
+
+log.info('File name is -: '+sFileName)
+log.info('Target path is -: '+remotefilelocation)
+/////////////////////////////////////////////////////////////
+
+// make sure input parameters are not empty or to short
+boolean bParametersOK=ftpdomain!=null && ftpdomain.length()>1 && ftpusername!=null && ftpusername.length()>1 &&
+			 remotefilelocation!=null && remotefilelocation.length()>1 &&
+			 sFileName!=null && sFileName.length()>=1
+assert bParametersOK
+
+// set relative full file-path on target sftp server and set / in path:
+remotefilelocation=(remotefilelocation+'/'+sFileName).replace('\\','/')
+log.info('Target full path is -: '+remotefilelocation)
+
+    	Session session = null;
+     Channel channel = null;	
+    try {
+    	log.info("Starting sftp upload process")
+	
+        JSch ssh = new JSch();        		
+        session = ssh.getSession(ftpusername, ftpdomain, 22);
+        session.setConfig("StrictHostKeyChecking", "no"); //auto accept secure host
+        session.setPassword(ftppassword);
+        session.connect();
+        log.info("Connected to session")
+        		
+        channel = session.openChannel("sftp");
+        channel.connect();
+        log.info("Connected to channel")        
+        		
+        ChannelSftp sftp = (ChannelSftp) channel; 
+        // delete file               
+        sftp.rm(remotefilelocation);        
+        log.info("File deleted " + remotefilelocation)
+        
+     }  catch (Exception e) {
+			log.error("Exception during uploding of '"    + remotefilelocation +"' - " + e)
+        		 throw e
+        }
+        finally {
+			if (session != null) 
+				try { 
+					session.disconnect()
+					log.info("Disconnected from session") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+					}	
+			if (channel != null) 
+				try { 
+					channel.disconnect()
+					log.info("Disconnected from channel") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+						}
+			log.info("sftp upload process completed")
+		}]]></script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFTPDomain</con:name>
+      <con:value>mucsgdp09</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inUser</con:name>
+      <con:value>drcbuild</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inTargetPath</con:name>
+      <con:value>/var/MFT/drc4/pain001</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inFileName</con:name>
+      <con:value>*</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>7848f125-2739-4dbd-bf93-9b3419d2bd6e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2edd09e1-27aa-4109-aed5-2a181702926a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c6740682-7644-4ffb-a544-0c38a52d3284</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3427049b-562a-4faa-83ec-45343888a194</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

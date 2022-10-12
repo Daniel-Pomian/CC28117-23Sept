@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="740ff570-9be8-4692-aa3f-9284e4b3f8b0" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-UpdateDDParameters" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests service updateDirectDebitParameters with first and second update
+Result validation against data base</con:description>
+  <con:settings>
+    <con:setting id="740ff570-9be8-4692-aa3f-9284e4b3f8b0fileName">GoodCase-DEV-UpdateDDParameters</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="_JDBC_subscripManagement-CleanUp" id="6a65b696-3a46-47fa-8445-363d6a644ddc">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_CLEANUP_PKG.cleanupDirectDebitParameters(:brandID,:tenantID)</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="5ed9ca1f-afc0-4815-8f14-91ca4b5cbec8" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="bcda4fbe-c4aa-4712-96e9-ca9186e2da9f" name="Match content of [UpdateCount]=-1">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties>
+        <con:property>
+          <con:name>brandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>tenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="_JDBC_subscripManagement-CheckCleanUp" id="3ddad920-ecdd-4ebc-8a01-7f8247732f29">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>select NAME, VALUE  from SETTINGS where PARENT_ID =
+      (select ID from SETTINGS where NAME like '${#TestSuite#DB_SelectPrefix}_${#Project#ChargeCustomer-1-BrandID}_${#Project#ChargeCustomer-1-TenantID}' and PARENT_ID = 
+        (select ID from SETTINGS where NAME like '%DIRECTDEBIT_ROOT'
+        )
+      )
+order by NAME</con:query>
+      <con:assertion type="JDBC Status" id="63b7285d-12d2-4f76-8e04-a73a9acc9159" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="f80c4e49-e57a-4e84-ad72-4f61962fa726" name="Check count of [Row]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="010P_subscripManagement_UpdateDDParameter-Insert" id="6d7f43d6-5f3e-4d84-8aef-eb7aec232228">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>cf109e4f-4e8c-4c49-8428-af3fa54c59ff</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>BrandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>monthlyValidationCycle</con:name>
+          <con:value>${#TestSuite#LIMIT-ValidationCycle-Fix-1}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="010P_JDBC_subscripManagement_Validate" id="a6a2280b-fcdd-4489-95f5-1ec722cd48bd">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>select NAME, VALUE  from SETTINGS where PARENT_ID =
+      (select ID from SETTINGS where NAME like '${#TestSuite#DB_SelectPrefix}_${#Project#ChargeCustomer-1-BrandID}_${#Project#ChargeCustomer-1-TenantID}' and PARENT_ID = 
+        (select ID from SETTINGS where NAME like '%DIRECTDEBIT_ROOT'
+        )
+      )
+order by NAME</con:query>
+      <con:assertion type="JDBC Status" id="63b7285d-12d2-4f76-8e04-a73a9acc9159" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="cd62d105-d247-4782-8a6b-b8230a2ffa33" name="Check count of [Row]=13">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>13</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="3a0656bf-161f-4f2f-922e-b40ee123f266" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_AMBIGUOUS_BANK_DATA</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[2]/@rowNumber</con:xpath>
+            <con:element>@rowNumber</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>2</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[2]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_INSUFFICIENT_BALANCE</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[3]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_MANDATE_REVOKED</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[4]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OBJECTION</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[5]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OTHER</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[6]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.FEE_FREED_CLAWBACK_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[6]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#Project#FEE_FREED_CLAWBACK_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[7]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_DAILY_MAX_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[7]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#GENERAL_DAILY_MAX_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[8]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_MONTHLY_MAX_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[8]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#GENERAL_MONTHLY_MAX_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[9]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.LOW_BALANCE_THRESHOLD_TOPUP_LIMIT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[9]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#LOW_BALANCE_THRESHOLD_TOPUP_LIMIT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[10]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_UNLIMITED_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[10]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#MONTHLY_UNLIMITED_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[11]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_VALIDATION_CYCLE</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[12]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.ON_DEMAND_TOPUP_LIMIT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[12]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#ON_DEMAND_TOPUP_LIMIT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[13]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.SUPPORTED_THRESHOLD_LIST</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[11]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>MONTHLY_FIX_START_1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[13]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>400;500;1000;1500;2000</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[5]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=${#Project#CHARGE_BACK_OTHER}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=300;SEPA_REASON_CODES=AC01,AC06,AC13,AG02,AM01,AM05,AM10,ARDT,BE05,BE06,DT01,ED05,FF01,FF05,FOCR,MD03,NOOR,PY01,RC01,RF01,SL01,TM01,MD04,ED03,ED01</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[3]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=350;SEPA_REASON_CODES=MD01,MD02</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[4]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=250;SEPA_REASON_CODES=MD06,MS02</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<Results>
+   <ResultSet fetchSize="10">
+      <Row rowNumber="1">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_AMBIGUOUS_BANK_DATA</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-1},AC06,AC13,AG02,AM01,AM05,AM10,ARDT,BE05,BE06,DT01,ED05,FF01,FF05,FOCR,MD03,NOOR,PY01,RC01,RF01,SL01,TM01,MD04,ED03,${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-2};CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="2">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_INSUFFICIENT_BALANCE</NAME>
+         <VALUE>SEPA_REASON_CODES=,${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-1},AM02,AM03,AM04,AM06,AM07,AM09,BE01,BE04,BE07,LEGL,${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-2},MD07,MS03,NARR,NOAS,RR01,RR02,RR03,RR04;CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="3">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_MANDATE_REVOKED</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-1},${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-2};CURRENCY=EUR;FEE=0</VALUE>
+      </Row>
+      <Row rowNumber="4">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OBJECTION</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_OBJECTION-Code-1},${#Project#CHARGE_BACK_OBJECTION-Code-2};CURRENCY=EUR;FEE=0</VALUE>
+      </Row>
+      <Row rowNumber="5">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OTHER</NAME>
+         <VALUE>SEPA_REASON_CODES=AC04;CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="6">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.FEE_FREED_CLAWBACK_AMOUNT</NAME>
+         <VALUE>400</VALUE>
+      </Row>
+      <Row rowNumber="7">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_DAILY_MAX_AMOUNT</NAME>
+         <VALUE>1500</VALUE>
+      </Row>
+      <Row rowNumber="8">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_MONTHLY_MAX_AMOUNT</NAME>
+         <VALUE>3000</VALUE>
+      </Row>
+      <Row rowNumber="9">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.LOW_BALANCE_THRESHOLD_TOPUP_LIMIT</NAME>
+         <VALUE>2</VALUE>
+      </Row>
+      <Row rowNumber="10">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_UNLIMITED_AMOUNT</NAME>
+         <VALUE>3100</VALUE>
+      </Row>
+      <Row rowNumber="11">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_VALIDATION_CYCLE</NAME>
+         <VALUE>MONTHLY_FLEX_START_30_DAYS</VALUE>
+      </Row>
+      <Row rowNumber="12">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.ON_DEMAND_TOPUP_LIMIT</NAME>
+         <VALUE>3</VALUE>
+      </Row>
+      <Row rowNumber="13">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.SUPPORTED_THRESHOLD_LIST</NAME>
+         <VALUE>5:EUR;10:EUR;15:EUR;20:EUR;25:EUR</VALUE>
+      </Row>
+   </ResultSet>
+</Results>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="020P_subscripManagement_UpdateDDParameter-Update" id="3c7a541b-cd54-419e-844c-4c6fbc19379e">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>cf109e4f-4e8c-4c49-8428-af3fa54c59ff</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>BrandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>monthlyValidationCycle</con:name>
+          <con:value>${#TestSuite#LIMIT-ValidationCycle-Flex-30}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="020P_JDBC_subscripManagement_Validate" id="e213ba28-5769-4974-ade3-de889d524ff5">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>select NAME, VALUE  from SETTINGS where PARENT_ID =
+      (select ID from SETTINGS where NAME like '${#TestSuite#DB_SelectPrefix}_${#Project#ChargeCustomer-1-BrandID}_${#Project#ChargeCustomer-1-TenantID}' and PARENT_ID = 
+        (select ID from SETTINGS where NAME like '%DIRECTDEBIT_ROOT'
+        )
+      )
+order by NAME</con:query>
+      <con:assertion type="JDBC Status" id="63b7285d-12d2-4f76-8e04-a73a9acc9159" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="cd62d105-d247-4782-8a6b-b8230a2ffa33" name="Check count of [Row]=13">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>13</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="3a0656bf-161f-4f2f-922e-b40ee123f266" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_AMBIGUOUS_BANK_DATA</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[2]/@rowNumber</con:xpath>
+            <con:element>@rowNumber</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>2</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[2]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_INSUFFICIENT_BALANCE</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[3]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_MANDATE_REVOKED</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[4]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OBJECTION</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[5]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OTHER</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[6]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.FEE_FREED_CLAWBACK_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[6]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#Project#FEE_FREED_CLAWBACK_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[7]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_DAILY_MAX_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[7]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#GENERAL_DAILY_MAX_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[8]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_MONTHLY_MAX_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[8]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#GENERAL_MONTHLY_MAX_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[9]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.LOW_BALANCE_THRESHOLD_TOPUP_LIMIT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[9]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#LOW_BALANCE_THRESHOLD_TOPUP_LIMIT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[10]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_UNLIMITED_AMOUNT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[10]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#MONTHLY_UNLIMITED_AMOUNT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[11]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_VALIDATION_CYCLE</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[11]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>MONTHLY_FLEX_START_30_DAYS</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[12]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.ON_DEMAND_TOPUP_LIMIT</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[12]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestSuite#ON_DEMAND_TOPUP_LIMIT}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[13]/NAME[1]</con:xpath>
+            <con:element>NAME</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>com.o2.directrecharge.core.settings.DirectDebitParameter.SUPPORTED_THRESHOLD_LIST</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[13]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>400;500;1000;1500;2000</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[5]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=${#Project#CHARGE_BACK_OTHER}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=300;SEPA_REASON_CODES=AC01,AC06,AC13,AG02,AM01,AM05,AM10,ARDT,BE05,BE06,DT01,ED05,FF01,FF05,FOCR,MD03,NOOR,PY01,RC01,RF01,SL01,TM01,MD04,ED03,ED01</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[3]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=350;SEPA_REASON_CODES=MD01,MD02</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[4]/VALUE[1]</con:xpath>
+            <con:element>VALUE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>CURRENCY=EUR;FEE=250;SEPA_REASON_CODES=MD06,MS02</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<Results>
+   <ResultSet fetchSize="10">
+      <Row rowNumber="1">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_AMBIGUOUS_BANK_DATA</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-1},AC06,AC13,AG02,AM01,AM05,AM10,ARDT,BE05,BE06,DT01,ED05,FF01,FF05,FOCR,MD03,NOOR,PY01,RC01,RF01,SL01,TM01,MD04,ED03,${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-2};CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="2">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_INSUFFICIENT_BALANCE</NAME>
+         <VALUE>SEPA_REASON_CODES=,${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-1},AM02,AM03,AM04,AM06,AM07,AM09,BE01,BE04,BE07,LEGL,${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-2},MD07,MS03,NARR,NOAS,RR01,RR02,RR03,RR04;CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="3">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_MANDATE_REVOKED</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-1},${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-2};CURRENCY=EUR;FEE=0</VALUE>
+      </Row>
+      <Row rowNumber="4">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OBJECTION</NAME>
+         <VALUE>SEPA_REASON_CODES=${#Project#CHARGE_BACK_OBJECTION-Code-1},${#Project#CHARGE_BACK_OBJECTION-Code-2};CURRENCY=EUR;FEE=0</VALUE>
+      </Row>
+      <Row rowNumber="5">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.CHARGE_BACK_OTHER</NAME>
+         <VALUE>SEPA_REASON_CODES=AC04;CURRENCY=EUR;FEE=400</VALUE>
+      </Row>
+      <Row rowNumber="6">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.FEE_FREED_CLAWBACK_AMOUNT</NAME>
+         <VALUE>400</VALUE>
+      </Row>
+      <Row rowNumber="7">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_DAILY_MAX_AMOUNT</NAME>
+         <VALUE>1500</VALUE>
+      </Row>
+      <Row rowNumber="8">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.GENERAL_MONTHLY_MAX_AMOUNT</NAME>
+         <VALUE>3000</VALUE>
+      </Row>
+      <Row rowNumber="9">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.LOW_BALANCE_THRESHOLD_TOPUP_LIMIT</NAME>
+         <VALUE>2</VALUE>
+      </Row>
+      <Row rowNumber="10">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_UNLIMITED_AMOUNT</NAME>
+         <VALUE>3100</VALUE>
+      </Row>
+      <Row rowNumber="11">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.MONTHLY_VALIDATION_CYCLE</NAME>
+         <VALUE>MONTHLY_FLEX_START_30_DAYS</VALUE>
+      </Row>
+      <Row rowNumber="12">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.ON_DEMAND_TOPUP_LIMIT</NAME>
+         <VALUE>3</VALUE>
+      </Row>
+      <Row rowNumber="13">
+         <NAME>com.o2.directrecharge.core.settings.DirectDebitParameter.SUPPORTED_THRESHOLD_LIST</NAME>
+         <VALUE>5:EUR;10:EUR;15:EUR;20:EUR;25:EUR</VALUE>
+      </Row>
+   </ResultSet>
+</Results>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>6a65b696-3a46-47fa-8445-363d6a644ddc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a6a2280b-fcdd-4489-95f5-1ec722cd48bd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3ddad920-ecdd-4ebc-8a01-7f8247732f29</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6d7f43d6-5f3e-4d84-8aef-eb7aec232228</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3c7a541b-cd54-419e-844c-4c6fbc19379e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e213ba28-5769-4974-ade3-de889d524ff5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

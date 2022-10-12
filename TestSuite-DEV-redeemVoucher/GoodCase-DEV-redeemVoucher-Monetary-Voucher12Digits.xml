@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase failOnError="false" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GoodCase-DEV-redeemVoucher-Monetary-Voucher12Digits" searchProperties="true" id="c30eb947-43a6-49e1-b70c-01cc6800ba55" discardOkResults="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tets the same test case like with package voucher, but vouchers have length 12 digits instead of 16</con:description>
+  <con:settings>
+    <con:setting id="4f5bcf4f-f3e9-43d8-9ab1-724dfc2ac8aefileName">GoodCase-DEV-redeemVoucher-Monetary</con:setting>
+    <con:setting id="c30eb947-43a6-49e1-b70c-01cc6800ba55fileName">GoodCase-DEV-redeemVoucher-Monetary-Voucher12Digits</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_cleanup" id="2f23c210-b450-4ee4-affa-f97d52557498">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Voucher</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="025P_redeemVoucher_Monetary" id="a84c17c4-fe43-48c4-890b-9d823218fd60">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="025P_redeemVoucher_Monetary" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#Project#MSISDN-Piranha-OK}</msisdn>
+         <voucherCode>${#TestSuite#voucher-Money-OK-Voucher12Digits}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1c0367f3-2a65-43fc-974a-65e559731c57"/>
+        <con:assertion type="Schema Compliance" id="8c854cff-f1f0-4d59-8566-b53c1c678fe3">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c5e1e49d-7245-4e77-8b7b-49dc0e146fb4"/>
+        <con:assertion type="MessageContentAssertion" id="7f7b8367-298a-453e-bf7d-29b6be11996e" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/voucherType[1]</con:xpath>
+              <con:element>voucherType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>MONETARY</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/monetaryAmount[1]</con:xpath>
+              <con:element>monetaryAmount</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]</con:xpath>
+              <con:element>ns2:RedeemVoucherResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>true</success>
+            <resultCode>0</resultCode>
+         </result>
+         <voucherType>MONETARY</voucherType>
+         <monetaryAmount>0</monetaryAmount>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>intf_mce</con:username>
+          <con:password>pwdmcedrc</con:password>
+          <con:selectedAuthProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Service</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:${#TestSuite#Partner-MCE-All}" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-Data" id="998ccb8b-b9f9-43ba-b944-998a53f44aaf">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>msisdn</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>025P_redeemVoucher_Monetary</con:sourceStep>
+        <con:sourcePath>declare namespace soap='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//soap:RedeemVoucher[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>voucherCode</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>025P_redeemVoucher_Monetary</con:sourceStep>
+        <con:sourcePath>declare namespace soap='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//soap:RedeemVoucher[1]/voucherCode[1]</con:sourcePath>
+        <con:targetType>Voucher</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="34117c90-3506-4782-adf9-fd6c8e215506" name="125P_GUI_SearchTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="125P_GUI_SearchTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:searchTransactions>
+         <search>
+            <first>0</first>
+            <count>1</count>
+            <searchParam>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <receptionDate>
+                  <fromDate>${#Project#Date_Current}</fromDate>
+               </receptionDate>
+               <paymentTypes>${#TestSuite#PaymentType-Voucher}</paymentTypes>
+            </searchParam>
+         </search>
+      </v1:searchTransactions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d5f221d0-3996-4ced-88f6-352eb640c366"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="378de4de-2be5-4a86-81d0-5663c96bf988">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="a3262f42-9b30-4ec6-a9db-a33d328985b0"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="478ba83d-7362-4821-884d-37099a53b33d">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Voucheraufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>70</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:searchTransactionsResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <searchResponse>
+            <viewTimeStamp>2017-02-17T12:28:06.589+01:00</viewTimeStamp>
+            <searchResponse>
+               <msisdn>4915990674489</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <correlationId>380001935</correlationId>
+               <id>12900072</id>
+               <amount>4100</amount>
+               <receptionDate>2017-02-17T11:42:41+01:00</receptionDate>
+               <committedDate>2017-02-17T11:42:41+01:00</committedDate>
+               <paymentDate>2017-02-17T11:42:41+01:00</paymentDate>
+               <paymentType>70</paymentType>
+               <paymentTypeDescription>Voucheraufladung</paymentTypeDescription>
+               <status>30</status>
+               <statusDescription>ausgeführt</statusDescription>
+               <serviceProviderCode>LO</serviceProviderCode>
+            </searchResponse>
+         </searchResponse>
+      </ns2:searchTransactionsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="125P_redeemVoucher_Monetary_again_resultCode=1" id="83e42c51-de52-47e6-b20e-324ac7c17bf0">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="125P_redeemVoucher_Monetary_again_resultCode=1" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#TestCase#MSISDN}</msisdn>
+         <voucherCode>${#TestCase#Voucher}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="dbd8816b-018d-48c9-9cde-c866ae958143"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="a99be093-4e9e-494b-8153-05a05fa53f3b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="d579e998-eaa6-4c96-ba06-0fda0eca0e91"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="9e057d98-4839-4c78-9872-f7954314f3ff">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/voucherType[1]</con:xpath>
+              <con:element>voucherType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>MONETARY</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/monetaryAmount[1]</con:xpath>
+              <con:element>monetaryAmount</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>true</success>
+            <resultCode>0</resultCode>
+         </result>
+         <voucherType>MONETARY</voucherType>
+         <monetaryAmount>0</monetaryAmount>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>intf_mce</con:username>
+          <con:password>pwdmcedrc</con:password>
+          <con:selectedAuthProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Service</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:${#TestSuite#Partner-MCE-All}" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="_JDBC_cleanup topups" id="c1e8d571-d437-42af-9b40-0852382d481f" disabled="true">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName xsi:nil="true"/>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connectionString}</con:connectionString>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_CLEANUP_PKG.cleanupTopupByMsisdn(:msisdn)</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" name="JDBC Status" id="d15f599e-1a79-461b-bf81-018cd75fdaec"/>
+      <con:assertion type="XPath Match" id="4621ee3f-a79f-48c3-9daa-e603b6a9a837" name="Match content of [UpdateCount]=-1">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties>
+        <con:property>
+          <con:name>msisdn</con:name>
+          <con:value>${#TestCase#MSISDN}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>4915985522812</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Voucher</con:name>
+      <con:value>900000081229</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>59a51310-ac8e-4abe-bb10-89661c3606dd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fe598595-253e-4db3-a0cc-39aeb4a0317c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ee24ba78-3506-45c0-b0f1-88ad5ccbed5f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6bf69c78-1862-40a7-85b1-37bbe7962ba8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34117c90-3506-4782-adf9-fd6c8e215506</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

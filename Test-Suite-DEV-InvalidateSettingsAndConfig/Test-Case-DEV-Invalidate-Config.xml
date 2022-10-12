@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="8e134929-452d-4015-86a8-0482cdc1e06c" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="Test Case-DEV-Invalidate-Config" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>https://www.sg.de.o2.com/jira/browse/DRC-3649
+
+As QA I want to implement tests only for manual execution before release like tests for logging or wss-security to coverage GUI-Service:
+
+invalidateAll for
+
+    group: CONFIGURATION
+   
+Note! Because settings on DEV must be tested for releases, implemented test-case must be disabled for regression tests. Implemented test-case must be executed each time one new release candidate together with tests for logging or ws-security.
+
+Followed settings group must be changed:
+
+    Change values for followed CONFIGURATION group based on test-case: TestSuite-DEV-BrandAccessRights–> BadCase-DEV-DirectDebit-Rights
+        (Oleg must delivery sql-query for change and restore configuration!)
+
+        DirectDebit.
+
+For change configuration settings followed test-steps must be implemented:
+
+    Save current configuration before test-case execution.
+    Exec test-case: TestSuite-DEV-BrandAccessRights–> BadCase-DEV-DirectDebit-Rights --> Expected: test-case is passed.
+    Exec query-script from delivered from Oleg for configuration change against core-db.
+    Exec test-case: TestSuite-DEV-BrandAccessRights–> BadCase-DEV-DirectDebit-Rights --> Expected: test-case is passed.
+    Exec Gui-Service: invalidateAll with group: CONFIGURATION
+    Exec test-case: TestSuite-DEV-BrandAccessRights–> BadCase-DEV-DirectDebit-Rights --> Expected: test-case is failed.
+    Exec query-script from Oleg against DB for restore.
+    Exec Gui-Service: invalidateAll with group: CONFIGURATION again.
+    Exec test-case: TestSuite-DEV-BrandAccessRights–> BadCase-DEV-DirectDebit-Rights --> Expected: test-case is passed.
+
+Acceptance criteria:
+
+    Present current values from configuration before test-execution in review meeting.
+    Exec implemented tests step by step and view changes.
+    Exec invalidation and view changed configuration.
+    Set all configuration values back and view restored values.</con:description>
+  <con:settings>
+    <con:setting id="8e134929-452d-4015-86a8-0482cdc1e06cfileName">Test-Case-DEV-Invalidate-Config</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" id="8c6dbb71-a93e-4a87-aa73-0d037d6559a3" name="_getSettings">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettings</con:operation>
+      <con:request name="_getSettings" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c445b7a5-d643-49bc-91b1-167b18113c13">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettings/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="60fe291c-34be-452d-afc8-31257dd5d617" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8ef57426-6fd6-4ff9-abbb-c2d59951f5c7" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="09c16a68-d0d6-41c0-a964-037f3ad25a05" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="bf81e6b3-2b70-4810-a9da-3a9461fbfc65" name="Check count of [settingsEntry]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/';
+count( //ns2:getSettingsResponse/settingsList/settingsEntry)>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getSettings"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-setWritable" id="eca3f11d-fe1b-49dc-a888-25456e693704">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>--make table writable before test execution
+alter table CHANNELS READ WRITE</con:query>
+      <con:assertion type="JDBC Status" id="f8d5d297-31c5-44d5-81b6-dd26b1eacce0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c3139479-e2ee-4c33-a8c0-cd6117c465da" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-Change" id="5516982c-3d2e-4feb-bd4a-1cf8123f7b2b">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>--deactivate directdebit channel
+update CHANNELS set ACTIVE = '0' where NAME = 'directdebit'</con:query>
+      <con:assertion type="JDBC Status" id="f8d5d297-31c5-44d5-81b6-dd26b1eacce0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c3139479-e2ee-4c33-a8c0-cd6117c465da" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DD-registerForDD" id="1a653106-d1bc-452e-a320-fbd5bc8d57b2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>registerForDirectDebit</con:operation>
+      <con:request name="DD-registerForDD" id="66d9d8f9-7ba5-4176-8f66-e91fce9dac03" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:registerForDirectDebit>
+         
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn><externalContractId>${#Project#Random10}${#Project#Random5}</externalContractId>
+         <multibrandId>
+            <brandId>${#Project#ChargeCustomer-1-BrandID}</brandId>
+            <tenantId>${#Project#ChargeCustomer-1-TenantID}</tenantId>
+         </multibrandId>
+         <bankData>
+            <iban>${#Project#Customer-IBAN}</iban>
+            <!--Optional:-->
+            <bic>${#Project#Customer-BIC}</bic>
+            <bankAccountOwner>bankAccountOwner</bankAccountOwner>
+            <mandateId>${#Project#Customer-MandantID}</mandateId>
+            <mandateCreationDate>${#Project#DateTime_Current}</mandateCreationDate>
+            <mandateStatus>ACTIVE</mandateStatus>
+            <!--Optional:-->
+            <ultimateDebtor>ultimateDebtor</ultimateDebtor>
+         </bankData>
+         <directDebitState>ACTIVE</directDebitState>
+      </cus:registerForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d2e40bcb-b76a-4758-bba3-ee05f2b4b8da"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ab912914-c9d1-4496-9feb-3c793ba23f99">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="7e2ddbd0-6aff-4392-99f1-9371d8b2acb3" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="d8169b6e-5765-419b-9671-9273e19e0729" name="Match content of [isNewRegistration]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:registerForDirectDebitResponse[1]/isNewRegistration[1]/text()</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="67d6d540-6327-46bb-be1d-4f9922ff6364" name="Match content of [recordId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:registerForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DD_deregisterForDD" id="f283aa02-33da-425a-a9dc-359ba74e06f3">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>deregisterForDirectDebit</con:operation>
+      <con:request name="DD_deregisterForDD" id="ab9fb4d0-03bf-4862-a093-44c0056f9228" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:deregisterForDirectDebit>
+         <!--type: string-->
+         <externalContractId>${DD-registerForDD#RawRequest#declare namespace cus='http://directrecharge.o2.com/ws/evolutionservice/customercharging/'; //cus:registerForDirectDebit[1]/externalContractId[1]}</externalContractId>
+      </cus:deregisterForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2a39e8d9-86ac-42ab-91f3-2e5fe5cb5310"/>
+        <con:assertion type="Schema Compliance" id="6c8f0a33-dd4a-48ce-b396-c88d6fc58732">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="3dbbe5bc-1452-42e5-915d-afedd59836ed"/>
+        <con:assertion type="XPath Match" id="dbc738ef-cdf6-4296-a2a2-3735bff4ffd2" name="Match content of [recordId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:deregisterForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="7cdb289f-a445-4147-a9ee-258bd0391a1b" name="GUI-invalidateAll-Config">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>invalidateAll</con:operation>
+      <con:request name="GUI-invalidateAll-Config" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6ae7f11c-5bc3-46fa-8fec-0c11c6e25752">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/invalidation/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:invalidateAll>
+         <!--type: invalidationGroupEnum - enumeration: [SETTINGS,CONFIGURATION]-->
+         <group>CONFIGURATION</group>
+      </v1:invalidateAll>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="504018b7-b63c-4f35-a950-2a2997e64f4e" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Schema Compliance" id="a9eb1080-abdd-4ca9-a926-f6a8cb7e4ffe" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ba9a911a-5417-4a4f-9a7f-51322bb165bf" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cd8d2e8d-78d8-40b2-a3c6-e15b20d74e64" name="Check for existence of [ns3:invalidateAllResponse]">
+          <con:configuration>
+            <path>declare namespace ns3='http://directrecharge.o2.com/ws/common/invalidation/v1/';
+exists( //ns3:invalidateAllResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/invalidateAll"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DD-registerForDD-notAllowed" id="4aaff960-c501-4e23-93e0-0567af4b0a04">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>registerForDirectDebit</con:operation>
+      <con:request name="DD-registerForDD-notAllowed" id="66d9d8f9-7ba5-4176-8f66-e91fce9dac03" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:registerForDirectDebit>
+         
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn><externalContractId>${#Project#Random10}${#Project#Random5}</externalContractId>
+         <multibrandId>
+            <brandId>${#Project#ChargeCustomer-1-BrandID}</brandId>
+            <tenantId>${#Project#ChargeCustomer-1-TenantID}</tenantId>
+         </multibrandId>
+         <bankData>
+            <iban>${#Project#Customer-IBAN}</iban>
+            <!--Optional:-->
+            <bic>${#Project#Customer-BIC}</bic>
+            <bankAccountOwner>bankAccountOwner</bankAccountOwner>
+            <mandateId>${#Project#Customer-MandantID}</mandateId>
+            <mandateCreationDate>${#Project#DateTime_Current}</mandateCreationDate>
+            <mandateStatus>ACTIVE</mandateStatus>
+            <!--Optional:-->
+            <ultimateDebtor>ultimateDebtor</ultimateDebtor>
+         </bankData>
+         <directDebitState>ACTIVE</directDebitState>
+      </cus:registerForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d2e40bcb-b76a-4758-bba3-ee05f2b4b8da"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ab912914-c9d1-4496-9feb-3c793ba23f99">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="5e92c227-2b02-468f-996a-5ef7299bedea" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="0671129a-5d0d-47f1-8f15-133ab3780e99" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BrandId: 1 not accepted for channel: directdebit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns1:drcFault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns1:drcFault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns1:drcFault[1]/originatorMessage[1]</con:xpath>
+              <con:element>originatorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Service provider not accepted for channel</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns1:drcFault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1050</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//detail[1]/ns1:drcFault[1]/message[1]</con:xpath>
+              <con:element>message</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Service provider not accepted for channel</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>BrandId: 1 not accepted for channel: directdebit</faultstring>
+         <detail>
+            <ns2:drcFault xmlns:ns2="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+               <retryPossible>false</retryPossible>
+               <originator>DRC</originator>
+               <originatorMessage>Service provider not accepted for channel</originatorMessage>
+               <errorCode>1050</errorCode>
+               <message>Service provider not accepted for channel</message>
+            </ns2:drcFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2f7db9e1-9362-45ec-8d26-fa1bb594e1aa" name="_setSettings" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>setSettings</con:operation>
+      <con:request name="_setSettings" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7907c612-9260-436d-8d66-23a2235dba96">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+          <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@disable-multipart-attachments">true</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      ${_getSettings#Response#declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/'; //ns2:getSettingsResponse[1]/settingsList[1]}
+   <v1:setSettings><settingsList/></v1:setSettings></soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="35a5e5d2-1955-42ce-9f6d-8fab8d2b9390" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="5f259ee2-9c73-48ef-beee-fef326c19e66" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="cfeb91c0-d363-4363-8600-661008082f11" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="33aba8b4-bb21-4d97-960e-50f89a3b6558" name="Check count of [ns2:setSettingsResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/';
+count( //ns2:setSettingsResponse)</path>
+            <content>1</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/setSettings"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-Restore" id="34fde151-7a16-4273-841e-6b0d9f96f7a2">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>--activate directdebit channel
+update CHANNELS set ACTIVE = '1' where NAME = 'directdebit'</con:query>
+      <con:assertion type="JDBC Status" id="f8d5d297-31c5-44d5-81b6-dd26b1eacce0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c3139479-e2ee-4c33-a8c0-cd6117c465da" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-Change-setReadOnly" id="de1f92e0-15aa-408e-a336-bc4639032fc2">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>--make table read only again
+alter table CHANNELS READ ONLY</con:query>
+      <con:assertion type="JDBC Status" id="f8d5d297-31c5-44d5-81b6-dd26b1eacce0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="fce05131-82f3-4c90-841b-0f03525a7dbc" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+          <ignoreComments>false</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ba20329d-8942-4e00-820e-5c4b975a3ed4" name="GUI-invalidateAll-Config-again">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>invalidateAll</con:operation>
+      <con:request name="GUI-invalidateAll-Config-again" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6ae7f11c-5bc3-46fa-8fec-0c11c6e25752">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/invalidation/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:invalidateAll>
+         <!--type: invalidationGroupEnum - enumeration: [SETTINGS,CONFIGURATION]-->
+         <group>CONFIGURATION</group>
+      </v1:invalidateAll>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="504018b7-b63c-4f35-a950-2a2997e64f4e" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Schema Compliance" id="a9eb1080-abdd-4ca9-a926-f6a8cb7e4ffe" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ba9a911a-5417-4a4f-9a7f-51322bb165bf" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cd8d2e8d-78d8-40b2-a3c6-e15b20d74e64" name="Check for existence of [ns3:invalidateAllResponse]">
+          <con:configuration>
+            <path>declare namespace ns3='http://directrecharge.o2.com/ws/common/invalidation/v1/';
+exists( //ns3:invalidateAllResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/invalidateAll"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DD-registerForDD-again" id="be71dd38-0813-43c1-a9b0-72f8a58cf845">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>registerForDirectDebit</con:operation>
+      <con:request name="DD-registerForDD-again" id="66d9d8f9-7ba5-4176-8f66-e91fce9dac03" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:registerForDirectDebit>
+         
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn><externalContractId>${#Project#Random10}${#Project#Random5}</externalContractId>
+         <multibrandId>
+            <brandId>${#Project#ChargeCustomer-1-BrandID}</brandId>
+            <tenantId>${#Project#ChargeCustomer-1-TenantID}</tenantId>
+         </multibrandId>
+         <bankData>
+            <iban>${#Project#Customer-IBAN}</iban>
+            <!--Optional:-->
+            <bic>${#Project#Customer-BIC}</bic>
+            <bankAccountOwner>bankAccountOwner</bankAccountOwner>
+            <mandateId>${#Project#Customer-MandantID}</mandateId>
+            <mandateCreationDate>${#Project#DateTime_Current}</mandateCreationDate>
+            <mandateStatus>ACTIVE</mandateStatus>
+            <!--Optional:-->
+            <ultimateDebtor>ultimateDebtor</ultimateDebtor>
+         </bankData>
+         <directDebitState>ACTIVE</directDebitState>
+      </cus:registerForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d2e40bcb-b76a-4758-bba3-ee05f2b4b8da"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ab912914-c9d1-4496-9feb-3c793ba23f99">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="7e2ddbd0-6aff-4392-99f1-9371d8b2acb3" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="d8169b6e-5765-419b-9671-9273e19e0729" name="Match content of [isNewRegistration]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:registerForDirectDebitResponse[1]/isNewRegistration[1]/text()</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="67d6d540-6327-46bb-be1d-4f9922ff6364" name="Match content of [recordId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:registerForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DD_deregisterForDD-again" id="9dda78e5-011a-4e18-9760-4ebc50f53b41">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>deregisterForDirectDebit</con:operation>
+      <con:request name="DD_deregisterForDD-again" id="ab9fb4d0-03bf-4862-a093-44c0056f9228" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:deregisterForDirectDebit>
+         <!--type: string-->
+         <externalContractId>${DD-registerForDD-again#RawRequest#declare namespace cus='http://directrecharge.o2.com/ws/evolutionservice/customercharging/'; //cus:registerForDirectDebit[1]/externalContractId[1]}</externalContractId>
+      </cus:deregisterForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2a39e8d9-86ac-42ab-91f3-2e5fe5cb5310"/>
+        <con:assertion type="Schema Compliance" id="6c8f0a33-dd4a-48ce-b396-c88d6fc58732">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="3dbbe5bc-1452-42e5-915d-afedd59836ed"/>
+        <con:assertion type="XPath Match" id="dbc738ef-cdf6-4296-a2a2-3735bff4ffd2" name="Match content of [recordId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:deregisterForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>b0c20bc2-766b-4d46-b43f-d1c348c3acec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0fc1a9aa-14c9-4958-8e36-7a70cac97414</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1f276e0b-52d3-49ce-b8ab-a0a01add409d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca07aa39-0c27-4f2d-af0a-8cc8959597e7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>74b7f54b-837d-4d2e-8961-5e0bb503d441</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7781c7c-3af1-42e4-8381-9be4bdd16d12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>33db89d2-4276-440a-af41-7aa633a6a89e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5901e304-7006-46e1-9bdf-0a8457818d4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>31ca7852-ed43-4804-ac0c-a41943bbb049</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7cdb289f-a445-4147-a9ee-258bd0391a1b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5516982c-3d2e-4feb-bd4a-1cf8123f7b2b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34fde151-7a16-4273-841e-6b0d9f96f7a2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>de1f92e0-15aa-408e-a336-bc4639032fc2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f283aa02-33da-425a-a9dc-359ba74e06f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1a653106-d1bc-452e-a320-fbd5bc8d57b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4aaff960-c501-4e23-93e0-0567af4b0a04</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8c6dbb71-a93e-4a87-aa73-0d037d6559a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eca3f11d-fe1b-49dc-a888-25456e693704</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f7db9e1-9362-45ec-8d26-fa1bb594e1aa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ba20329d-8942-4e00-820e-5c4b975a3ed4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be71dd38-0813-43c1-a9b0-72f8a58cf845</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9dda78e5-011a-4e18-9760-4ebc50f53b41</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

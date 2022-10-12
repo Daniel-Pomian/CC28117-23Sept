@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="subscribePackage" id="3820f477-142b-49bf-87a3-a41c479eac9d" interface="PackageManagement-SOAPBinding" operation="subscribePackage" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="3820f477-142b-49bf-87a3-a41c479eac9dfileName">subscribePackage</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Date: 17.10.2016
+ * Autor: Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using OCS 10 mock service.packageManagement
+
+Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+Mock service despatch default response with values from request and default values from mock service like current response below.
+Default balance configured by mock is - ${#MockService#DEFAULT-balance}
+
+To order custom soap fault response with expected values, MSISDN in request must be in format:
+
+- MSISDN prefix must be:
+	- ${#Project#MOCK-Prefix-OCS10-subscribePackage-CustomException}
+
+- Position 6:
+	1 - for service exception with  errorType=PERMANENT
+	2 - for service exception with  errorType=TRANSIENT
+	3 - for policy exception	with  errorType=PERMANENT
+	x - for service exception default response
+	
+- Positions 7-14 = last 8 signs from expected error code in response
+	Ex. MSISDN = 49113198800012 returns <ns3:errorCode>98800012</ns3:errorCode>
+
+Example soap fault response for MSISDN above: 
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns3:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns3:errorCode>98800012</ns3:errorCode>
+               <ns3:errorType>Permanent</ns3:errorType>
+               <ns3:text>${#MockService#DEFAULT-Exception_ErrorText}</ns3:text>
+               <ns3:variables>variable-1</ns3:variables>
+            </ns3:serviceException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>
+
+ End of documentation  
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+ // read default values from project properties
+ def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-OCS10-subscribePackage-CustomException}' )
+ def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+ 
+ // from virt properties
+ def iDEFAULTBalance = context.expand( '${#MockService#DEFAULT-balance}' ).toInteger() 
+ def sErrorCode_Default=context.expand( '${#MockService#DEFAULT-Exception_ErrorCode}' )
+ def sErrorType_Default = context.expand( '${#MockService#DEFAULT-Exception_ErrorType}' )
+ def sAmount_Default=context.expand( '${#MockService#DEFAULT-Amount}')
+ 
+ // set virt properties for soap fault responses
+ context.mockService.setPropertyValue('Exception-ErrorCode',sErrorCode_Default)
+ context.mockService.setPropertyValue('Exception-ErrorType',sErrorType_Default)
+
+ // read values from incommning request
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent )   
+ def sAppID=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:appInfo[1]/ns1:applicationId[1]")
+ def sReference=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:appInfo[1]/ns1:reference[1]") 
+ def sMSISDN = holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:subscriberId[1]/ns1:e164Number[1]")
+ def sAmount=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:packageInfo[1]/ns1:amount[1]")
+ def sPackageId=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:packageInfo[1]/ns1:packageId[1]")
+ def iFee=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:packageInfo[1]/ns1:subscriptionFee[1]").toInteger()
+ def sStartDate=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:packageInfo[1]/ns1:startDate[1]")
+ def sEndDate=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:subscribePackageRequest[1]/ns1:packageInfo[1]/ns1:endDate[1]")
+ 
+ log.info('OCS10-PackageManagement.subscribePackage: Return response for request with msisdn ' + sMSISDN)
+ 
+ // check msissdn
+ if(sMSISDN==null || sMSISDN.length()<1 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	return 'Response-soapFault-ServiceException'
+ }
+
+ // if msisd=constant msisdn unknown, return permanent errorcode=1000000001, it is default code
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	// set virt properties for soap fault responses
+ 	context.mockService.setPropertyValue('Exception-ErrorCode','1') 	
+ 	return 'Response-soapFault-ServiceException'
+ }
+ 
+ // set request values to virt properties
+ context.mockService.setPropertyValue('subscribe-appId',sAppID)
+ context.mockService.setPropertyValue('subscribe-reference',sReference)
+ context.mockService.setPropertyValue('subscribe-msisdn',sMSISDN)
+ context.mockService.setPropertyValue('subscribe-fee',iFee.toString())
+ context.mockService.setPropertyValue('subscribe-packageId',sPackageId)  
+
+ // if startdate is empty, set startdate to current date and time.
+ if(sStartDate==null || sStartDate.length()<25)
+ 	sStartDate=new Date().format( "yyyy-MM-dd'T'HH:mm:ssXXX" ).toString()
+ 
+ context.mockService.setPropertyValue('subscribe-startDate',sStartDate) 
+  
+ // if enddate is empty, set enddate=startdate + 30 days
+ if (sEndDate==null || sEndDate.length()<25 ){
+ 	dEndDate=new Date().parse("yyyy-MM-dd'T'HH:mm:ssXXX", sStartDate)+30
+ 	context.mockService.setPropertyValue('subscribe-endDate',dEndDate.format( "yyyy-MM-dd'T'HH:mm:ssXXX" ).toString()) 	 	
+ }else
+ 	context.mockService.setPropertyValue('subscribe-endDate',sEndDate) 
+ 		 	
+  // if amount is empty, set to default amount
+  if(sAmount==null || sAmount.length()<1)
+  	context.mockService.setPropertyValue('subscribe-amount',sAmount_Default)
+  else
+  	context.mockService.setPropertyValue('subscribe-amount',sAmount)
+ 
+ // set balance to default balance - fee
+ context.mockService.setPropertyValue('subscribe-balance',(iDEFAULTBalance-iFee).toString())
+ 
+ // if balance < 0, return error code=4000009
+ if(iDEFAULTBalance-iFee<0){
+ 	context.mockService.setPropertyValue('Exception-ErrorCode','4000009')
+ 	return 'Response-soapFault-ServiceException'
+ } 
+
+ // make sure, soap fault response is not ordered 
+ if (sMSISDN.length()<14 || sMSISDN[0..4]!=sMSISDNPrefixException){
+	 return 'Response-Default'
+ }
+  
+ // create ordered soap fault exception
+ // set error code, if response is soap fault
+ context.mockService.setPropertyValue('Exception-ErrorCode',sMSISDN.substring(6).toInteger().toString())
+ switch ( sMSISDN[5] ) {
+    case '1':		// service exception, permanent    		
+         	return 'Response-soapFault-ServiceException' 
+    case '2':		// service exception, transient   
+    		context.mockService.setPropertyValue('Exception-ErrorType','TRANSIENT')        	
+          return 'Response-soapFault-ServiceException' 
+    case '3':		// policy exception, transient        	
+        	return 'Response-soapFault-PolicyException'   
+    default:
+    		context.mockService.setPropertyValue('Exception-ErrorCode',sErrorCode_Default)
+        	return 'Response-soapFault-ServiceException' 
+}]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="2cbaddfe-6a85-42b1-b145-da2ecf8f816d" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+   <S:Header>
+      <add:MessageID xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing">urn:uuid:7c15955c-7413-4ab2-8dc9-67d6aa504aae</add:MessageID>
+   </S:Header>
+   <S:Body>
+      <ns2:subscribePackageResponse xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+         <ns2:appInfo>
+            <ns2:applicationId>${#MockService#subscribe-appId}</ns2:applicationId>
+            <ns2:reference>${#MockService#subscribe-reference}</ns2:reference>
+         </ns2:appInfo>
+         <ns2:result>
+            <ns2:opReference>${#Project#GUID_Moved-}</ns2:opReference>
+            <ns2:opExecutionDate>${#Project#DateTime_Current_Offset}</ns2:opExecutionDate>
+            <ns2:opCost currencyCode="${#MockService#DEFAULT-currencyCode}" exponent="${#MockService#DEFAULT-exponent}">${#MockService#subscribe-fee}</ns2:opCost>
+            <ns2:subscriberId>
+               <ns2:e164Number>${#MockService#subscribe-msisdn}</ns2:e164Number>
+            </ns2:subscriberId>
+            <ns2:serviceProviderId>${#MockService#DEFAULT-serviceProviderId}</ns2:serviceProviderId>
+            <ns2:balance currencyCode="${#MockService#DEFAULT-currencyCode}" exponent="${#MockService#DEFAULT-exponent}">${#MockService#subscribe-balance}</ns2:balance>
+            <ns2:lifeCycleStatus>
+               <ns2:state>A</ns2:state>
+               <ns2:subState>R</ns2:subState>
+            </ns2:lifeCycleStatus>
+            <ns2:tariffPlanId>${#MockService#DEFAULT-tariffPlanId}</ns2:tariffPlanId>
+         </ns2:result>
+         <ns2:packageId>${#MockService#subscribe-packageId}</ns2:packageId>
+         <ns2:amount exponent="0">${#MockService#subscribe-amount}</ns2:amount>
+         <ns2:startDate>${#MockService#subscribe-startDate}</ns2:startDate>
+         <ns2:endDate>${#MockService#subscribe-endDate}</ns2:endDate>
+         <ns2:cyclicPackageFlag>false</ns2:cyclicPackageFlag>
+      </ns2:subscribePackageResponse>
+   </S:Body>
+</S:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="subscribePackage"/>
+  </con:response>
+  <con:response name="Response-soapFault-ServiceException" id="df808efc-9bf3-4e69-a7bc-88e69844b115" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+   <S:Header>
+      <add:MessageID xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing">urn:uuid:${#Project#GUID}</add:MessageID>
+   </S:Header>
+   <S:Body>
+      <ns2:Fault xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope">
+         <faultcode>ns2:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns2:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns2:errorCode>${#MockService#Exception-ErrorCode}</ns2:errorCode>
+               <ns2:errorType>${#MockService#Exception-ErrorType}</ns2:errorType>
+               <ns2:text>${#MockService#DEFAULT-Exception_ErrorText}</ns2:text>
+               <ns2:variables>variable-1</ns2:variables>
+            </ns2:serviceException>
+         </detail>
+      </ns2:Fault>
+   </S:Body>
+</S:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="subscribePackage"/>
+  </con:response>
+  <con:response name="Response-soapFault-PolicyException" id="74b3752a-c90f-44c3-8f33-27f1a1c67b7a" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+   <S:Header>
+      <add:MessageID xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing">urn:uuid:${#Project#GUID}</add:MessageID>
+   </S:Header>
+   <S:Body>
+      <ns2:Fault xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope">
+         <faultcode>ns2:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns2:policyException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns2:errorCode>${#MockService#Exception-ErrorCode}</ns2:errorCode>
+               <ns2:errorType>${#MockService#Exception-ErrorType}</ns2:errorType>
+               <ns2:text>${#MockService#DEFAULT-Exception_ErrorText}</ns2:text>
+               <ns2:variables>variable-1</ns2:variables>
+            </ns2:policyException>
+         </detail>
+      </ns2:Fault>
+   </S:Body>
+</S:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="subscribePackage"/>
+  </con:response>
+</con:mockOperation>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="cf109e4f-4e8c-4c49-8428-af3fa54c59ff" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-UpdateDDParameters-Max" searchProperties="true" disabled="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="cf109e4f-4e8c-4c49-8428-af3fa54c59fffileName">TestCase-UpdateDDParameters-Max</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="JDBC Request-Validate-TenantIDBrandID-ExistInServiceConfig" id="57c3e1a0-cde1-46db-8aa2-524849dd1b82">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>Select *
+From SERVICEPROVIDER_CONF Conf
+Order By Conf.TENANT_ID, Conf.BRAND_ID</con:query>
+      <con:assertion type="JDBC Status" id="38ef9203-94d3-4ce7-8711-afb393f93cf4" name="JDBC Status"/>
+      <con:assertion type="XQuery Match" id="9441f20d-ce80-4e71-9cff-53bafda2cbf8" name="XQuery Match">
+        <con:configuration/>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="00664464-2672-4d88-9e11-ce7efa962d2e" name="Check for existence of [TENANT_ID]">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/TENANT_ID/text()='${#TestCase#TenantID}'</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="d31a5ca0-5939-4cbd-ac0c-3ee4decd1062" name="Check for existence of [BRAND_ID]">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/BRAND_ID/text()='${#TestCase#BrandID}'</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="subscripManagement_UpdateDDParameter-Max" id="95984381-2953-41f0-90d2-6d8ed16b7040">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>updateDirectDebitParameters</con:operation>
+      <con:request name="subscripManagement_UpdateDDParameter-Max" id="c7e841b9-b8ea-48e6-8389-fd61e8dfa981" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:updateDirectDebitParameters>
+         <!--1 or more repetitions:-->
+         <directDebitParameters>
+            <multibrandIds>
+               <!--1 or more repetitions:-->
+               <multibrandId>
+                  <!--type: int-->
+                  <brandId>${#TestCase#BrandID}</brandId>
+                  <!--type: int-->
+                  <tenantId>${#TestCase#TenantID}</tenantId>
+               </multibrandId>
+            </multibrandIds>
+            <!--Zero or more repetitions:-->
+            <directDebitIntParameter>
+               <name>ON_DEMAND_TOPUP_LIMIT</name>
+               <value>${#TestSuite#ON_DEMAND_TOPUP_LIMIT}</value>
+            </directDebitIntParameter>
+            <directDebitIntParameter>
+               <name>LOW_BALANCE_THRESHOLD_TOPUP_LIMIT</name>
+               <value>${#TestSuite#LOW_BALANCE_THRESHOLD_TOPUP_LIMIT}</value>
+            </directDebitIntParameter>
+            <directDebitMonetaryParameter>
+               <!--type: directDebitParameterNameEnum - enumeration: [GENERAL_DAILY_MAX_AMOUNT,GENERAL_MONTHLY_MAX_AMOUNT,MONTHLY_UNLIMITED_AMOUNT,ON_DEMAND_TOPUP_LIMIT,LOW_BALANCE_THRESHOLD_TOPUP_LIMIT,CHARGE_BACK_INSUFFICIENT_BALANCE,CHARGE_BACK_MANDATE_REVOKED,CHARGE_BACK_AMBIGUOUS_BANK_DATA,CHARGE_BACK_OBJECTION,CHARGE_BACK_OTHER,FEE_FREED_CLAWBACK_AMOUNT]-->
+               <name>GENERAL_DAILY_MAX_AMOUNT</name>
+               <!--type: currency - enumeration: [EUR]-->
+               <value>${#TestSuite#GENERAL_DAILY_MAX_AMOUNT}</value>
+               <currency>${#Project#Currency_Default}</currency>
+            </directDebitMonetaryParameter>
+            <!--Zero or more repetitions:-->
+            <directDebitMonetaryParameter>
+               <name>GENERAL_MONTHLY_MAX_AMOUNT</name>
+               <value>${#TestSuite#GENERAL_MONTHLY_MAX_AMOUNT}</value>
+               <currency>${#Project#Currency_Default}</currency>
+            </directDebitMonetaryParameter>
+            <directDebitMonetaryParameter>
+               <name>FEE_FREED_CLAWBACK_AMOUNT</name>
+               <value>${#Project#FEE_FREED_CLAWBACK_AMOUNT}</value>
+               <currency>${#Project#Currency_Default}</currency>
+            </directDebitMonetaryParameter>
+            <directDebitMonetaryParameter>
+               <name>MONTHLY_UNLIMITED_AMOUNT</name>
+               <value>${#TestSuite#MONTHLY_UNLIMITED_AMOUNT}</value>
+               <currency>${#Project#Currency_Default}</currency>
+            </directDebitMonetaryParameter>
+            <chargeBackParameter>
+               <!--type: directDebitParameterNameEnum - enumeration: [GENERAL_DAILY_MAX_AMOUNT,GENERAL_MONTHLY_MAX_AMOUNT,MONTHLY_UNLIMITED_AMOUNT,ON_DEMAND_TOPUP_LIMIT,LOW_BALANCE_THRESHOLD_TOPUP_LIMIT,CHARGE_BACK_INSUFFICIENT_BALANCE,CHARGE_BACK_MANDATE_REVOKED,CHARGE_BACK_AMBIGUOUS_BANK_DATA,CHARGE_BACK_OBJECTION,CHARGE_BACK_OTHER,FEE_FREED_CLAWBACK_AMOUNT]-->
+               <name>CHARGE_BACK_INSUFFICIENT_BALANCE</name>
+               <!--Optional:-->
+               <SEPAReasonCodes>
+                  <!--1 or more repetitions:-->                 
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-1}</SEPAReasonCode>
+                  <SEPAReasonCode>AM02</SEPAReasonCode>
+                  <SEPAReasonCode>AM03</SEPAReasonCode>
+                  <SEPAReasonCode>AM04</SEPAReasonCode>
+                  <SEPAReasonCode>AM06</SEPAReasonCode>
+                  <SEPAReasonCode>AM07</SEPAReasonCode>
+                  <SEPAReasonCode>AM09</SEPAReasonCode>
+                  <SEPAReasonCode>BE01</SEPAReasonCode>
+                  <SEPAReasonCode>BE04</SEPAReasonCode>
+                  <SEPAReasonCode>BE07</SEPAReasonCode>
+                  <SEPAReasonCode>LEGL</SEPAReasonCode>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE-Code-2}</SEPAReasonCode>
+                  <SEPAReasonCode>MD07</SEPAReasonCode>
+                  <SEPAReasonCode>MS03</SEPAReasonCode>
+                  <SEPAReasonCode>NARR</SEPAReasonCode>
+                  <SEPAReasonCode>NOAS</SEPAReasonCode>
+                  <SEPAReasonCode>RR01</SEPAReasonCode>
+                  <SEPAReasonCode>RR02</SEPAReasonCode>
+                  <SEPAReasonCode>RR03</SEPAReasonCode>
+                  <SEPAReasonCode>RR04</SEPAReasonCode>
+               </SEPAReasonCodes>
+               <!--type: int-->
+               <fee>${#Project#CHARGE_BACK_INSUFFICIENT_BALANCE}</fee>
+               <currency>${#Project#Currency_Default}</currency>
+            </chargeBackParameter>
+            <chargeBackParameter>
+               <name>CHARGE_BACK_MANDATE_REVOKED</name>
+               <SEPAReasonCodes>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-1}</SEPAReasonCode>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_MANDATE_REVOKED-Code-2}</SEPAReasonCode>
+               </SEPAReasonCodes>
+               <fee>${#Project#CHARGE_BACK_MANDATE_REVOKED}</fee>
+               <currency>${#Project#Currency_Default}</currency>
+            </chargeBackParameter>
+            <chargeBackParameter>
+               <name>CHARGE_BACK_AMBIGUOUS_BANK_DATA</name>
+               <SEPAReasonCodes>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-1}</SEPAReasonCode>
+                  <SEPAReasonCode>AC06</SEPAReasonCode>
+                  <SEPAReasonCode>AC13</SEPAReasonCode>
+                  <SEPAReasonCode>AG02</SEPAReasonCode>
+                  <SEPAReasonCode>AM01</SEPAReasonCode>
+                  <SEPAReasonCode>AM05</SEPAReasonCode>
+                  <SEPAReasonCode>AM10</SEPAReasonCode>
+                  <SEPAReasonCode>ARDT</SEPAReasonCode>
+                  <SEPAReasonCode>BE05</SEPAReasonCode>
+                  <SEPAReasonCode>BE06</SEPAReasonCode>
+                  <SEPAReasonCode>DT01</SEPAReasonCode>
+                  <SEPAReasonCode>ED05</SEPAReasonCode>
+                  <SEPAReasonCode>FF01</SEPAReasonCode>
+                  <SEPAReasonCode>FF05</SEPAReasonCode>
+                  <SEPAReasonCode>FOCR</SEPAReasonCode>
+                  <SEPAReasonCode>MD03</SEPAReasonCode>
+                  <SEPAReasonCode>NOOR</SEPAReasonCode>
+                  <SEPAReasonCode>PY01</SEPAReasonCode>
+                  <SEPAReasonCode>RC01</SEPAReasonCode>
+                  <SEPAReasonCode>RF01</SEPAReasonCode>
+                  <SEPAReasonCode>SL01</SEPAReasonCode>
+                  <SEPAReasonCode>TM01</SEPAReasonCode>
+                  <SEPAReasonCode>MD04</SEPAReasonCode>
+                  <SEPAReasonCode>ED03</SEPAReasonCode>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA-Code-2}</SEPAReasonCode>
+               </SEPAReasonCodes>
+               <fee>${#Project#CHARGE_BACK_AMBIGUOUS_BANK_DATA}</fee>
+               <currency>${#Project#Currency_Default}</currency>
+            </chargeBackParameter>
+            <chargeBackParameter>
+               <name>CHARGE_BACK_OBJECTION</name>
+               <SEPAReasonCodes>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_OBJECTION-Code-1}</SEPAReasonCode>
+                  <SEPAReasonCode>${#Project#CHARGE_BACK_OBJECTION-Code-2}</SEPAReasonCode>
+               </SEPAReasonCodes>
+               <fee>${#Project#CHARGE_BACK_OBJECTION}</fee>
+               <currency>${#Project#Currency_Default}</currency>
+            </chargeBackParameter>
+            <chargeBackParameter>
+               <name>CHARGE_BACK_OTHER</name>
+               <fee>${#Project#CHARGE_BACK_OTHER}</fee>
+               <currency>${#Project#Currency_Default}</currency>
+            </chargeBackParameter>
+            <directDebitThresholdList>
+               <!--Zero or more repetitions:-->
+               <thresholdValue>
+                  <!--type: int-->
+                  <value>400</value>
+                  <!--type: currency - enumeration: [EUR]-->
+                  <currency>${#Project#Currency_Default}</currency>
+               </thresholdValue>
+               <thresholdValue>
+                  <!--type: int-->
+                  <value>500</value>
+                  <!--type: currency - enumeration: [EUR]-->
+                  <currency>${#Project#Currency_Default}</currency>
+               </thresholdValue>
+               <thresholdValue>
+                  <value>1000</value>
+                  <currency>${#Project#Currency_Default}</currency>
+               </thresholdValue>
+               <thresholdValue>
+                  <value>1500</value>
+                  <currency>${#Project#Currency_Default}</currency>
+               </thresholdValue>
+               <thresholdValue>
+                  <value>2000</value>
+                  <currency>${#Project#Currency_Default}</currency>
+               </thresholdValue>
+            </directDebitThresholdList>
+            <!--type: validationCycleTypeEnum - enumeration: [DAILY_FIX_START_00,MONTHLY_FLEX_START_30_DAYS,MONTHLY_FIX_START_1]-->
+            <monthlyValidationCycle>${#TestCase#monthlyValidationCycle}</monthlyValidationCycle>
+         </directDebitParameters>
+      </cus:updateDirectDebitParameters>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d632f660-2b08-4ba8-bce4-d288d855f0a9"/>
+        <con:assertion type="Schema Compliance" id="b35dfccd-e204-4962-b17e-b3847f2063e6">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="bb502a72-4478-4f6f-bced-2bd40634ee89"/>
+        <con:assertion type="XPath Match" id="d2bf687f-b859-49c7-a6c8-98fd4fc1f788" name="Check for existence of [recordId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:updateDirectDebitParametersResponse/recordId>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>BrandID</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TenantID</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>monthlyValidationCycle</con:name>
+      <con:value>MONTHLY_FLEX_START_30_DAYS</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>57c3e1a0-cde1-46db-8aa2-524849dd1b82</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

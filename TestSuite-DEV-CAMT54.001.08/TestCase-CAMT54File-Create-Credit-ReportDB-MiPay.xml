@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="55e53785-a1a5-46c9-accf-0549fe3af831" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CAMT54File-Create-Credit-ReportDB-MiPay" searchProperties="true" timeout="0" maxResults="5" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Based on us in jira:
+https://www.sg.de.o2.com/jira/browse/DRC-4044
+https://www.sg.de.o2.com/jira/browse/DRC-3360
+https://www.sg.de.o2.com/jira/browse/DRC-3455
+Return count of transactions and local file path.</con:description>
+  <con:settings>
+    <con:setting id="caff8dea-a62f-431c-90b5-e96dede4c5c8fileName">TestCase-CAMT54File-Create-Credit-ReportDB-MiPay</con:setting>
+    <con:setting id="55e53785-a1a5-46c9-accf-0549fe3af831fileName">TestCase-CAMT54File-Create-Credit-ReportDB-MiPay</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="325f8dae-daef-4360-b23e-5a485215a311">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTargetFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outCount</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>sumAmountEUR</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>transactAmountEUR</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>creditorIBAN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="getSettingChildNodes" id="6d9c5042-e917-42b6-9b34-b6b141c8a28a" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettingChildNodes</con:operation>
+      <con:request name="getSettingChildNodes" id="5359bfc1-fba6-4614-9779-ab8f5f744270">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ReportService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettingChildNodes>
+         <settingPath>
+            		                    
+         <settingName>com.o2.directrecharge.core.settings.SettingsRootCategoryEnum.FINANCE_DEPARTMENT_ROOT</settingName></settingPath>
+      </v1:getSettingChildNodes>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="e99e3749-7e9e-42b9-be97-9cf2d20cb52e"/>
+        <con:assertion type="Schema Compliance" id="737c6b5c-21eb-44ef-8cd1-a332cfd34285">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="93467184-3e38-480b-9560-14cb6804afbb"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="eaf6e06f-bc40-41e7-913f-e7b84a38e56c" name="GUI_getSettingChildNodes_getTefIBAN">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettingChildNodes</con:operation>
+      <con:request name="GUI_getSettingChildNodes_getTefIBAN" id="be75abfd-aa60-4fd9-90ed-726a8b8d5c69">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettingChildNodes>
+         <settingPath>
+            <!--1 or more repetitions:-->
+            <!--type: string1To256-->
+            <settingName>com.o2.directrecharge.core.settings.SettingsRootCategoryEnum.FINANCE_DEPARTMENT_ROOT</settingName><settingName>com.o2.directrecharge.core.settings.FinanceDepartmentName.TEF</settingName><settingName>com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.ATM_IBAN</settingName>
+         </settingPath>
+      </v1:getSettingChildNodes>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Fault Assertion" id="f6df6a44-5231-419d-a851-5a0cc8135a82" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="76a567c9-4719-49bb-bb06-9aaef8ecd981" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="DataAndMetadataAssertion" id="09ea43dc-13d3-4c6b-855c-9be604df1280" name="Smart Assertion 2">
+          <con:configuration xsi:type="con:DataAndMetadataAssertion">
+            <con:mode>Received Metadata</con:mode>
+            <con:elements>
+              <con:path>$['Headers']['date']</con:path>
+              <con:element>date</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Mon, 31 Jan 2022 10:40:30 GMT</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['transfer-encoding']</con:path>
+              <con:element>transfer-encoding</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>chunked</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['content-type']</con:path>
+              <con:element>content-type</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>text/xml;charset=UTF-8</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['#status#']</con:path>
+              <con:element>#status#</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>HTTP/1.1 200</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:originalMessage>{"Headers":{"date":"Mon, 31 Jan 2022 10:40:30 GMT","transfer-encoding":"chunked","content-type":"text/xml;charset=UTF-8","#status#":"HTTP/1.1 200 "}}</con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="DataAndMetadataAssertion" id="abd82950-25d6-4928-89d2-71008dae2294" name="Smart Assertion">
+          <con:configuration xsi:type="con:DataAndMetadataAssertion">
+            <con:mode>Received Data</con:mode>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/id[1]</con:path>
+              <con:element>id</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>30437</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/name[1]</con:path>
+              <con:element>name</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.ATM_IBAN</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/node[1]</con:path>
+              <con:element>node</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALL</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/value[1]</con:path>
+              <con:element>value</con:element>
+              <con:operatorId>12</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DE99999999999999999090</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/description[1]</con:path>
+              <con:element>description</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Hausbank ATM-IBAN</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/type[1]</con:path>
+              <con:element>type</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>STRING</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/mandatory[1]</con:path>
+              <con:element>mandatory</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/editable[1]</con:path>
+              <con:element>editable</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/parentId[1]</con:path>
+              <con:element>parentId</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>30131</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/parentEntry[1]/restartNeeded[1]</con:path>
+              <con:element>restartNeeded</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:path>declare namespace ns1='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns1:getSettingChildNodesResponse[1]/childNodeList[1]</con:path>
+              <con:element>childNodeList</con:element>
+              <con:operatorId>9</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue xsi:nil="true"/>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:getSettingChildNodesResponse xmlns:ns8="http://directrecharge.o2.com/ws/commonservice/v1/" xmlns:ns7="http://directrecharge.o2.com/ws/generic/v1/" xmlns:ns6="http://directrecharge.o2.com/ws/common/job/v1/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns4="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:ns3="http://directrecharge.o2.com/ws/common/invalidation/v1/" xmlns:ns2="http://directrecharge.o2.com/ws/common/settings/v1/">
+         <parentEntry>
+            <id>30437</id>
+            <name>com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.ATM_IBAN</name>
+            <node>ALL</node>
+            <value>DE99999999999999999090</value>
+            <description>Hausbank ATM-IBAN</description>
+            <type>STRING</type>
+            <mandatory>true</mandatory>
+            <editable>true</editable>
+            <parentId>30131</parentId>
+            <restartNeeded>false</restartNeeded>
+         </parentEntry>
+         <childNodeList/>
+      </ns2:getSettingChildNodesResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig action="getSettingChildNodes" mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-iban" id="e25d82db-a438-4b33-a94b-0481206a5916">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>iban</con:name>
+        <con:sourceType>Response</con:sourceType>
+        <con:sourceStep>GUI_getSettingChildNodes_getTefIBAN</con:sourceStep>
+        <con:sourcePath>declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/';
+//ns2:getSettingChildNodesResponse[1]/parentEntry[1]/value[1]</con:sourcePath>
+        <con:targetType>creditorIBAN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-createData" id="c2df1f8b-5fef-463a-8e0a-f350d5065b6a">
+    <con:settings/>
+    <con:config>
+      <script><![CDATA[/*
+ * This script create data and pathes for camt054 file for reportingDB
+ * Date: 2021-05-11
+ * Autor: Michael Gordon
+*/
+
+// read pathes 
+String sTemplatePath = context.expand( '${#TestSuite#Template-CAMT54-Credit-ATM}' )
+String sTargetDir = context.expand( '${#TestSuite#TargetDir}' )
+String sFileName = context.expand( '${#Project#DateTime_Current_String_yyyyMMddHHmmssSSS}' )+'-CAMT054-ReportDB.xml'
+String sTargetPath=sTargetDir +'/' + sFileName
+log.info('Path from template is: - '+sTemplatePath)
+log.info('Target paht is: - '+sTargetPath)
+
+// read amounts
+int iCOUNTTRANS = context.expand( '${#TestCase#CONST_COUNTTRANS}' ).toInteger()
+def fAmount= context.expand( '${#TestCase#inAmountEUR}' )
+def fFee = context.expand( '${#TestCase#inFeeEUR}' )
+log.info('Amount is: - '+fAmount + ' | Fee is: - '+ fFee )
+
+// check directories are exists
+File fTemp=new File(sTemplatePath)
+File f=new File(sTargetDir)
+assert fTemp.exists() && fTemp.isDirectory() && f.exists() && f.isDirectory()
+// check amounts are not empty
+assert fAmount.isFloat() && fFee.isFloat() 
+
+// if os is windows, replace in pathes  / with \\, solang readyApi doesn't fix bug with case nr. Case #00468963
+if (System.properties['os.name'].toLowerCase().contains('windows')) {
+    sTemplatePath=sTemplatePath.replace('/','\\')
+    sTargetPath=sTargetPath.replace('/','\\')
+}
+// set pathes and count of transaction to test-case property 
+testRunner.testCase.setPropertyValue( "templatePath", sTemplatePath )
+testRunner.testCase.setPropertyValue( "outTargetFile", sTargetPath )
+testRunner.testCase.setPropertyValue( "outCount", iCOUNTTRANS.toString() )
+
+// count diff amount and sum of all amounts rounded to 2 digits for cents after coma
+Float fTransactAmount=(fAmount.toFloat()-fFee.toFloat()).round(2)
+Float fSumAmount=(fTransactAmount*iCOUNTTRANS).round(2)
+
+testRunner.testCase.setPropertyValue( "transactAmountEUR", fTransactAmount.toString() )
+testRunner.testCase.setPropertyValue( "sumAmountEUR", fSumAmount.toString())
+log.info('Amount is: - '+ fAmount + ' | Fee is: - '+fFee + ' | Transaction amount is: - '+fTransactAmount + ' | Count is: -  '+ iCOUNTTRANS + ' | Sum is: - '+fSumAmount)]]></script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="Data Source-getData" id="1e1f307c-f4b2-4cad-93b5-4448e6b3c68d">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Data Generator">
+        <con:configuration><generatedDataCount>1</generatedDataCount><generatorsTotalNumber>5</generatorsTotalNumber><lastSelectedProperty>0</lastSelectedProperty><GeneratorType0>TIME</GeneratorType0><PropertyName0>stringDateTime</PropertyName0><repetitionCountstringDateTime>0</repetitionCountstringDateTime><repeatValuesstringDateTime>false</repeatValuesstringDateTime><DateTimeDataGeneratorCustomFormatstringDateTime>YYYY-MM-dd'T'HH:mm:ss</DateTimeDataGeneratorCustomFormatstringDateTime><DateTimeDataGeneratorFormatstringDateTime>Custom</DateTimeDataGeneratorFormatstringDateTime><DateTimeDataGeneratorIsSequentstringDateTime>false</DateTimeDataGeneratorIsSequentstringDateTime><DateTimeDataGeneratorStepDaysstringDateTime>1</DateTimeDataGeneratorStepDaysstringDateTime><DateTimeDataGeneratorStepHoursstringDateTime>1</DateTimeDataGeneratorStepHoursstringDateTime><DateTimeDataGeneratorStepMinsstringDateTime>1</DateTimeDataGeneratorStepMinsstringDateTime><DateTimeDataGeneratorStepSecondsstringDateTime>1</DateTimeDataGeneratorStepSecondsstringDateTime><DateTimeDataGeneratorMinDatestringDateTime>1514823075069</DateTimeDataGeneratorMinDatestringDateTime><DateTimeDataGeneratorMaxDatestringDateTime>1614096675069</DateTimeDataGeneratorMaxDatestringDateTime><GeneratorType1>INT</GeneratorType1><PropertyName1>random3</PropertyName1><repetitionCountrandom3>0</repetitionCountrandom3><repeatValuesrandom3>false</repeatValuesrandom3><IntegerDataGeneratorMinValuerandom3>100</IntegerDataGeneratorMinValuerandom3><IntegerDataGeneratorMaxValuerandom3>999</IntegerDataGeneratorMaxValuerandom3><IntegerDataGeneratorStepValuerandom3>1</IntegerDataGeneratorStepValuerandom3><IntegerDataGeneratorConsequentValuesrandom3>false</IntegerDataGeneratorConsequentValuesrandom3><GeneratorType2>STR</GeneratorType2><PropertyName2>randomStringInt10</PropertyName2><repetitionCountrandomStringInt10>0</repetitionCountrandomStringInt10><repeatValuesrandomStringInt10>false</repeatValuesrandomStringInt10><PasswordDataGeneratorUseSpacesrandomStringInt10>false</PasswordDataGeneratorUseSpacesrandomStringInt10><PasswordDataGeneratorUsePunctuationMarksrandomStringInt10>false</PasswordDataGeneratorUsePunctuationMarksrandomStringInt10><PasswordDataGeneratorUseLettersrandomStringInt10>false</PasswordDataGeneratorUseLettersrandomStringInt10><PasswordDataGeneratorUseDigitsrandomStringInt10>true</PasswordDataGeneratorUseDigitsrandomStringInt10><PasswordDataGeneratorMaxCharacterCountrandomStringInt10>10</PasswordDataGeneratorMaxCharacterCountrandomStringInt10><PasswordDataGeneratorMinCharacterCountrandomStringInt10>10</PasswordDataGeneratorMinCharacterCountrandomStringInt10><GeneratorType3>STR</GeneratorType3><PropertyName3>randomString10</PropertyName3><repetitionCountrandomString10>0</repetitionCountrandomString10><repeatValuesrandomString10>false</repeatValuesrandomString10><PasswordDataGeneratorUseSpacesrandomString10>false</PasswordDataGeneratorUseSpacesrandomString10><PasswordDataGeneratorUsePunctuationMarksrandomString10>false</PasswordDataGeneratorUsePunctuationMarksrandomString10><PasswordDataGeneratorUseLettersrandomString10>true</PasswordDataGeneratorUseLettersrandomString10><PasswordDataGeneratorUseDigitsrandomString10>true</PasswordDataGeneratorUseDigitsrandomString10><PasswordDataGeneratorMaxCharacterCountrandomString10>10</PasswordDataGeneratorMaxCharacterCountrandomString10><PasswordDataGeneratorMinCharacterCountrandomString10>10</PasswordDataGeneratorMinCharacterCountrandomString10><GeneratorType4>TIME</GeneratorType4><PropertyName4>stringDate</PropertyName4><repetitionCountstringDate>0</repetitionCountstringDate><repeatValuesstringDate>false</repeatValuesstringDate><DateTimeDataGeneratorCustomFormatstringDate>YYYY-MM-dd</DateTimeDataGeneratorCustomFormatstringDate><DateTimeDataGeneratorFormatstringDate>Custom</DateTimeDataGeneratorFormatstringDate><DateTimeDataGeneratorIsSequentstringDate>false</DateTimeDataGeneratorIsSequentstringDate><DateTimeDataGeneratorStepDaysstringDate>1</DateTimeDataGeneratorStepDaysstringDate><DateTimeDataGeneratorStepHoursstringDate>1</DateTimeDataGeneratorStepHoursstringDate><DateTimeDataGeneratorStepMinsstringDate>1</DateTimeDataGeneratorStepMinsstringDate><DateTimeDataGeneratorStepSecondsstringDate>1</DateTimeDataGeneratorStepSecondsstringDate><DateTimeDataGeneratorMinDatestringDate>1514801070195</DateTimeDataGeneratorMinDatestringDate><DateTimeDataGeneratorMaxDatestringDate>1614074670195</DateTimeDataGeneratorMaxDatestringDate><escapeSpaceSequence/></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>randomString10</con:property>
+      <con:property>randomStringInt10</con:property>
+      <con:property>random3</con:property>
+      <con:property>stringDateTime</con:property>
+      <con:property>stringDate</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getContent" id="6f3347b3-f6da-42bf-98a4-8d625965f242">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Directory">
+        <con:configuration><directory>${#TestCase#templatePath}</directory><filter>*MiPay.xml</filter><encoding>UTF-8</encoding></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>content</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="Data Sink-saveData" id="9ee43464-7b3b-49c2-b734-22eb8bae0227">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outTargetFile}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>false</append><encoding>UTF-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>content</con:name>
+          <con:value>${DataSource-getContent#content}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run Test Case-CopyLocalFile-SFTP" id="742481e0-b1ad-47fe-b5cf-c251b962b227">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>791db6b3-a507-480d-a3b6-07ff3032ff54</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inFTPDomain</con:name>
+          <con:value>${#Project#drc-sftp-server}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#TestCase#sftp-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inPswd</con:name>
+          <con:value>${#Project#drc-sftp-password}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inTargetPath</con:name>
+          <con:value>${#TestCase#target-path}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>CONST_COUNTTRANS</con:name>
+      <con:value>5</con:value>
+    </con:property>
+    <con:property>
+      <con:name>target-path</con:name>
+      <con:value>${drc_ftp_ReportPath}/MIPAY/camt054</con:value>
+    </con:property>
+    <con:property>
+      <con:name>creditorIBAN</con:name>
+      <con:value>DE99999999999999999090</con:value>
+    </con:property>
+    <con:property>
+      <con:name>sftp-user</con:name>
+      <con:value>drcbuild</con:value>
+    </con:property>
+    <con:property>
+      <con:name>sumAmountEUR</con:name>
+      <con:value>235.05</con:value>
+    </con:property>
+    <con:property>
+      <con:name>transactAmountEUR</con:name>
+      <con:value>47.01</con:value>
+    </con:property>
+    <con:property>
+      <con:name>templatePath</con:name>
+      <con:value>D:\Projects\Telefonica\DirectReCharge\DRC-QA\soapUI-Pro\DRC_Release_22-5\TestData\CAMT54\CAMT54-Templates</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outTargetFile</con:name>
+      <con:value>D:\Projects\Telefonica\DirectReCharge\TestOutput\soapUI\CAMT54-Files\20220830100901621-CAMT054-ReportDB.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outCount</con:name>
+      <con:value>5</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inAmountEUR</con:name>
+      <con:value>49.00</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inFeeEUR</con:name>
+      <con:value>1.99</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inCorrelationID</con:name>
+      <con:value>409755282</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inMSISDN</con:name>
+      <con:value>4917654167800</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inIBAN</con:name>
+      <con:value>DE99999999999999990090</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inBIC</con:name>
+      <con:value>TEFXXXXXXXX</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3732b0cd-fab8-4ea2-b914-feed3cf8732f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e763faa-cd50-4583-b575-17cdd1a23452</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9f163fc3-5e3c-4bd2-9572-4a07e33193be</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52c3cfd8-ffae-442f-b606-98128b70ceb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27ee7f82-96d6-4563-8f0c-17d9b67814c6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dc88923-d84e-4e21-803c-4e1b0331118d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b4d5788c-fc24-42e1-a64e-f6a9db39f4f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>949f49f3-f5de-42bb-8b63-174425cc8922</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>59099b36-8010-44e1-9fb3-139792d2204b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a966e541-d1e9-4886-84d3-1c52aceb2eac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2465dd6-c29d-4ef3-b401-05e7779c850e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>969606a1-b438-4104-85af-337c32b42d9a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>31013ae6-bea6-447b-bd75-4437e7dd2da7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1ef600b5-cf30-456f-9af2-d6c4d6dc0c34</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0444dbef-788f-46e3-9cec-b2a9b944177c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3194b9f2-11a4-4766-a0fd-2e8770122674</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>280603d3-be83-43b5-a0e4-1988af4ddd78</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0a29c932-cdcc-453d-a67d-b2318dda2c8d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6053feb7-9c11-40d4-9f35-4cc6cfe8e881</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0757e2a0-199a-435b-8fa1-32884b86aec0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9a85bbd4-b663-4230-910f-170c47322251</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c32503ba-30c3-4972-84ff-ee7ccd179346</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bf82e879-3a7e-4c13-ad84-92b57e9de1b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>05f391c6-ef37-4f6b-90e7-5b57fb237b7d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e942f34c-e731-4122-bd28-2210c9c15939</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>25a36332-c206-4a63-8262-6ff4c654bd3a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d36d5bce-6c86-4e36-a64f-5467b723dbeb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a83b9a2-c6e5-4dad-9f11-9acd4dcc57e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>48fde110-6796-46b7-a5c1-10425946e55b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62d0c6f4-1d09-4e24-b1e6-ef582fb21adc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>75ac8a28-0fdb-49a6-b171-8cfa96484b54</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>356008f3-7d9d-4252-b462-955a39e918c9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>02eb5366-9f8d-4ccf-8297-f2aa36d77b02</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>28203a6f-8682-434b-b08c-93174dd7977b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>233fc9fd-876f-4fbd-b252-f2d3d8cb1a67</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d66cc80d-496e-417a-a203-2eafe061b414</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63839c87-8852-42e8-8752-5d188526664b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>aa460c13-8f71-48cd-ab19-d91a14da4e85</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

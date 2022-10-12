@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="44a6759a-d070-4298-866b-858657779459" discardOkResults="true" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase-GetMSISDN-Unknown" searchProperties="true" disabled="true" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Get msisdns from piranha:
+- unknown
+- service provider id
+- inactive
+- deactivated</con:description>
+  <con:settings>
+    <con:setting id="61c822dd-858e-4948-855d-06f8e17485c9fileName">TestCase-GetMSISDN-Unknown</con:setting>
+    <con:setting id="44a6759a-d070-4298-866b-858657779459fileName">TestCase-GetMSISDN-Unknown</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer_ClearProperties" id="cc36994f-aee3-49f8-a36c-7419c905ce66">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDNUnknown</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDNForbiddenSP</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDNDeactivated</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outMSISDNInactive</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-GetUnknownMSISDNs" id="34cd5761-aa94-4fa9-bdf4-812836e18c64">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script format generated msisdns to format 0+number
+ * Date: 19101.07.2016
+ * Autor: Michael Gordon
+*/
+
+ // Generate and format msisdna
+ String sPrefix = context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}' ).toString().replace('49','0') 
+   
+ // set config from service provider id = 1 and brandid=1
+ String sSP = context.expand( '${#Project#ChargeCustomer-1-SP}' ).toString().replace('SP','') 
+ String sBrandID=context.expand( '${#Project#ChargeCustomer-1-BrandID}' )
+  
+ // write in properties formated msisdns
+ testRunner.testCase.setPropertyValue('outMSISDNUnknown',sPrefix+'9999999')
+ // msisdn from another tenant
+ testRunner.testCase.setPropertyValue('outMSISDNForbiddenSP',sPrefix+'321'+sSP+sBrandID)
+ // msisdn is deactivated in response from piranha mock
+ testRunner.testCase.setPropertyValue('outMSISDNDeactivated',sPrefix+'323'+sSP+sBrandID)
+ // msisdn is inactivated in response from piranha mock
+ testRunner.testCase.setPropertyValue('outMSISDNInactive',sPrefix+'324'+sSP+sBrandID)
+  // msisdn for ocs-error=1
+ testRunner.testCase.setPropertyValue('outMSISDNOCSError', context.expand( '${#Project#MSISDN_OCS_Unknown}' ).toString().replace('49','0') )</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outMSISDNUnknown</con:name>
+      <con:value>01509999999</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDNForbiddenSP</con:name>
+      <con:value>01503219011</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDNDeactivated</con:name>
+      <con:value>01503239011</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDNInactive</con:name>
+      <con:value>01503249011</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outMSISDNOCSError</con:name>
+      <con:value>01010000001</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3813698b-6bce-4c38-a0b8-801cb4427471</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

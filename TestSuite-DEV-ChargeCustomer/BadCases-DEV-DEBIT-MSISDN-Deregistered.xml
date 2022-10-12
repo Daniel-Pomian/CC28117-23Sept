@@ -1,0 +1,1416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="4ef27362-19bf-474e-82e0-6f83c826b17d" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCases-DEV-DEBIT-MSISDN-Deregistered" searchProperties="false" timeout="0" maxResults="5" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests clawback for deregistered msisdn.
+Expected result base on CR: SR50945 for DRC
+It must be not possible to assign debit transaction to msisdn, not registered by direct debit (ppit)
+Amount from bank transactions (CAMT054-Credit) can be assigned to registered and not registered msisdn!</con:description>
+  <con:settings>
+    <con:setting id="4ef27362-19bf-474e-82e0-6f83c826b17dfileName">BadCases-DEV-DEBIT-MSISDN-Deregistered</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-CleareValues" id="2175c739-c515-4f63-9933-14a76b696d76">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ContractID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecAction-Pain008" id="108dd6c6-8ad4-477f-8a4f-dd0f6bb5af3b">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>b501dca9-bffd-4723-be42-3c85f090e6d9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-OCS-Notification</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-CreateNewPain008-Tenant-1</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-CreateNewPain008-Tenant-2</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Notification</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report-Manager</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-SendEmail</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecAction-CAMT054" id="d6927798-f1ab-4318-8868-65a4d7e08f33">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ef956cd7-c928-4686-9e7e-deba57d56c3f</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Assign</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Prepare-ClawBack</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Return</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Fee</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Credit</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Notify</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process_CAMT054_Report</con:name>
+          <con:value xsi:nil="true"/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Email</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-UpdateDDParams-ToMaxLimits" id="4a770835-94a5-4c16-a8f7-f35f56321803">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>fbec2b9c-0a4f-4bcc-ae21-fd1e5c070d7d</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>BrandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="3000N_Run TestCase-ChargeCustomer" id="1650059b-32f2-4ee7-92bb-97fef5498fe6">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>4d8035c0-f9e1-4f60-bcb4-c49391400f18</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inTenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inOCSID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-OCS-ID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inAmount</con:name>
+          <con:value>${#TestSuite#CAMT54-Amount-Default}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>outContractID</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outMSISDN</con:entry>
+        <con:entry>outContractID</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="3005N_DRCGUI-OCS_EXTERNAL_NOTIFICATION" id="e2c1b401-0bae-4f0c-98a8-631fe4d7b843">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="3005N_DRCGUI-OCS_EXTERNAL_NOTIFICATION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.OCS_EXTERNAL_NOTIFICATION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="Schema Compliance" id="ebe3662a-b87d-498e-a89f-d0884e5f2dd8" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="4b554804-99e4-4626-80d3-4b358612850c" name="Check count of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</path>
+            <content>1</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="3010N_Property Transfer-Data" id="838c1919-59ab-4e39-b6da-ae9b85b94c27">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>msisdn</con:name>
+        <con:sourceType>outMSISDN</con:sourceType>
+        <con:sourceStep>3000N_Run TestCase-ChargeCustomer</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>contractID</con:name>
+        <con:sourceType>outContractID</con:sourceType>
+        <con:sourceStep>3000N_Run TestCase-ChargeCustomer</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ContractID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="3015N_subsripManagement_deregisterMSISDN" id="349599be-7aa1-48cd-bfb3-920d790a9a14">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>deregisterForDirectDebit</con:operation>
+      <con:request name="3015N_subsripManagement_deregisterMSISDN" id="ab9fb4d0-03bf-4862-a093-44c0056f9228" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:deregisterForDirectDebit>
+         <!--type: string-->
+         <externalContractId>${#TestCase#ContractID}</externalContractId>
+      </cus:deregisterForDirectDebit>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2a39e8d9-86ac-42ab-91f3-2e5fe5cb5310"/>
+        <con:assertion type="Schema Compliance" id="6c8f0a33-dd4a-48ce-b396-c88d6fc58732">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="3dbbe5bc-1452-42e5-915d-afedd59836ed"/>
+        <con:assertion type="XPath Match" id="d82c010c-d452-4533-905e-66d353bef3a3" name="Match content of [recordId]>0">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/evolutionservice/customercharging/';
+//ns2:deregisterForDirectDebitResponse[1]/recordId[1]>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="f0b1827d-f91e-475a-8e4e-e9e61c434909" name="deregisterForPaymentMethod" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>SubscriptionManagementServiceSoapBinding</con:interface>
+      <con:operation>deregisterForPaymentMethod</con:operation>
+      <con:request name="deregisterForPaymentMethod" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d1665699-1427-4122-9f2d-849160846eae">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-subscriptionManagementService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cus="http://directrecharge.o2.com/ws/evolutionservice/customercharging/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cus:deregisterForPaymentMethod>
+         <!--type: externalContractId-->
+         <externalContractId>${#TestCase#ContractID}</externalContractId>
+         <!--type: paymentMethodEnum - enumeration: [NONE,DD,CC]-->
+         <paymentMethod>DD</paymentMethod>
+      </cus:deregisterForPaymentMethod>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="86e9e9a4-90a3-4c65-86e6-9e2f6bc309ee" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="c1d3e1a0-0dc3-40b0-b3c8-e9d3f83e93b6" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="2dfcd311-6704-40e5-9c57-7391757df2ac" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="deregisterForPaymentMethod"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="_HTTP-ClearMockLogs" id="93e53192-94ce-4687-b3c6-488d850b0994">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="_HTTP-ClearMockLogs" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log?clear</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="153285f9-6e44-4544-a2fc-7890d817d456" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="3020N_Run TestCase-CreateCAMT054-Debit" id="8e7a8c0b-b62c-4382-a987-79151a22bb11">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>326b2850-a89f-462f-8f88-082fd06e3548</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20220930090253400-CAMT54-Debit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#TestCase#MSISDN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFee</con:name>
+          <con:value>${#Project#CHARGE_BACK_OBJECTION}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeCode</con:name>
+          <con:value>${#Project#CHARGE_BACK_OBJECTION-Code-1}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBool-SkipLoadAndExecSteps</con:name>
+          <con:value>false</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Count</con:name>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="3025N_Run TestCase-CreateCAMT054-Credit" id="97bb8f9c-91dc-442d-8cc5-06b6eafede76">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>6c53fd31-dcb2-4656-b2f7-74476ec4927b</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>/CAMT54-Files/20221003155831384-CAMT54-Credit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#TestCase#MSISDN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBool-SkipLoadAndExecSteps</con:name>
+          <con:value>false</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+          <con:value>10.00</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCount</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inAmountInCent</con:name>
+          <con:value>${#TestSuite#CAMT54-Amount-Default}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+          <con:value>10.00</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>Amount</con:entry>
+        <con:entry>TotalAmount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="3060N_HTTP-ValidateResponsesFromMocks" id="8722e14a-26ec-4271-954b-07edec8bbdad">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="3060N_HTTP-ValidateResponsesFromMocks" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="e6210c3b-d8a2-49da-abfa-4afbbf4e3af8" name="Valid HTTP Status Codes=200">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="245afeda-c0a9-4e73-9981-0d67ce398887" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.notifyAboutBankTransaction: Return response for request with externalContractID: - ${#TestCase#ContractID}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.notifyAboutBankTransaction: Return response for request with externalContractID: - ${#TestCase#ContractID}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[4]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.notifyAboutBankTransaction: Return response for request with externalContractID: - ${#TestCase#ContractID}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[5]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.notifyAboutBankTransaction: Return response for request with externalContractID: - ${#TestCase#ContractID}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[6]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.notifyAboutBankTransaction: Return response for request with externalContractID: - ${#TestCase#ContractID}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<html>
+   <head>
+      <title>Virt Groovy Log</title>
+      <meta http-equiv="refresh" content="15"/>
+      <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+   </head>
+   <body>
+      <p>
+         <b>Groovy Log output</b>
+         : [
+         <a href="log">Refresh</a>
+         ] [
+         <a href="log?clear">Clear</a>
+         ]
+      </p>
+      <table border="1">
+         <tr>
+            <td/>
+            <td>Timestamp</td>
+            <td>Message</td>
+         </tr>
+         <tr>
+            <td>1</td>
+            <td>Tue Jul 19 12:38:49 CEST 2016</td>
+            <td>PPIT-CustomerCaseServices: Return response for request with externalContractID: - 446184642738765</td>
+         </tr>
+         <tr>
+            <td>2</td>
+            <td>Tue Jul 19 12:38:50 CEST 2016</td>
+            <td>PPIT-CustomerCaseServices: Return response for request with externalContractID: - 446184642738765</td>
+         </tr>
+         <tr>
+            <td>3</td>
+            <td>Tue Jul 19 12:38:51 CEST 2016</td>
+            <td>PPIT-CustomerCaseServices: Return response for request with externalContractID: - 446184642738765</td>
+         </tr>
+         <tr>
+            <td>4</td>
+            <td>Tue Jul 19 12:38:52 CEST 2016</td>
+            <td>PPIT-CustomerCaseServices: Return response for request with externalContractID: - 446184642738765</td>
+         </tr>
+         <tr>
+            <td>5</td>
+            <td>Tue Jul 19 12:38:53 CEST 2016</td>
+            <td>PPIT-CustomerCaseServices: Return response for request with externalContractID: - 446184642738765</td>
+         </tr>
+      </table>
+   </body>
+</html>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="616a28fa-cf0d-4d15-8077-cac965c4cf39" name="3070N_GUI-getNotRelatableBankTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getNotRelatableBankTransactions</con:operation>
+      <con:request name="3070N_GUI-getNotRelatableBankTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a6dc855e-af5c-4eb2-b76e-4f21c67c2c54">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getNotRelatableBankTransactions>\r
+         <first>0</first>\r
+         <count>5</count>\r
+         <timeFrame>\r
+            <fromDate>${#Project#Date_Current_yyyy-MM-dd}T00:00:00</fromDate>\r
+         </timeFrame>\r
+      </v1:getNotRelatableBankTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="48920219-a663-4693-a6e7-80b7ca7616e9" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="ce87eb7a-a04f-4a55-9e61-ca4710ea0b6e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="399df137-5200-44f8-b496-023c78b9916a" name="Check count of [notRelatableBankTransactions]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:getNotRelatableBankTransactionsResponse/notRelatableBankTransactions)</path>
+            <content>5</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="MessageContentAssertion" id="7d9b0e03-a38e-479e-83a3-d9e2d495f364" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[1]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[2]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[2]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[3]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[3]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[4]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[4]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[5]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[5]/sepaTransactionType[1]</con:xpath>
+              <con:element>sepaTransactionType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>RETURNED_DIRECT_DEBIT_TRANSACTION</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:getNotRelatableBankTransactionsResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <notRelatableBankTransactions>
+            <camt05400102InputEntyId>1333</camt05400102InputEntyId>
+            <sepaTransactionType>RETURNED_DIRECT_DEBIT_TRANSACTION</sepaTransactionType>
+            <remittanceInformation>Test Aufladung für Ihr Prepaid-Konto MSISDN: 20160719102154518:  Debit with wrong EndToEndID   + Check-code is not relevant. O2 SAGT DANKE</remittanceInformation>
+            <mandateId>MndtIdkXk114399XXAii21LAnI</mandateId>
+            <endToEndId>7300996781</endToEndId>
+            <transactionId>TxIdkXk114399XXAii21LAnI</transactionId>
+            <bookingDate>2016-07-19T00:00:00+02:00</bookingDate>
+            <currency>EUR</currency>
+         </notRelatableBankTransactions>
+         <notRelatableBankTransactions>
+            <camt05400102InputEntyId>1332</camt05400102InputEntyId>
+            <sepaTransactionType>RETURNED_DIRECT_DEBIT_TRANSACTION</sepaTransactionType>
+            <remittanceInformation>Test Aufladung für Ihr Prepaid-Konto MSISDN: 4917641209394  + Check-code is not relevant. O2 SAGT DANKE</remittanceInformation>
+            <mandateId>MndtId134G6446748X01bJJyHC</mandateId>
+            <endToEndId>12901116</endToEndId>
+            <transactionId>TxId134G6446748X01bJJyHC</transactionId>
+            <bookingDate>2016-07-19T00:00:00+02:00</bookingDate>
+            <amount>1000</amount>
+            <currency>EUR</currency>
+         </notRelatableBankTransactions>
+         <notRelatableBankTransactions>
+            <camt05400102InputEntyId>1331</camt05400102InputEntyId>
+            <sepaTransactionType>RETURNED_DIRECT_DEBIT_TRANSACTION</sepaTransactionType>
+            <remittanceInformation>Test Aufladung für Ihr Prepaid-Konto MSISDN: 4917641209394  + Check-code is not relevant. O2 SAGT DANKE</remittanceInformation>
+            <mandateId>MndtIdQo0F0gqdrr7601x922E1</mandateId>
+            <endToEndId>12901117</endToEndId>
+            <transactionId>TxIdQo0F0gqdrr7601x922E1</transactionId>
+            <bookingDate>2016-07-19T00:00:00+02:00</bookingDate>
+            <amount>1000</amount>
+            <currency>EUR</currency>
+         </notRelatableBankTransactions>
+         <notRelatableBankTransactions>
+            <camt05400102InputEntyId>1330</camt05400102InputEntyId>
+            <sepaTransactionType>RETURNED_DIRECT_DEBIT_TRANSACTION</sepaTransactionType>
+            <remittanceInformation>Test Aufladung für Ihr Prepaid-Konto MSISDN: 4917641209394  + Check-code is not relevant. O2 SAGT DANKE</remittanceInformation>
+            <mandateId>MndtIdhh0Ii8j8kjy8oCN3HAn5</mandateId>
+            <endToEndId>12901118</endToEndId>
+            <transactionId>TxIdhh0Ii8j8kjy8oCN3HAn5</transactionId>
+            <bookingDate>2016-07-19T00:00:00+02:00</bookingDate>
+            <amount>1000</amount>
+            <currency>EUR</currency>
+         </notRelatableBankTransactions>
+         <notRelatableBankTransactions>
+            <camt05400102InputEntyId>1329</camt05400102InputEntyId>
+            <sepaTransactionType>RETURNED_DIRECT_DEBIT_TRANSACTION</sepaTransactionType>
+            <remittanceInformation>Test Aufladung für Ihr Prepaid-Konto MSISDN: 4917641209394  + Check-code is not relevant. O2 SAGT DANKE</remittanceInformation>
+            <mandateId>MndtIdzNFD5cj0IcrJ86q6085i</mandateId>
+            <endToEndId>12901119</endToEndId>
+            <transactionId>TxIdzNFD5cj0IcrJ86q6085i</transactionId>
+            <bookingDate>2016-07-19T00:00:00+02:00</bookingDate>
+            <amount>1000</amount>
+            <currency>EUR</currency>
+         </notRelatableBankTransactions>
+      </ns2:getNotRelatableBankTransactionsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="b03520d2-0db9-4824-a4ff-77a00d7df00d" name="Match content of [remittanceInformation]-1">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[1]/remittanceInformation[1]/text()</path>
+            <content>*${#TestCase#MSISDN}*</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="b03520d2-0db9-4824-a4ff-77a00d7df00d" name="Match content of [remittanceInformation]-4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:getNotRelatableBankTransactionsResponse[1]/notRelatableBankTransactions[5]/remittanceInformation[1]</path>
+            <content>*${#TestCase#MSISDN}*</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getNotRelatableBankTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-UpdateDDParams" id="61aacbcb-3f53-450b-baa0-4bb5fd0b1782">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>cf109e4f-4e8c-4c49-8428-af3fa54c59ff</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>BrandID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TenantID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>monthlyValidationCycle</con:name>
+          <con:value>${#TestSuite#LIMIT-ValidationCycle-Flex-30}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>ContractID</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>873f21ae-4f09-4e81-836b-7c2db65e53f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>030edbd4-0cf9-44de-8827-b3608bd883fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c0844c82-d2c1-406f-8525-7754def4102e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>906f7ad1-8a21-4c84-b922-99a1ebc6a0a5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0c8b7b6c-2792-4191-92b8-af4bcbefaa6c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>16d96131-4f7e-4693-a162-4ed2ac725d37</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9ce2765f-7a48-433c-a7bc-8a6701e18ab7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6e9f4850-8a27-48aa-9368-7bab120e3754</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bc92827c-c3aa-4e36-8ed1-1b1c1f9f3e5e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b75fa4e8-1e22-4c67-8f36-2cf2d4b2fdbc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a198082c-6fa3-4c72-9bde-16e3a2a22620</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5b528cf7-a19e-444b-b3e1-4761ea3a3fb8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7c0f0fbe-621d-40de-967c-ebcc6c329923</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4ee3248f-64d7-4563-9967-b04c4c5c8f37</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0632b8a8-c914-4e99-a2bd-a1272384b9ab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ecb1c1e4-4a6f-482b-bb68-248bae225b7d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>00a590f5-d6c8-4ab1-a59c-490a1578d55b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7d56d5de-913f-4782-b9d4-79cd0d89b707</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dbb8c00-fa23-4463-b4b5-b7548609a068</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>acb730af-4802-456b-86e0-2c25e7fedb49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>148b4ca6-faaf-4f8b-b098-4982aa2fd23c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f8fc195-2342-40e3-9903-6b781814c861</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f1275ca6-88e4-4972-8798-5a38457c0d42</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6c60c226-b1d2-4792-8ef0-fcd623817dc0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c2510a4-d1de-4c06-a3c3-fcd42f2b4cb7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>466d6170-165c-49f8-9840-90f54d3650d1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>048ca756-439c-45fc-bc98-e5c2cd550add</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fd71f96a-bbb6-40d2-9c63-b06d82361294</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61f0c353-837b-4396-9223-4527b802af8d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e1d833f2-930a-4c3e-9758-e4bc671c73c7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7985eec0-24c2-452c-82ba-d484f1dd0c00</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2823dbfb-a335-4fa1-877e-9c53844f7b0c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>66ceffd6-2c24-4c94-9796-0c7189556225</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b33fa261-0cb2-45e2-ab11-f8371bfd823e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7f23ff6b-e4bb-480f-9d11-8f6f0f55e0d6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>00e2c3e9-0658-462b-af52-e47dbe113a3e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>125fe012-690a-4670-b476-f18dff9a596a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8faa6b8f-7718-4e1e-b0e9-a26d31efc1ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>36571e3e-2fc7-4ee8-a5e0-7bb4e2e31cd1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cbd9e371-395c-4684-bf4a-2dcfc66961ca</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4ecf6cd8-8d4e-4e87-b546-708df9b965b6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2853ad1e-fa29-4a3f-9d1f-823389af16d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7ed07c9-3b36-4e2a-82ef-8441e590f5b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>15106594-fcb5-40e5-8a1e-351c8aaa4e66</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3654871a-5714-4e1b-8127-629087ded72b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32ced04c-68f5-4e8d-9fad-df386dc51a4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61aa3578-3415-4866-a165-104574785e88</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e2c407a1-389f-4704-946b-e0558c33db62</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5dd5aacd-9a09-4928-a2a5-9383b4ae5894</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a22e21d8-f536-44e9-b8b4-0987a8e94b6b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ceef7c1c-ac0e-496b-ab99-16b43466ab28</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d15082bb-1bf6-4bb3-9b3f-7009aa2982f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>adb0eb3f-3af5-4ba5-a35a-101952179fec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>df089782-5aca-4970-b063-721f1fb320cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ec55f834-197a-4a01-9a6f-6d3fd4c742df</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ab0fa07a-6d76-45a2-9969-af4146aaccf2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>602d6240-1974-45d6-a3a4-a748a02fdee3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>744e42a8-7839-4b6f-a65f-980dbd9a1b5c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>411d2c50-8f45-4dd8-83ee-ceab9bb29d40</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93a974d3-325d-43a2-9dbe-80e7674edbb0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a73e5232-d9c2-4608-97fd-df5fb05fa822</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c02ba4af-79ab-4005-a941-0592963c1272</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1eb451dd-e896-420b-b7d8-20ffedc36b6d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d90a3620-15d2-4100-acb9-556cc40d64fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5579fa94-c640-40b5-8621-703525aadc3f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>50fcabef-70d5-40e8-b1fa-bf2c9777c7fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c787484a-be5f-4889-8d6f-54e17258702a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>87b8db6a-a382-457f-8493-3d4240749ba2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea69bc6f-7f2c-4751-beea-bb11c7ab63f0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c93347d-e508-463e-a027-f4ffaa8872d9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1688e1e6-5555-41ce-af1f-06d4ce0dc30a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ec8f7ae9-12f9-41c5-a401-ba29aac9db2b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>966d383a-a4a1-4322-b039-d39bbd69d32f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ebd9b2bf-5f62-458b-9770-3674a31c9cc2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>78a71dcf-4b1f-4562-8eac-01ca99405462</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>70af2557-e788-4cd7-8d8e-0e9d25a23dfe</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>56236dfc-4a33-471a-80e6-094fb24f5047</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>53020a7c-7524-47a1-9c9e-74cb28880488</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>92cdf19a-4b8f-429f-b2be-074892e4c2d4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>193c072f-3bb7-4f0f-9a4d-efd434c50aa7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da571c1e-3929-43d0-95f3-321c23ff9a86</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b5c93304-f837-4f63-9c69-868c3a2c31ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e05713af-4f58-4db7-9352-13fc0f6bfc94</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>05a2c8e9-de06-452d-a5bf-e4618be436bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>349599be-7aa1-48cd-bfb3-920d790a9a14</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>76f0d131-0175-4fc2-b683-3a5442ec9454</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93e53192-94ce-4687-b3c6-488d850b0994</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2175c739-c515-4f63-9933-14a76b696d76</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d6927798-f1ab-4318-8868-65a4d7e08f33</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4a770835-94a5-4c16-a8f7-f35f56321803</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1650059b-32f2-4ee7-92bb-97fef5498fe6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>838c1919-59ab-4e39-b6da-ae9b85b94c27</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e7a8c0b-b62c-4382-a987-79151a22bb11</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8722e14a-26ec-4271-954b-07edec8bbdad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>616a28fa-cf0d-4d15-8077-cac965c4cf39</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61aacbcb-3f53-450b-baa0-4bb5fd0b1782</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e2c1b401-0bae-4f0c-98a8-631fe4d7b843</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ab405bc6-5678-4cfc-bc07-0c97a5dedf63</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>97bb8f9c-91dc-442d-8cc5-06b6eafede76</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0b1827d-f91e-475a-8e4e-e9e61c434909</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>108dd6c6-8ad4-477f-8a4f-dd0f6bb5af3b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

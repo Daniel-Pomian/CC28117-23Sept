@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="36c84b1d-647e-439f-97ee-f7b021011420" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-MiPayService-PPIT-storeFailedRechargeAttempt-OCS" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>This test-case implement followed test-scenario:
+1. Send topup-request to mipay and use msisdn for ocs-error.
+2. Exec job for process operation info.
+3. Validate drc-request to ppit.
+
+https://www.sg.de.o2.com/jira/browse/DRC-1949
+Extend this test-case with followed steps:
+3905N_topupSynchronous-SOA-ResponseNoDetails
+and
+MSISDN=49111100000003
+After OCS-Error service from ppit return SOA-Fault response without details.</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@errors_only">true</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@follow">true</con:setting>
+    <con:setting id="36c84b1d-647e-439f-97ee-f7b021011420fileName">BadCase-MiPayService-PPIT-storeFailedRechargeAttempt-OCS</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="calltestcase" name="_Run TestCase-getSetting" id="3c88f8ff-e1b2-4453-9431-09c4006d3b31">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>e17d9c21-4e1d-492a-b204-766769a26d72</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrand</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outSetting</con:name>
+          <con:value>Not found any known ocs-setting for brand: - 1</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outSetting</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo" id="830c18b2-feb6-4f54-8b6b-ff3cee0fe156">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script continues with test-steps below, if ocs-setting=ocs or springs to steps for ocs-setting=ngocs
+ * Date: 05.06.2019
+ * Autor: Michael Gordon
+*/
+
+def sCurrentSetting = context.expand( '${_Run TestCase-getSetting#outSetting}' )
+def oCSSetting_NEW = context.expand( '${#Project#OCSSetting_NEW}' )
+
+// if current setting for ocs=ngocs, go to test-steps for ngocs.
+if(sCurrentSetting==oCSSetting_NEW)
+	testRunner.gotoStepByName(["Delay-FinalStep"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_DRCGUI-PPIT_OPERATION_INFO_PROPAGATION_ACTION" id="ae5b4a07-eddf-4819-9cad-df17f72e0357">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="_DRCGUI-PPIT_OPERATION_INFO_PROPAGATION_ACTION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:triggerJobManager>\r
+         <jobName>com.o2.directrecharge.core.job.JobAction.PPIT_OPERATION_INFO_PROPAGATION_ACTION</jobName>\r
+         <repeat>true</repeat>\r
+      </v1:triggerJobManager>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="Schema Compliance" id="359823be-e3db-4d71-92b6-318c8803a95b" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="_HTTP-ClearMockLogs" id="3c72df4c-2c37-49f9-828b-e04018929561">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="_HTTP-ClearMockLogs" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log?clear</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="153285f9-6e44-4544-a2fc-7890d817d456" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="64d43dba-a091-4d16-bb10-9a93cc10f2f3" name="3900N_topupSynchronous">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="3900N_topupSynchronous" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="aac2724f-4212-4672-8045-355be4a20a52">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mip="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <mip:topupSynchronous>
+         <DirectRechargeServiceTopupDtoWithVoucherID>
+            <amount>${#TestSuite#Balance-OCS-Default}</amount>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <msisdn>${#TestCase#MSISDN-1}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+         </DirectRechargeServiceTopupDtoWithVoucherID>
+      </mip:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d5a636c3-5677-4da5-b7a1-f0d4b6928d47" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="06910d03-59cf-4181-94d7-48c7c9b9d168" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="29ac27a6-9971-414a-9a9d-98858f6c7ca7" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="072e8726-4d6d-4556-bb17-4c9b9cc7033c" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>98800000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Error while calling OCS</faultstring>
+         <detail>
+            <ns4:topupSynchronousFault xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/">
+               <fault>
+                  <retryPossible>true</retryPossible>
+                  <originator>OCS</originator>
+                  <originatorMessage>Internal Error</originatorMessage>
+                  <errorCode>98800000</errorCode>
+                  <message>Error while calling OCS</message>
+                  <correlationId>400003164</correlationId>
+               </fault>
+               <request>
+                  <amount>1000</amount>
+                  <balanceType>2</balanceType>
+                  <msisdn>49111598800000</msisdn>
+                  <referenceId>f224222b239340ecb1458ce7621679a3</referenceId>
+               </request>
+            </ns4:topupSynchronousFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/topupSynchronous"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="9446db95-1097-45b9-9257-44bdf7cdf0b6" name="3905N_topupSynchronous-SOA-ResponseNoDetails">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForMipaySoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="3905N_topupSynchronous-SOA-ResponseNoDetails" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="aac2724f-4212-4672-8045-355be4a20a52">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForMipay-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mip="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <mip:topupSynchronous>
+         <DirectRechargeServiceTopupDtoWithVoucherID>
+            <amount>${#TestSuite#Balance-OCS-Default}</amount>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <msisdn>${#TestCase#MSISDN-2}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+         </DirectRechargeServiceTopupDtoWithVoucherID>
+      </mip:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="d5a636c3-5677-4da5-b7a1-f0d4b6928d47" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="06910d03-59cf-4181-94d7-48c7c9b9d168" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="29ac27a6-9971-414a-9a9d-98858f6c7ca7" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="072e8726-4d6d-4556-bb17-4c9b9cc7033c" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Error while calling OCS</faultstring>
+         <detail>
+            <ns4:topupSynchronousFault xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querystatusregisterforthesholdevent/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/registerforthresholdevent/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/mipay/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/operationinfo/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deregisterforthresholdevent/">
+               <fault>
+                  <retryPossible>true</retryPossible>
+                  <originator>OCS</originator>
+                  <originatorMessage>Internal Error</originatorMessage>
+                  <errorCode>98800000</errorCode>
+                  <message>Error while calling OCS</message>
+                  <correlationId>400003164</correlationId>
+               </fault>
+               <request>
+                  <amount>1000</amount>
+                  <balanceType>2</balanceType>
+                  <msisdn>49111598800000</msisdn>
+                  <referenceId>f224222b239340ecb1458ce7621679a3</referenceId>
+               </request>
+            </ns4:topupSynchronousFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForMipayPortType/topupSynchronous"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="3910N_DRCGUI-PPIT_OPERATION_INFO_PROPAGATION_ACTION" id="9c6fa98a-a24d-42f6-99eb-fb19038aad41">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="3910N_DRCGUI-PPIT_OPERATION_INFO_PROPAGATION_ACTION" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <jobName>com.o2.directrecharge.core.job.JobAction.PPIT_OPERATION_INFO_PROPAGATION_ACTION</jobName>
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="Schema Compliance" id="359823be-e3db-4d71-92b6-318c8803a95b" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="6b34cf9d-a61f-4d1a-8758-5b8cd73ea494" name="Check count of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)</path>
+            <content>2</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="3920N_HTTP-ValidateResponsesFromMocks" id="a695cafe-b1f9-41d2-a4e9-32df7aa3bac8">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="1ac0cffb-2fd8-436d-8bbc-bc723dbad492" name="3920N_HTTP-ValidateResponsesFromMocks" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="61f57801-b402-497d-ac2b-af4d1e06ea88" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="1e14d808-489f-4d69-9a61-7fb893aae67c" name="Message Content Assertion - LastRow=11withPPIT">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[5]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ReplyTo.Address is: null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[6]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D40</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[9]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>rechargeType is: 40M1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[10]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[11]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[13]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ReplyTo.Address is: null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[14]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D40</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[18]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.storeFailedRechargeAttempt: Return response for incoming request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[19]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>PPIT-CustomerCaseServices.storeFailedRechargeAttempt: Return response for incoming request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<html>
+   <head>
+      <title>Virt Groovy Log</title>
+      <meta http-equiv="refresh" content="15"/>
+      <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+   </head>
+   <body>
+      <p>
+         <b>Groovy Log output</b>
+         : [
+         <a href="log">Refresh</a>
+         ] [
+         <a href="log?clear">Clear</a>
+         ]
+      </p>
+      <table border="1">
+         <tr>
+            <td/>
+            <td>Timestamp</td>
+            <td>Message</td>
+         </tr>
+         <tr>
+            <td>1</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 49111198800000</td>
+         </tr>
+         <tr>
+            <td>2</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn 49111198800000</td>
+         </tr>
+         <tr>
+            <td>3</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>MessageID is: urn:uuid:21eaf957-da72-48d8-894f-19246af9e34e</td>
+         </tr>
+         <tr>
+            <td>4</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>ReplyTo.Address is: null</td>
+         </tr>
+         <tr>
+            <td>5</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>applicationId is: D40</td>
+         </tr>
+         <tr>
+            <td>6</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>reference is: 400003262</td>
+         </tr>
+         <tr>
+            <td>7</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>amount is: 1000</td>
+         </tr>
+         <tr>
+            <td>8</td>
+            <td>Tue Apr 23 10:11:18 CEST 2019</td>
+            <td>rechargeType is: 40M1</td>
+         </tr>
+         <tr>
+            <td>9</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 49111100000003</td>
+         </tr>
+         <tr>
+            <td>10</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn 49111100000003</td>
+         </tr>
+         <tr>
+            <td>11</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>MessageID is: urn:uuid:a256ce87-d6be-49b4-bc3d-c1d7002a0481</td>
+         </tr>
+         <tr>
+            <td>12</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>ReplyTo.Address is: null</td>
+         </tr>
+         <tr>
+            <td>13</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>applicationId is: D40</td>
+         </tr>
+         <tr>
+            <td>14</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>reference is: 400003263</td>
+         </tr>
+         <tr>
+            <td>15</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>amount is: 1000</td>
+         </tr>
+         <tr>
+            <td>16</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>rechargeType is: 40M1</td>
+         </tr>
+         <tr>
+            <td>17</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>PPIT-CustomerCaseServices.storeFailedRechargeAttempt: Return response for incoming request with MSISDN: 49111198800000</td>
+         </tr>
+         <tr>
+            <td>18</td>
+            <td>Tue Apr 23 10:11:19 CEST 2019</td>
+            <td>PPIT-CustomerCaseServices.storeFailedRechargeAttempt: Return response for incoming request with MSISDN: 49111100000003</td>
+         </tr>
+      </table>
+   </body>
+</html>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-FinalStep" id="58e6d6b4-083b-4284-b710-0c0e3124685f">
+    <con:settings/>
+    <con:config>
+      <delay>100</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN-1</con:name>
+      <con:value>${#Project#MOCK-Prefix-OCS10-rechargeAccount-CustomException}198800000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-2</con:name>
+      <con:value>${#Project#MOCK-Prefix-OCS10-rechargeAccount-CustomException}100000003</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>120bde4a-3284-4861-8701-57ab2a7146a4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a297bbb-222d-43bf-88f0-2484508aafdd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3588172d-4a7c-48b7-951f-d0b92b43e8a9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e9701d4-e757-4635-a89a-19b90d479c5d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9be2dab5-4b3c-47f3-b8c7-5950aaff2392</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>10858c7a-ddf6-49ec-abe9-67020d600159</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>18c958de-3c99-4ba1-8c8a-27c24fa0d3c8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d3af3887-1981-4453-8eec-5c2c4312f5c3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>45590d8d-0556-4454-96de-1be9f4c2f404</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4c048d17-3149-4607-b974-dbce107c6539</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>199ac2b7-e470-42b1-8049-4e1b77a0ecbc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7a8b9330-d470-4741-b0af-8255ada9aa97</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>22fefdd1-dd88-4679-b56f-3d4d23d7e5b0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8bd3d3b8-0f77-42c4-9894-b04c7db6d8b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>64c9915a-224f-48e6-a043-e6b14db51b06</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e2343f95-2e84-4cde-8fb1-171321a8dee2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>64d43dba-a091-4d16-bb10-9a93cc10f2f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9c6fa98a-a24d-42f6-99eb-fb19038aad41</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ae5b4a07-eddf-4819-9cad-df17f72e0357</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3c72df4c-2c37-49f9-828b-e04018929561</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a695cafe-b1f9-41d2-a4e9-32df7aa3bac8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9446db95-1097-45b9-9257-44bdf7cdf0b6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>58e6d6b4-083b-4284-b710-0c0e3124685f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3c88f8ff-e1b2-4453-9431-09c4006d3b31</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>830c18b2-feb6-4f54-8b6b-ff3cee0fe156</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

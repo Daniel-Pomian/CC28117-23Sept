@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="62bddf71-c84a-4d26-ba9a-a122b91b337b" discardOkResults="true" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase_CleanSEPAFileByName" searchProperties="true" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Delete sepa-file from data base</con:description>
+  <con:settings>
+    <con:setting id="62bddf71-c84a-4d26-ba9a-a122b91b337bfileName">TestCase_CleanSEPAFileByName</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer_clearValue" id="19fc41ba-ceec-4e62-8b76-2c7b46c48eaf">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFileName</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-ExtractFileName" id="f96d6315-fd68-4200-852d-98c54dde25fe">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script extract file name from file path and set to out property
+ * Date: 12.09.2016
+ * Autor: Michael Gordon
+*/
+ String inFilePath = context.expand( '${#TestCase#inFilePath}' )
+
+  if(inFilePath==null || inFilePath=='' || !inFilePath.contains('.'))
+  	testRunner.testCase.setPropertyValue('outFileName', testRunner.testCase.name + ': Input path is wrong or empty. Please set absolut path or file name with extension!')  	
+  else
+  	testRunner.testCase.setPropertyValue('outFileName',new File(inFilePath).getName())</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC_cleanupAccountByMSISDN" id="074dc6f2-0c7a-4af4-949d-309027640515">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_CLEANUP_PKG.cleanupSepaFileByName(:fileName)</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="5ed9ca1f-afc0-4815-8f14-91ca4b5cbec8" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="bcda4fbe-c4aa-4712-96e9-ca9186e2da9f" name="Match content of [UpdateCount]=1">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties>
+        <con:property>
+          <con:name>fileName</con:name>
+          <con:value>${#TestCase#outFileName}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFilePath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/soapUI-NG-Pro/TestData/CAMT54/CAMT54-Files/20160913134933296-CAMT54-Debit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFileName</con:name>
+      <con:value>20160913134933296-CAMT54-Debit.xml</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>19fc41ba-ceec-4e62-8b76-2c7b46c48eaf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f96d6315-fd68-4200-852d-98c54dde25fe</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

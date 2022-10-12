@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockService id="13f578e0-0507-4f1f-8879-5e02705a6375" port="8080" path="/OCS12/BalanceManagementService" host="localhost" name="Virt-OCS12-BalanceManagement" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting>
+    <con:setting id="13f578e0-0507-4f1f-8879-5e02705a6375fileName">Virt-OCS12-BalanceManagement</con:setting>
+  </con:settings>
+  <con:properties>
+    <con:property>
+      <con:name>Doc</con:name>
+      <con:value><![CDATA[
+Documentation for using OCS 12 mock service.
+
+Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+Mock service despatch default response with values from request and default values from mocke service like current response below.
+Default balance configured by mock is - ${#MockService#DEFAULT-balance}
+
+To order custom soap fault response with expected values, MSISDN in request must be in format:
+
+- MSISDN prefix must be:
+	- for rechargeAccount exceptions	- ${#Project#MSISDN-Prefix-OCS10-rechargeAmount-CustomException}
+	- for deductBalance exceptions	- ${#Project#MOCK-Prefix-OCS10-deductBalance-CustomException}
+
+- Position 6:
+	1 - for service exception with  errorType=PERMANENT
+	2 - for service exception with  errorType=TEMPORARY
+	3 - for client exception	with  errorType=PERMANENT
+	x - for service exception default response
+	
+- Positions 7-14 = last 8 signs from expected error code in response
+	Ex. MSISDN = 49111198800012 returns  <ns2:exceptionId>1098800012</ns2:exceptionId>
+
+Example soap fault response for MSISDN above: 
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Mock: OCS12-BalanceManagement-Service. Soap fault exception</faultstring>
+         <detail>
+            <ns2:serverException xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:ns2="http://www.telefonica.com/schemas/UNICA/SOAP/common/v2" xmlns:ns3="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types" xmlns:ns4="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types" xmlns:ns5="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns6="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns2:exceptionCategory>SVR</ns2:exceptionCategory>
+               <ns2:exceptionId>1098800012</ns2:exceptionId>
+               <ns2:text>Account in wrong status</ns2:text>
+               <ns2:exceptionPersistence>PERMANENT</ns2:exceptionPersistence>
+            </ns2:serverException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>
+
+ End of documentation  
+]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>faultString</con:name>
+      <con:value>Mock: OCS12-BalanceManagement-Service.  Soap fault exception</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-ErrorType</con:name>
+      <con:value>PERMANENT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-ErrorCode</con:name>
+      <con:value>1000099999</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-ErrorText</con:name>
+      <con:value>Unclassified error</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Exception-ErrorType</con:name>
+      <con:value>PERMANENT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Exception-ErrorCode</con:name>
+      <con:value>5</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Exception-ErrorText</con:name>
+      <con:value>Incoherent parameters:-negativeBalanceUsageFlag in request contains wrong value. Allowed is only yes!</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-exponent</con:name>
+      <con:value>-2</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-opCost</con:name>
+      <con:value>-100</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-walletId</con:name>
+      <con:value>2</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-balance</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>topUpAccount-balance</con:name>
+      <con:value>1500</con:value>
+    </con:property>
+    <con:property>
+      <con:name>topUpAccount-balanceChange</con:name>
+      <con:value>500</con:value>
+    </con:property>
+    <con:property>
+      <con:name>decrementBalance-balance</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>decrementBalance-negativBalance</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>decrementBalance-balanceChange</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+  </con:properties>
+  <con:constraints>
+    <con:congestion>0</con:congestion>
+    <con:inputBandwidth>-1</con:inputBandwidth>
+    <con:outputBandwidth>-1</con:outputBandwidth>
+    <con:maxThreadPoolCapacity>20</con:maxThreadPoolCapacity>
+    <con:coreThreadPoolCapacity>5</con:coreThreadPoolCapacity>
+    <con:virtError>
+      <con:start>0</con:start>
+      <con:endless>true</con:endless>
+    </con:virtError>
+  </con:constraints>
+  <con:dataSources/>
+  <con:headerValidator type="NONE"/>
+</con:mockService>

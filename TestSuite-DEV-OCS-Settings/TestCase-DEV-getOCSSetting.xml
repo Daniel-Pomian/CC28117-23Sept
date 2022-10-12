@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="e17d9c21-4e1d-492a-b204-766769a26d72" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-getOCSSetting" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Read via gui-interface current configuration from drc and return ocs-seting for brand.
+
+2019-05-23-Current Followed values for ocs-config for brand are allowed:
+OCS
+NGOCS
+OCS_NGOCS</con:description>
+  <con:settings>
+    <con:setting id="e17d9c21-4e1d-492a-b204-766769a26d72fileName">TestCase-DEV-getOCSSetting</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="3334f843-13b3-4dc9-b722-e49c380e2b7f">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outSetting</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="25732e8d-13e1-4786-9abc-6410d5cb27c9" name="getSettingChildNodes">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettingChildNodes</con:operation>
+      <con:request name="getSettingChildNodes" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="421dc65e-b441-482f-b3ca-5bf01175c3a6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettingChildNodes>
+         <settingPath>
+            <settingName>com.o2.directrecharge.core.settings.SettingsRootCategoryEnum.OCS_ROOT</settingName>
+            <settingName>com.o2.directrecharge.core.settings.OCSSettingEnum.OCS_TYPE_MAP</settingName>
+         </settingPath>
+      </v1:getSettingChildNodes>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="eba1145e-2bfd-4cc0-a1e9-e0f5b71a8b87" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="9d2dafd0-9b3e-49cc-a7d4-9df396d93df2" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c334c753-e1cc-4e12-bb69-03f2c3b5ec8c" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getSettingChildNodes"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="GroovyScript_returnSetting" id="4d601768-68b6-43b5-bef1-961e64fcfd81">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script read ocs-settings from drc and return ocs-setting for brand
+ * Date: 23.05.2019
+ * Setting-Example:  1=OCS;2=OCS;3=OCS;37=OCS;38=OCS;39=OCS;40=OCS;41=OCS;42=OCS;43=OCS;44=OCS;45=OCS;46=OCS;47=OCS;48=OCS;49=OCS;50=OCS;51=OCS;52=OCS;53=OCS;54=OCS;55=OCS;72=OCS;73=OCS;74=OCS;75=OCS;76=OCS;77=OCS;78=OCS;79=OCS;80=OCS;86=OCS
+ * Autor: Michael Gordon
+*/
+
+// read value from settings with name=com.o2.directrecharge.core.settings.OCSSettingEnum.OCS_TYPE_MAP and set separate sign=; at start
+// String  sSettings = ';'+context.expand( '${getSettings#Response#declare namespace ns2=\'http://directrecharge.o2.com/ws/drcgui/v1/\'; //ns2:getSettingsResponse[1]/settingsList/settingsEntry[name="com.o2.directrecharge.core.settings.OCSSettingEnum.OCS_TYPE_MAP"]/value}' )
+String  sSettings = ';'+ context.expand( '${getSettingChildNodes#Response#declare namespace ns2=\'http://directrecharge.o2.com/ws/common/settings/v1/\'; //ns2:getSettingChildNodesResponse[1]/parentEntry[1]/value[1]}' )
+ log.info(sSettings)
+
+// read data from properties
+String  inBrand = context.expand( '${#TestCase#inBrand}' )
+String oCSSetting_OLD = context.expand( '${#Project#OCSSetting_OLD}' )
+String oCSSetting_NEW = context.expand( '${#Project#OCSSetting_NEW}' )
+String oCSSetting_MIX = context.expand( '${#Project#OCSSetting_MIX}' )
+
+// seach for exist settings for brand.
+String sOutSetting=''
+if (sSettings.contains(';'+  inBrand+'='+oCSSetting_MIX))	
+	sOutSetting=oCSSetting_MIX
+if (sSettings.contains( ';'+ inBrand+'='+oCSSetting_NEW))	
+	sOutSetting=oCSSetting_NEW
+if (sSettings.contains(';'+ inBrand+'='+oCSSetting_OLD))	
+	sOutSetting=oCSSetting_OLD
+
+// if settings for brand not found, write error message in return properties
+if ( sOutSetting=='')
+	sOutSetting="Not found any known ocs-setting for brand: - " +inBrand
+log.info('Current ocs setting for brand '+inBrand + ' is:- '+sOutSetting)
+
+// return property
+testRunner.testCase.setPropertyValue( "outSetting",sOutSetting )</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inBrand</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outSetting</con:name>
+      <con:value>OCS</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3334f843-13b3-4dc9-b722-e49c380e2b7f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>25732e8d-13e1-4786-9abc-6410d5cb27c9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

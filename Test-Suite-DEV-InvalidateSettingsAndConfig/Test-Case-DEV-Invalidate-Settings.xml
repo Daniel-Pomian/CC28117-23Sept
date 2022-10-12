@@ -1,0 +1,1612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="796e5965-de38-4687-b462-92e89bdfbb4b" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="Test Case-DEV-Invalidate-Settings" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>https://www.sg.de.o2.com/jira/browse/DRC-3648
+
+As QA I want to implement tests only for manual execution before release like tests for logging or wss-security to coverage GUI-Service:
+
+invalidateAll for
+
+    group: SETTINGS
+     
+
+Note! Because settings on DEV must be tested for releases, implemented test-case must be disabled for regression tests. Implemented test-case must be executed each time one new release candidate together with tests for logging or ws-security.
+
+Followed settings group must be changed:
+
+    Change values with setSettings-methode or in DB for followed SETTINGS group:
+        Change any setting like address from finance department.
+        Url from  one ENDPOINT on the end like:
+            com.o2.directrecharge.adapter.ppit.PpitSettings.PPIT_CUSTOMERCARE_ENDPOINT
+            com.o2.directrecharge.adapter.mipay.MipaySettings.MIPAY_AUTOTOPUP_ENDPOINT
+        One change URL for VOMS (Corba)
+        One change for MFT (Oleg: have to send SQL-Script for changes)
+        One change for Job in DB  (set to inactive)
+        One change for WebService like com.o2.directrecharge.service.WebService.SUBSCRIPTION_MANAGEMENT_SERVICE, Set active=false.
+
+For change settings followed test-steps must be implemented:
+
+    Prereq: call healtyCheck with http://mucsgdp08.sg.de.pri.o2.com:8280/drc/ws/PlainDrcGuiService.
+        Make sure all services are running and accessible
+        Save all setting-values in getSettings - Response.
+    Read setings with service: getSettingChildNodes like in test-case: TestSuite-DEV-DATQIT --> TestCase-DEV-SFTP-UploadQIT
+    Change settings with methods in followed order if not possible to change with one of them:
+        with GUI-Service: setSettings
+        directly in db in tables
+        with script from Oleg (Order script, if not delivered yet)
+    Call healtyCheck with http://mucsgdp08.sg.de.pri.o2.com:8280/drc/ws/PlainDrcGuiService.
+        Make sure changed  services are running and accessible.
+    Exec Invalidation.
+    Call healtyCheck with http://mucsgdp08.sg.de.pri.o2.com:8280/drc/ws/PlainDrcGuiService.
+        Make sure changed  services are not accessible any more.
+    Restore all settings to value before test started.
+    Call healtyCheck with http://mucsgdp08.sg.de.pri.o2.com:8280/drc/ws/PlainDrcGuiService.
+        Make sure all services are running and accessible
+        Verify changed settings set back to old value with method: getSettingChildNodes
+
+Acceptance criteria:
+
+    Present current values from settings before test-execution in review meeting.
+    Exec implemented tests step by step and view changes.
+    Exec invalidation and view changed settings.
+    Set all settings value back and view restored values.</con:description>
+  <con:settings>
+    <con:setting id="796e5965-de38-4687-b462-92e89bdfbb4bfileName">Test-Case-DEV-Invalidate-Settings</con:setting>
+    <con:setting id="HttpSettings@socket_timeout">60000</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="_JDBC Request-Backup-Settings" id="1f276e0b-52d3-49ce-b8ab-a0a01add409d">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_PKG.backup_settings()</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="37a39856-3e8c-4662-b2f6-a6d3359f4da0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="920edcce-d6d0-4265-a335-80f493bd3911" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b0c20bc2-766b-4d46-b43f-d1c348c3acec" name="_getSettings">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettings</con:operation>
+      <con:request name="_getSettings" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c445b7a5-d643-49bc-91b1-167b18113c13">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettings/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="60fe291c-34be-452d-afc8-31257dd5d617" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8ef57426-6fd6-4ff9-abbb-c2d59951f5c7" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="09c16a68-d0d6-41c0-a964-037f3ad25a05" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="bf81e6b3-2b70-4810-a9da-3a9461fbfc65" name="Check count of [settingsEntry]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/';
+count( //ns2:getSettingsResponse/settingsList/settingsEntry)>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getSettings"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0fc1a9aa-14c9-4958-8e36-7a70cac97414" name="healthCheck">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>healthCheck</con:operation>
+      <con:request name="healthCheck" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f127e6ce-3b27-4985-8494-cfb3830c7955">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/commonservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:healthCheck/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="4e19b0b5-bdd3-40f8-adc1-78e2cf3987e2" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="83acaab9-d86f-4b86-a5a7-379a1c26b14f" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="173ed254-ea60-4c2f-93a8-db4df9b1f8af" name="Not SOAP Fault"/>
+        <con:assertion type="Simple NotContains" id="76a699f8-5b35-49a9-99a1-e17f99b596c9" name="Not Contains-false">
+          <con:configuration>
+            <token>&lt;adapterIsAlive>false</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/healthCheck"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-Update-Settings" id="d7781c7c-3af1-42e4-8381-9be4bdd16d12">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>BEGIN
+
+update SETTINGS set VALUE='BASE_URL=http://unknown:8580/mocks/GPS/gps/v1;USERNAME=intf_drc2gps;PASSWORD_ALIAS=gps_globalpaymentservice_password;RECEIVER_TIMEOUT=65000;CONNECTION_TIMEOUT=65000'
+where NAME='com.o2.directrecharge.adapter.impl.cxf.gps.GpsSettings.GPS_GLOBALPAYMENTSERVICE_ENDPOINT';
+
+update SETTINGS set VALUE='URL=http://unknown:8580/mocks/MiPay/AutoTopupServices;RECEIVER_TIMEOUT=65000;USE_WS_SECURITY=false;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.adapter.mipay.MipaySettings.MIPAY_AUTOTOPUP_ENDPOINT';
+
+update SETTINGS set VALUE='URL=http://unknown:8580/mocks/Piranha/StackService;RECEIVER_TIMEOUT=65000;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.adapter.piranha.PiranhaSettings.PIRANHA_STACKSERVICE_ENDPOINT';
+
+update SETTINGS set VALUE='URL=https://unknown:8545/mocks/PPIT/CustomerCareServices;RECEIVER_TIMEOUT=65000;SOA_ENABLED=false;TS_FILE=/opt/drc5/DRC-TEST/protected/soa/soa-truststore.jks;TS_PASSWORD_ALIAS=soa_truststore_password;SSL_ADD_FILTER=false;SSL_DISABLE_CH_CHECK=true;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.adapter.ppit.PpitSettings.PPIT_CUSTOMERCARE_ENDPOINT';
+
+update SETTINGS set VALUE='CLIENT_ID=dev5;CHANNEL=test;OBJECT_NAME=drc_voms_mock_dev5;NAMING_SERVICE=TNameService;MAX_COMMIT_RETRIES=2;WAIT_COMMIT_RETRY=1000;ORB_ARGUMENTS=-ORBInitialPort 1050 -ORBInitialHost unknown'
+where NAME='com.o2.directrecharge.adapter.voms.VomsSettings.VOMS_VAS_ADAPTER';
+
+update SETTINGS set VALUE='URL=http://unknown:8580/mocks/ngOCS/BalanceManagementService;RECEIVER_TIMEOUT=65000;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.core.settings.OCSSettingEnum.NGOCS_AR_ENDPOINT';
+
+update SETTINGS set VALUE='URL=https://unknown:8544/mocks/OCS10/BalanceManagementService;RECEIVER_TIMEOUT=65000;KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks;KS_PASSWORD_ALIAS=ocs_keystore_password;KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks;TS_PASSWORD_ALIAS=ocs_truststore_password;SSL_PROTOCOL=TLSv1;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.core.settings.OCSSettingEnum.OCS10_BALANCEMANAGEMENT_ENDPOINT';
+
+update SETTINGS set VALUE='URL=http://unknown:8580/mocks/OCS10/CommonService;RECEIVER_TIMEOUT=65000;SSL_PROTOCOL=TLSv1'
+where NAME='com.o2.directrecharge.core.settings.OCSSettingEnum.OCS10_COMMON_ENDPOINT';
+
+update SETTINGS set VALUE='URL=https://unknown:8544/mocks/OCS10/PackageManagementService;RECEIVER_TIMEOUT=65000;KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks;KS_PASSWORD_ALIAS=ocs_keystore_password;KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks;TS_PASSWORD_ALIAS=ocs_truststore_password;SSL_PROTOCOL=TLSv1;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.core.settings.OCSSettingEnum.OCS10_PACKAGEMANAGEMENT_ENDPOINT';
+
+update SETTINGS set VALUE='URL=https://unknown:8544/mocks/OCS12/BalanceManagementService;RECEIVER_TIMEOUT=65000;USER_CODE=SDT;KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks;KS_PASSWORD_ALIAS=ocs_keystore_password;KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks;TS_PASSWORD_ALIAS=ocs_truststore_password;SSL_PROTOCOL=TLSv1;SCHEMA_VALIDATION_ENABLED=true'
+where NAME='com.o2.directrecharge.core.settings.OCSSettingEnum.OCS12_BALANCEMANAGEMENT_ENDPOINT';
+
+END;</con:query>
+      <con:assertion type="JDBC Status" id="f8d5d297-31c5-44d5-81b6-dd26b1eacce0" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c3139479-e2ee-4c33-a8c0-cd6117c465da" name="Match content of [UpdateCount]">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="33db89d2-4276-440a-af41-7aa633a6a89e" name="healthCheck-noChanges">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>healthCheck</con:operation>
+      <con:request name="healthCheck-noChanges" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f127e6ce-3b27-4985-8494-cfb3830c7955">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/commonservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:healthCheck/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="4e19b0b5-bdd3-40f8-adc1-78e2cf3987e2" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="83acaab9-d86f-4b86-a5a7-379a1c26b14f" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="173ed254-ea60-4c2f-93a8-db4df9b1f8af" name="Not SOAP Fault"/>
+        <con:assertion type="Simple NotContains" id="76a699f8-5b35-49a9-99a1-e17f99b596c9" name="Not Contains-false">
+          <con:configuration>
+            <token>&lt;adapterIsAlive>false</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/healthCheck"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="74b7f54b-837d-4d2e-8961-5e0bb503d441" name="GUI-invalidateAll-Settings">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>invalidateAll</con:operation>
+      <con:request name="GUI-invalidateAll-Settings" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6ae7f11c-5bc3-46fa-8fec-0c11c6e25752">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/invalidation/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:invalidateAll>
+         <!--type: invalidationGroupEnum - enumeration: [SETTINGS,CONFIGURATION]-->
+         <group>SETTINGS</group>
+      </v1:invalidateAll>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="504018b7-b63c-4f35-a950-2a2997e64f4e" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Schema Compliance" id="a9eb1080-abdd-4ca9-a926-f6a8cb7e4ffe" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ba9a911a-5417-4a4f-9a7f-51322bb165bf" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cd8d2e8d-78d8-40b2-a3c6-e15b20d74e64" name="Check for existence of [ns3:invalidateAllResponse]">
+          <con:configuration>
+            <path>declare namespace ns3='http://directrecharge.o2.com/ws/common/invalidation/v1/';
+exists( //ns3:invalidateAllResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/invalidateAll"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="5901e304-7006-46e1-9bdf-0a8457818d4d" name="healthCheck-settings-Changed">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>healthCheck</con:operation>
+      <con:request name="healthCheck-settings-Changed" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f127e6ce-3b27-4985-8494-cfb3830c7955">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/commonservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:healthCheck/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="4e19b0b5-bdd3-40f8-adc1-78e2cf3987e2" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="83acaab9-d86f-4b86-a5a7-379a1c26b14f" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="173ed254-ea60-4c2f-93a8-db4df9b1f8af" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="1f928ea1-d90c-4c5e-9e76-15aae984bb04" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/runningJavaVersion[1]</con:xpath>
+              <con:element>runningJavaVersion</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1.8.0_121</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/drcMetadata[1]/version[1]</con:xpath>
+              <con:element>version</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>21.7-SNAPSHOT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/drcMetadata[1]/deliveryVersion[1]</con:xpath>
+              <con:element>deliveryVersion</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>R21-7/develop</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/drcMetadata[1]/deliveryRevision[1]</con:xpath>
+              <con:element>deliveryRevision</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>R21-7/develop.153</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/drcMetadata[1]/buildNumber[1]</con:xpath>
+              <con:element>buildNumber</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>153</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/drcMetadata[1]/builtTimestamp[1]</con:xpath>
+              <con:element>builtTimestamp</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-06-01 16:13</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/dbName[1]</con:xpath>
+              <con:element>dbName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Core-Server-Datenbank</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/dbIsAlive[1]</con:xpath>
+              <con:element>dbIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/connectionUrl[1]</con:xpath>
+              <con:element>connectionUrl</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>jdbc:oracle:thin:@mucsgdp10.sg.de.pri.o2.com:1522:DRCD3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/dbUserName[1]</con:xpath>
+              <con:element>dbUserName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>DRC3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/dbProductName[1]</con:xpath>
+              <con:element>dbProductName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Oracle</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/dbProductVersion[1]</con:xpath>
+              <con:element>dbProductVersion</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/jdbcDriverName[1]</con:xpath>
+              <con:element>jdbcDriverName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Oracle JDBC driver</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/databaseMetadata[1]/jdbcDriverVersion[1]</con:xpath>
+              <con:element>jdbcDriverVersion</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12.1.0.2.0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[1]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MIPAY</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[1]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MiPayAutoTopup</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[1]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[1]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/MiPay/AutoTopupServices; USE_WS_SECURITY=false; RECEIVER_TIMEOUT=65000;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[2]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MAIL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[2]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MAIL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[2]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[2]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue><![CDATA[BODY_MISSING_QIT_REPORT=DAT-File <FILE_NAME> was delivered at <UPLOAD_TIMESTAMP> to Voeb-Zvd. No QIT-File is delivered after <QIT_FILE_DELIVER_DURATION> days.; SUBJECT_PAIN_REPORT=Begleitzettel fuer DirectDebit File <FILE_TYPE>; SUBJECT_MISSING_QIT_REPORT=Terminal QIT-File for DAT-File <FILE_NAME> is missing; PROTOCOL=smtp; SEND_POST_BOX=DRC_SYSTEM@telefonica.com; HOST=10.97.192.1; BODY_CAMT_CORRUPTED=Folgendes Sepa File konnte nicht eingelesen werden: <FILE_NAME>\nEs ist folgender Fehler aufgetreten <ERROR_CODE>\n<ERROR_MESSAGE>\n\nDas File wurde in <FILE_NAME>.failed unbenannt.; SUBJECT_CAMTENTRY_DUPLICATED=Duplizierte Ruecklastschrift fuer <E2EID> im Sepa File <FILE_NAME> gefunden; SUBJECT_EPA_REPORT=Begleitzettel fuer DirectDebit File <FILE_TYPE>; JAVA_MAIL_PROPERTIES=mail.transport.protocol=smtp;mail.smtp.auth=false;mail.mime.charset=UTF-8;mail.smtp.starttls.enable=false; SENDING_DISABLED=true; SUBJECT_CAMT_CORRUPTED=Einlesen von Sepa File <FILE_NAME> fehlgeschlagen; BODY_CAMTENTRY_DUPLICATED=Duplizierte Ruecklastschrift fuer EndToEndId <E2EID> im Sepa File <FILE_NAME> gefunden.\n\nMit folgenden File(s) wurde(n) bereits Ruecklastschrift(en) mit angegebener EndToEndId uebermittelt: <FILE_SET>.\n\nInhalt des Camt054 Eintrags: <ENTRY_DATA>;]]></con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[3]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>VOMS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[3]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>VAS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[3]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[3]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>WAIT_COMMIT_RETRY=1000; CHANNEL=test; CLIENT_ID=dev5; NAMING_SERVICE=TNameService; MAX_COMMIT_RETRIES=2; ORB_ARGUMENTS=-ORBInitialPort 1050 -ORBInitialHost unknown; OBJECT_NAME=drc_voms_mock_dev5;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[4]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>PIRANHA</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[4]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>StackService</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[4]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[4]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/Piranha/StackService; RECEIVER_TIMEOUT=65000;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[5]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MFT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[5]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SEPA</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[5]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[5]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSH_NAME=drcbuild; PUBLIC_KEY_AUTH=true; PUBLIC_KEY_PASSPHRASE_ALIAS=mft_keyfile_passphrase; SSH_PASSWORD_ALIAS=mft_ssh_password; PATH_TO_PAIN_008_003_02=/var/MFT/drc3/pain008; LIST_AFTER_SEC=0; PATH_TO_PAIN_001_002_03=/var/MFT/drc3/pain001; HOST=mucsgdp09; PUBLIC_KEY_FILE=/home/drc/.ssh/id_rsa; PATH_TO_PAIN_001_001_03=/var/MFT/drc3/pain001; PATH_TO_PAIN_008_001_02=/var/MFT/drc3/pain008; PATH_TO_CAMT_054_001_02=/var/MFT/drc3/camt054;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[6]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MFT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[6]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BANK_TRANSFER</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[6]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[6]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSH_NAME=drcbuild; PATH_TO_MANUAL_RESEND=/var/MFT/drc3/bt_manual_resend; SSH_PASSWORD_ALIAS=bt_mft_ssh_password; LIST_AFTER_SEC=10; HOST=mucsgdp09; PATH_TO_PAIN_001_001_03=/var/MFT/drc3/bt_pain001; PATH_TO_CAMT_054_001_02=/var/MFT/drc3/bt_camt054; PATH_TO_CSV=/var/MFT/drc3/bt_csv;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[7]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MFT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[7]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SOX</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[7]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[7]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSH_NAME=drcbuild; PATH_TO_SOX=/var/MFT/drc3/sox-monitoring; HOST=mucsgdp09; PUBLIC_KEY_AUTH=true; PUBLIC_KEY_FILE=~/.ssh/id_rsa; SSH_PASSWORD_ALIAS=sox_mft_ssh_password;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[8]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MFT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[8]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>VOEB</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[8]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[8]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSH_NAME=drcbuild; PATH_TO_QIT=/var/MFT/drc3/voeb_QIT; PORT=22; SSH_PASSWORD_ALIAS=voeb_mft_ssh_password; LIST_AFTER_SEC=0; HOST=mucsgdp09; PATH_TO_DAT=/var/MFT/drc3/voeb_DAT;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[9]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>MFT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[9]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>POS_TOPUP</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[9]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[9]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSH_NAME=drcbuild; PATH_TO_QIT=/var/MFT/drc3/tef_QIT; PORT=22; SSH_PASSWORD_ALIAS=pos_topup_mft_ssh_password; LIST_AFTER_SEC=0; HOST=mucsgdp09; PATH_TO_MANUAL_QIT_RESEND=/var/MFT/drc3/tef_MANUAL_QIT_RESEND; PATH_TO_DAT=/var/MFT/drc3/tef_DAT;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[10]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>GPS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[10]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>GeneralPaymentService</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[10]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[10]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>USERNAME=intf_drc2gps; BASE_URL=http://unknown:8580/mocks/GPS/gps/v1; PASSWORD_ALIAS=gps_globalpaymentservice_password; RECEIVER_TIMEOUT=65000; CONNECTION_TIMEOUT=65000;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[11]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[11]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>PackageManagement-Service</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[11]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[11]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS10/PackageManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[12]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[12]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BalanceManagement-Service</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[12]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[12]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS10/BalanceManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[13]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[13]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BalanceManagementService_v1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[13]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[13]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>USER_CODE=SDT; KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS12/BalanceManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[14]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>OCS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[14]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ArServices</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[14]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[14]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/ngOCS/BalanceManagementService; RECEIVER_TIMEOUT=65000;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[15]/clientName[1]</con:xpath>
+              <con:element>clientName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>PPIT</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[15]/adapterName[1]</con:xpath>
+              <con:element>adapterName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>PrepaidITCustomerCareServices</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[15]/adapterIsAlive[1]</con:xpath>
+              <con:element>adapterIsAlive</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//ns1:healthCheckResponse[1]/healthData[1]/adapterMetadata[15]/adapterParameters[1]</con:xpath>
+              <con:element>adapterParameters</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SSL_ADD_FILTER=false; SSL_DISABLE_CH_CHECK=true; TS_FILE=/opt/drc5/DRC-TEST/protected/soa/soa-truststore.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=soa_truststore_password; SCHEMA_VALIDATION_ENABLED=true; SOA_ENABLED=false; URL=https://unknown:8545/mocks/PPIT/CustomerCareServices;</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns7:healthCheckResponse xmlns:ns8="http://directrecharge.o2.com/ws/common/job/v1/" xmlns:ns7="http://directrecharge.o2.com/ws/commonservice/v1/" xmlns:ns6="http://directrecharge.o2.com/ws/generic/v1/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns4="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:ns3="http://directrecharge.o2.com/ws/common/invalidation/v1/" xmlns:ns2="http://directrecharge.o2.com/ws/common/settings/v1/">
+         <healthData>
+            <runningJavaVersion>1.8.0_121</runningJavaVersion>
+            <drcMetadata>
+               <version>21.7-SNAPSHOT</version>
+               <deliveryVersion>R21-7/develop</deliveryVersion>
+               <deliveryRevision>R21-7/develop.153</deliveryRevision>
+               <buildNumber>153</buildNumber>
+               <builtTimestamp>2021-06-01 16:13</builtTimestamp>
+            </drcMetadata>
+            <databaseMetadata>
+               <dbName>Core-Server-Datenbank</dbName>
+               <dbIsAlive>true</dbIsAlive>
+               <connectionUrl>jdbc:oracle:thin:@mucsgdp10.sg.de.pri.o2.com:1522:DRCD3</connectionUrl>
+               <dbUserName>DRC3</dbUserName>
+               <dbProductName>Oracle</dbProductName>
+               <dbProductVersion>Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production</dbProductVersion>
+               <jdbcDriverName>Oracle JDBC driver</jdbcDriverName>
+               <jdbcDriverVersion>12.1.0.2.0</jdbcDriverVersion>
+            </databaseMetadata>
+            <adapterMetadata>
+               <clientName>MIPAY</clientName>
+               <adapterName>MiPayAutoTopup</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/MiPay/AutoTopupServices; USE_WS_SECURITY=false; RECEIVER_TIMEOUT=65000;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MAIL</clientName>
+               <adapterName>MAIL</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters><![CDATA[BODY_MISSING_QIT_REPORT=DAT-File <FILE_NAME> was delivered at <UPLOAD_TIMESTAMP> to Voeb-Zvd. No QIT-File is delivered after <QIT_FILE_DELIVER_DURATION> days.; SUBJECT_PAIN_REPORT=Begleitzettel fuer DirectDebit File <FILE_TYPE>; SUBJECT_MISSING_QIT_REPORT=Terminal QIT-File for DAT-File <FILE_NAME> is missing; PROTOCOL=smtp; SEND_POST_BOX=DRC_SYSTEM@telefonica.com; HOST=10.97.192.1; BODY_CAMT_CORRUPTED=Folgendes Sepa File konnte nicht eingelesen werden: <FILE_NAME>\nEs ist folgender Fehler aufgetreten <ERROR_CODE>\n<ERROR_MESSAGE>\n\nDas File wurde in <FILE_NAME>.failed unbenannt.; SUBJECT_CAMTENTRY_DUPLICATED=Duplizierte Ruecklastschrift fuer <E2EID> im Sepa File <FILE_NAME> gefunden; SUBJECT_EPA_REPORT=Begleitzettel fuer DirectDebit File <FILE_TYPE>; JAVA_MAIL_PROPERTIES=mail.transport.protocol=smtp;mail.smtp.auth=false;mail.mime.charset=UTF-8;mail.smtp.starttls.enable=false; SENDING_DISABLED=true; SUBJECT_CAMT_CORRUPTED=Einlesen von Sepa File <FILE_NAME> fehlgeschlagen; BODY_CAMTENTRY_DUPLICATED=Duplizierte Ruecklastschrift fuer EndToEndId <E2EID> im Sepa File <FILE_NAME> gefunden.\n\nMit folgenden File(s) wurde(n) bereits Ruecklastschrift(en) mit angegebener EndToEndId uebermittelt: <FILE_SET>.\n\nInhalt des Camt054 Eintrags: <ENTRY_DATA>;]]]]>><![CDATA[</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>VOMS</clientName>
+               <adapterName>VAS</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>WAIT_COMMIT_RETRY=1000; CHANNEL=test; CLIENT_ID=dev5; NAMING_SERVICE=TNameService; MAX_COMMIT_RETRIES=2; ORB_ARGUMENTS=-ORBInitialPort 1050 -ORBInitialHost unknown; OBJECT_NAME=drc_voms_mock_dev5;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>PIRANHA</clientName>
+               <adapterName>StackService</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/Piranha/StackService; RECEIVER_TIMEOUT=65000;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MFT</clientName>
+               <adapterName>SEPA</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters>SSH_NAME=drcbuild; PUBLIC_KEY_AUTH=true; PUBLIC_KEY_PASSPHRASE_ALIAS=mft_keyfile_passphrase; SSH_PASSWORD_ALIAS=mft_ssh_password; PATH_TO_PAIN_008_003_02=/var/MFT/drc3/pain008; LIST_AFTER_SEC=0; PATH_TO_PAIN_001_002_03=/var/MFT/drc3/pain001; HOST=mucsgdp09; PUBLIC_KEY_FILE=/home/drc/.ssh/id_rsa; PATH_TO_PAIN_001_001_03=/var/MFT/drc3/pain001; PATH_TO_PAIN_008_001_02=/var/MFT/drc3/pain008; PATH_TO_CAMT_054_001_02=/var/MFT/drc3/camt054;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MFT</clientName>
+               <adapterName>BANK_TRANSFER</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters>SSH_NAME=drcbuild; PATH_TO_MANUAL_RESEND=/var/MFT/drc3/bt_manual_resend; SSH_PASSWORD_ALIAS=bt_mft_ssh_password; LIST_AFTER_SEC=10; HOST=mucsgdp09; PATH_TO_PAIN_001_001_03=/var/MFT/drc3/bt_pain001; PATH_TO_CAMT_054_001_02=/var/MFT/drc3/bt_camt054; PATH_TO_CSV=/var/MFT/drc3/bt_csv;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MFT</clientName>
+               <adapterName>SOX</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters>SSH_NAME=drcbuild; PATH_TO_SOX=/var/MFT/drc3/sox-monitoring; HOST=mucsgdp09; PUBLIC_KEY_AUTH=true; PUBLIC_KEY_FILE=~/.ssh/id_rsa; SSH_PASSWORD_ALIAS=sox_mft_ssh_password;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MFT</clientName>
+               <adapterName>VOEB</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters>SSH_NAME=drcbuild; PATH_TO_QIT=/var/MFT/drc3/voeb_QIT; PORT=22; SSH_PASSWORD_ALIAS=voeb_mft_ssh_password; LIST_AFTER_SEC=0; HOST=mucsgdp09; PATH_TO_DAT=/var/MFT/drc3/voeb_DAT;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>MFT</clientName>
+               <adapterName>POS_TOPUP</adapterName>
+               <adapterIsAlive>true</adapterIsAlive>
+               <adapterParameters>SSH_NAME=drcbuild; PATH_TO_QIT=/var/MFT/drc3/tef_QIT; PORT=22; SSH_PASSWORD_ALIAS=pos_topup_mft_ssh_password; LIST_AFTER_SEC=0; HOST=mucsgdp09; PATH_TO_MANUAL_QIT_RESEND=/var/MFT/drc3/tef_MANUAL_QIT_RESEND; PATH_TO_DAT=/var/MFT/drc3/tef_DAT;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>GPS</clientName>
+               <adapterName>GeneralPaymentService</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>USERNAME=intf_drc2gps; BASE_URL=http://unknown:8580/mocks/GPS/gps/v1; PASSWORD_ALIAS=gps_globalpaymentservice_password; RECEIVER_TIMEOUT=65000; CONNECTION_TIMEOUT=65000;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>OCS</clientName>
+               <adapterName>PackageManagement-Service</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS10/PackageManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>OCS</clientName>
+               <adapterName>BalanceManagement-Service</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS10/BalanceManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>OCS</clientName>
+               <adapterName>BalanceManagementService_v1</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>USER_CODE=SDT; KS_FILE=/opt/drc5/DRC-TEST/protected/ocs/direct-recharge.jks; TS_FILE=/opt/drc5/DRC-TEST/protected/ocs/ca.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=ocs_truststore_password; SSL_PROTOCOL=TLSv1; SCHEMA_VALIDATION_ENABLED=true; URL=https://unknown:8544/mocks/OCS12/BalanceManagementService; KS_PASSWORD_ALIAS=ocs_keystore_password; KS_KEY_PASSWORD_ALIAS=ocs_keystore_key_password;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>OCS</clientName>
+               <adapterName>ArServices</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>SCHEMA_VALIDATION_ENABLED=true; URL=http://unknown:8580/mocks/ngOCS/BalanceManagementService; RECEIVER_TIMEOUT=65000;</adapterParameters>
+            </adapterMetadata>
+            <adapterMetadata>
+               <clientName>PPIT</clientName>
+               <adapterName>PrepaidITCustomerCareServices</adapterName>
+               <adapterIsAlive>false</adapterIsAlive>
+               <adapterParameters>SSL_ADD_FILTER=false; SSL_DISABLE_CH_CHECK=true; TS_FILE=/opt/drc5/DRC-TEST/protected/soa/soa-truststore.jks; RECEIVER_TIMEOUT=65000; TS_PASSWORD_ALIAS=soa_truststore_password; SCHEMA_VALIDATION_ENABLED=true; SOA_ENABLED=false; URL=https://unknown:8545/mocks/PPIT/CustomerCareServices;</adapterParameters>
+            </adapterMetadata>
+         </healthData>
+      </ns7:healthCheckResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/healthCheck"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ef775a94-eb19-4db5-9991-7969ea83438b" name="_setSettings" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>setSettings</con:operation>
+      <con:request name="_setSettings" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7907c612-9260-436d-8d66-23a2235dba96">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+          <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@disable-multipart-attachments">true</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      ${_getSettings#Response#declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/'; //ns2:getSettingsResponse[1]/settingsList[1]}
+   <v1:setSettings><settingsList/></v1:setSettings></soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="35a5e5d2-1955-42ce-9f6d-8fab8d2b9390" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="5f259ee2-9c73-48ef-beee-fef326c19e66" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="cfeb91c0-d363-4363-8600-661008082f11" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="33aba8b4-bb21-4d97-960e-50f89a3b6558" name="Check count of [ns2:setSettingsResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/settings/v1/';
+count( //ns2:setSettingsResponse)</path>
+            <content>1</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/setSettings"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-Restore-Settings" id="ca07aa39-0c27-4f2d-af0a-8cc8959597e7">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_PKG.restore_settings()</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="c920ac0e-6c5a-422e-bd67-f293b7b89ec9" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="b9033246-a8d1-4e47-aad6-2c4f7ef298f8" name="Match content of [Results]">
+        <con:configuration>
+          <path>//Results[1]</path>
+          <content>&lt;Results>
+  &lt;UpdateCount>-1&lt;/UpdateCount>
+&lt;/Results></content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="31ca7852-ed43-4804-ac0c-a41943bbb049" name="GUI-invalidateAll-Settings-again">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>invalidateAll</con:operation>
+      <con:request name="GUI-invalidateAll-Settings-again" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6ae7f11c-5bc3-46fa-8fec-0c11c6e25752">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/invalidation/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:invalidateAll>
+         <!--type: invalidationGroupEnum - enumeration: [SETTINGS,CONFIGURATION]-->
+         <group>SETTINGS</group>
+      </v1:invalidateAll>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="504018b7-b63c-4f35-a950-2a2997e64f4e" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Schema Compliance" id="a9eb1080-abdd-4ca9-a926-f6a8cb7e4ffe" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ba9a911a-5417-4a4f-9a7f-51322bb165bf" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cd8d2e8d-78d8-40b2-a3c6-e15b20d74e64" name="Check for existence of [ns3:invalidateAllResponse]">
+          <con:configuration>
+            <path>declare namespace ns3='http://directrecharge.o2.com/ws/common/invalidation/v1/';
+exists( //ns3:invalidateAllResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/invalidateAll"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="25ba7446-35ca-4dae-bf26-c47241c19137" name="healthCheck-asAtStart">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>healthCheck</con:operation>
+      <con:request name="healthCheck-asAtStart" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f127e6ce-3b27-4985-8494-cfb3830c7955">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/commonservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:healthCheck/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="4e19b0b5-bdd3-40f8-adc1-78e2cf3987e2" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="83acaab9-d86f-4b86-a5a7-379a1c26b14f" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="173ed254-ea60-4c2f-93a8-db4df9b1f8af" name="Not SOAP Fault"/>
+        <con:assertion type="Simple NotContains" id="76a699f8-5b35-49a9-99a1-e17f99b596c9" name="Not Contains-false">
+          <con:configuration>
+            <token>&lt;adapterIsAlive>false</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/healthCheck"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>b0c20bc2-766b-4d46-b43f-d1c348c3acec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0fc1a9aa-14c9-4958-8e36-7a70cac97414</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1f276e0b-52d3-49ce-b8ab-a0a01add409d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca07aa39-0c27-4f2d-af0a-8cc8959597e7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>74b7f54b-837d-4d2e-8961-5e0bb503d441</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7781c7c-3af1-42e4-8381-9be4bdd16d12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>33db89d2-4276-440a-af41-7aa633a6a89e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5901e304-7006-46e1-9bdf-0a8457818d4d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>31ca7852-ed43-4804-ac0c-a41943bbb049</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ef775a94-eb19-4db5-9991-7969ea83438b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>25ba7446-35ca-4dae-bf26-c47241c19137</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

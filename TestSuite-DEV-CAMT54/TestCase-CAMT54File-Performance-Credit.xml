@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="49d7e31f-4471-42c4-a415-0d1149845576" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CAMT54File-Performance-Credit" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" disabled="true" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create camt54 credit file with many eintrances for performance test.
+The same msisdn from properties and msisdn-code are set for each entrance in camt54 file for credit.</con:description>
+  <con:settings>
+    <con:setting id="49d7e31f-4471-42c4-a415-0d1149845576fileName">TestCase-CAMT54File-Performance-Credit</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="calltestcase" name="Run TestCase-Header" id="5939162f-a149-46e5-a290-e4196d03bcc0">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>425bb68d-b5be-4711-95b5-7ac75072cbab</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestSuite#TargetDir}/${#TestSuite#TargetFileCredit}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Count</con:name>
+          <con:value>${#TestCase#Count}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+          <con:value>${#TestCase#TotalAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Type</con:name>
+          <con:value>${#TestSuite#Type-CdtDbtInd-Credit}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>D:\Projects\Telefonica\DirectReCharge\TestOutput\soapUI/CAMT54-Files/20191007112214526-CAMT54-Credit.xml</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-GetCheckCode" id="6a56ae07-6769-4ad4-a292-dc94847fd1fd">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ecc2354e-f67c-4a1d-b32e-bfb6bb65163c</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>MSISDN</con:name>
+          <con:value>${#TestCase#MSISDN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outCheckCode</con:name>
+          <con:value>9158</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outCheckCode</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-TargetPath" id="42267bf3-a4b7-479b-861f-d59c5237374e">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="true" transferChildNodes="false">
+        <con:name>Path</con:name>
+        <con:sourceType>outTargetFile</con:sourceType>
+        <con:sourceStep>Run TestCase-Header</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTargetFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" entitize="false" ignoreEmpty="false" transferToAll="false" transferChildNodes="false">
+        <con:name>Code</con:name>
+        <con:sourceType>outCheckCode</con:sourceType>
+        <con:sourceStep>Run TestCase-GetCheckCode</con:sourceStep>
+        <con:targetType>CheckCode</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-Middle" id="b08940c1-4fe6-46e6-8e14-305eb070baf1">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script create middle part for camt54 file with many eintrances for performance test 
+ * Date: 22.06.2016
+ * Autor: Michael Gordon
+*/
+
+ // set values
+ def iCount = context.expand( '${#TestCase#Count}' ).toInteger()
+ def targetFile = new FileWriter (context.expand( '${#TestCase#outTargetFile}' ), true)
+ 	// write middle content
+	for ( i in 1..iCount ) {
+		log.info(i)
+    		targetFile.write( context.expand( '${#TestCase#CAMT54-Credit-Middle}' ).toString())
+    		targetFile.flush()
+	}</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-Footer" id="4df70a34-13c1-4bbb-985e-e002a841f003">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>28075ddf-477b-42c7-9359-dc04583a35ef</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Count</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Amount</con:name>
+      <con:value>1.99</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TotalAmount</con:name>
+      <con:value>1990</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outTargetFile</con:name>
+      <con:value>D:\Projects\Telefonica\DirectReCharge\TestOutput\soapUI/CAMT54-Files/20191007112214526-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>CAMT54-Credit-Middle</con:name>
+      <con:value><![CDATA[<TxDtls> 	<Refs> 		<EndToEndId>ZV1234567891234567890001</EndToEndId> 		<TxId>CTC${=java.lang.Math.round(Math.random()*10000000000)}${=java.lang.Math.round(Math.random()*10000000000)}0002</TxId> 	</Refs> 	<AmtDtls> 		<TxAmt> 			<Amt Ccy="EUR">${#TestCase#Amount}</Amt> 		</TxAmt> 	</AmtDtls> 	<BkTxCd> 		<Prtry> 			<Cd>NTRF+166+100</Cd> 			<Issr>ZKA</Issr> 		</Prtry> 	</BkTxCd> 	<RltdPties> 		<Dbtr> 			<Nm>Testueberweisung CAMT54 Credit</Nm> 		</Dbtr> 		<DbtrAcct> 			<Id> 				<IBAN>DE02ZZZ01234567890</IBAN> 			</Id> 		</DbtrAcct> 		<Cdtr> 			<Nm>Name</Nm> 		</Cdtr> 		<CdtrAcct> 			<Id> 				<IBAN>DE99999999999999999990</IBAN> 			</Id> 		</CdtrAcct> 	</RltdPties> 	<RltdAgts> 		<DbtrAgt> 			<FinInstnId> 				<BIC>TEFXXXXXXXX</BIC> 			</FinInstnId> 		</DbtrAgt> 		<CdtrAgt> 			<FinInstnId> 				<BIC>TEFXXXXXXXX</BIC> 			</FinInstnId> 		</CdtrAgt> 	</RltdAgts> 	<RmtInf> 		<Ustrd>${#TestCase#MSISDN}-${#TestCase#CheckCode} Testaufladung Direct Debit</Ustrd> 	</RmtInf> 	<AddtlTxInf>SEPA-Gutschrift</AddtlTxInf> </TxDtls>]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>491797654321</con:value>
+    </con:property>
+    <con:property>
+      <con:name>CheckCode</con:name>
+      <con:value>9158</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3732b0cd-fab8-4ea2-b914-feed3cf8732f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e763faa-cd50-4583-b575-17cdd1a23452</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9f163fc3-5e3c-4bd2-9572-4a07e33193be</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52c3cfd8-ffae-442f-b606-98128b70ceb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27ee7f82-96d6-4563-8f0c-17d9b67814c6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dc88923-d84e-4e21-803c-4e1b0331118d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b4d5788c-fc24-42e1-a64e-f6a9db39f4f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>949f49f3-f5de-42bb-8b63-174425cc8922</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e645c7d-0e9e-4a79-b2a6-bf8e63c61385</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a56ae07-6769-4ad4-a292-dc94847fd1fd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5939162f-a149-46e5-a290-e4196d03bcc0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>42267bf3-a4b7-479b-861f-d59c5237374e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b08940c1-4fe6-46e6-8e14-305eb070baf1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4df70a34-13c1-4bbb-985e-e002a841f003</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

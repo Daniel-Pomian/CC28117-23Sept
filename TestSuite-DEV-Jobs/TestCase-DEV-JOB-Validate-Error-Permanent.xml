@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="1aa626fb-dd72-4574-ae9a-a0b1663c7766" discardOkResults="false" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-JOB-Validate-Error-Permanent" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Make sure last job execution created new entrance in Job-Maintains table and contains errors</con:description>
+  <con:settings>
+    <con:setting id="1aa626fb-dd72-4574-ae9a-a0b1663c7766fileName">TestCase-DEV-JOB-Validate-Error-Permanent</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="JDBC Request-getLastJobEntrance" id="3f5e4408-a226-4fd2-bb23-c58ea103b7b9">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>Select *
+From job_maintain jm
+WHERE jm.id = 
+    ( Select MAX(ID) 
+    FROM job_maintain WHERE 
+    job_name like '%${#TestCase#inJobName}')</con:query>
+      <con:assertion type="JDBC Status" id="9dc91eb2-660f-4277-8913-8ea0c4a705b3" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c06fdcba-da66-424c-812e-060b5450c9b1" name="Match content of [STATUS]=1">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/STATUS[1]/text()</path>
+          <content>1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="3fc9aba2-4791-40fd-9bff-715e1c0d82fd" name="Match content of [START_DATE]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/START_DATE[1]/text()</path>
+          <content>${#Project#Date_Current_yyyy-MM-dd}*</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="ed582bd6-4965-4e0d-9a0d-0f0fd8b370be" name="Match content of [END_DATE]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/END_DATE[1]/text()</path>
+          <content>${#Project#Date_Current_yyyy-MM-dd}*</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="9a7a166d-f460-4a6a-b125-0bc7f9b7ffee" name="Match content of [PERMANENT_ERRORS]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/PERMANENT_ERRORS[1]>=${#TestCase#inCountErrors}</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="c9febcee-18c1-43b4-8293-93394ed5fdd3" name="Match content of [ERROR_TEXT]">
+        <con:configuration>
+          <path>string-length(//Results[1]/ResultSet[1]/Row[1]/ERROR_TEXT[1])>1</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="fe1bf05b-997b-44fa-9860-7a8e64657e54" name="Match content of [TOTAL_COUNT]-ErrorCount>=0">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/TOTAL_COUNT[1] - 
+${JDBC Request-getLastJobEntrance#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/PERMANENT_ERRORS[1]}
+>=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="e3566091-18ca-4d2f-9bd3-bf4f7fdcf4ab" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>inJobName</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inJobName</con:name>
+      <con:value>POS_TOPUP_ACCOUNTING_DOWNLOAD_DAT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inCountErrors</con:name>
+      <con:value>1</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

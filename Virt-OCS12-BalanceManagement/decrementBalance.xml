@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="decrementBalance" id="248dcc2f-b48c-4232-9884-9dc4f32f225d" interface="BalanceManagementServiceSOAPBinding_v1_0" operation="decrementBalance" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="248dcc2f-b48c-4232-9884-9dc4f32f225dfileName">decrementBalance</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath>/*
+ * This script read values from request, count balance and set in virt properties for response 
+ * Date: 12.05.2016, reimplemented at 12.04.19
+ * Autor: Michael Gordon
+*/
+
+// constants
+ def sERRORCODE_PREFIX='10'
+ // read default values from project properties
+ def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-OCS10-deductBalance-CustomException}' )
+ def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+ 
+ // from virt properties
+ def iDEFAULTBalance = context.expand( '${#MockService#DEFAULT-balance}' ).toInteger() 
+ def sErrorType_Default = context.expand( '${#MockService#DEFAULT-ErrorType}')
+ def sErrorCode_Default=context.expand( '${#MockService#DEFAULT-ErrorCode}')
+ def sErrorText_Default = context.expand( '${#MockService#DEFAULT-ErrorText}')
+
+ // set virt properties for soap fault responses  
+ context.mockService.setPropertyValue('Exception-ErrorType',sErrorType_Default)
+ context.mockService.setPropertyValue('Exception-ErrorCode',sErrorCode_Default)
+ context.mockService.setPropertyValue('Exception-ErrorText',sErrorText_Default)
+
+ // read values from incommning request
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent )  
+ def sHeaderMsgId=holder.getNodeValue("declare namespace ns1='http://schemas.xmlsoap.org/ws/2004/08/addressing';//ns1:MessageID[1]")
+ def sMSISDN = holder.getNodeValue("declare namespace typ='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types'; declare namespace typ1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types'; //typ:decrementBalance[1]/typ1:subscriberId[1]/typ1:e164Number[1]")  
+ def sAmount=holder.getNodeValue("declare namespace typ='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types'; declare namespace typ1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types'; //typ:decrementBalance[1]/typ1:adjustmentAmount[1]") 
+ def sApplicationID=holder.getNodeValue("declare namespace ns3='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types';declare namespace ns1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types';//ns3:decrementBalance[1]/ns1:actionCommonInfo[1]/ns1:appInfo[1]/ns1:appId[1]") 
+ def sReference =holder.getNodeValue("declare namespace ns3='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types';declare namespace ns1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types';//ns3:decrementBalance[1]/ns1:actionCommonInfo[1]/ns1:appInfo[1]/ns1:reference[1]")
+ def sUserCode=holder.getNodeValue("declare namespace ns3='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types';declare namespace ns1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types';//ns3:decrementBalance[1]/ns1:actionCommonInfo[1]/ns1:userCode[1]")
+ def sWalledID=holder.getNodeValue("declare namespace ns3='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types';declare namespace ns1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types';//ns3:decrementBalance[1]/ns1:walletId[1]")
+ def sTotalFlag=holder.getNodeValue("declare namespace typ='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types'; declare namespace typ1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types'; //typ:decrementBalance[1]/typ1:totalFlag[1]") 
+ def sNegativeUsageFlag=holder.getNodeValue("declare namespace typ='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types'; declare namespace typ1='http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types'; //typ:decrementBalance[1]/typ1:negativeBalanceUsageFlag[1]") 
+
+ log.info('OCS12-BalanceManagement.decrementBalance: Return response for request with msisdn ' + sMSISDN)
+ // log data from request in groovy-output from mock-gui for validations
+ log.info('MessageID is: ' + sHeaderMsgId) 	 
+ log.info('applicationId is: ' + sApplicationID)
+ log.info('reference is: ' + sReference)
+ log.info('amount is: ' + sAmount)
+ log.info('total flag is: ' + sTotalFlag)
+
+ // check msissdn
+ if(sMSISDN==null || sMSISDN.length()&lt;1 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	context.mockService.setPropertyValue('Exception-ErrorCode','5')
+ 	context.mockService.setPropertyValue('Exception-ErrorText','Incoherent parameters: MSISDN is missed, to short, to long or contains not allowed signs')
+	return 'Response-soapFault-ServiceException'
+ }
+ 
+ // if msisd=constant msisdn unknown, return permanent errorcode=1000000001, it is default code
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	context.mockService.setPropertyValue('Exception-ErrorCode','1')
+ 	context.mockService.setPropertyValue('Exception-ErrorText','Unknown subscriberId')
+ 	return 'Response-soapFault-ServiceException'
+ }
+ 
+// check input parameters from request
+String sResultCode='5'
+String sResultDesc='Incoherent parameters:-'
+def lstMediaType = ['23','25','27','28','35','38','39','40','43','44','60','61','70','71']
+def lstTopup=['M0','M1','M2','M3','M4','M5','M6']
+// check: MessageId in soapHeader. Must be uuid and 36 signs long
+if (sHeaderMsgId==null || sHeaderMsgId.length()&lt;1 ||
+	sHeaderMsgId.replace('urn:uuid:','').length()!=36)
+	sResultDesc=sResultDesc + 'MessageID in soapHeader is missed or not uuid!'
+// check applicationId. Must be D+mediaType. Ex. D35
+else if (sApplicationID==null ||  sApplicationID.length()!=3 || 
+	!lstMediaType.contains(sApplicationID[1..2]) || sApplicationID[0]!='D')
+	sResultDesc=sResultDesc + 'applicationId in request is emtpy or contains not allowed value! Must be D + media type'
+// check reference. Started with mediaType. Ex. 350000010006278
+else if (sReference==null ||  sReference.length()&lt;9 ||  sReference.length()>64 ||
+	!lstMediaType.contains(sReference[0..1]))
+	sResultDesc=sResultDesc + 'reference in request is emtpy, not 9 till 64 signs long or does not contain media type!'
+// check walletId=balanceID=2
+else if (sWalledID==null || sWalledID!='2')
+	sResultDesc=sResultDesc + 'walletId in request contains wrong value. Allowed is only 2!'
+// check userCode=SDT
+else if (sUserCode==null || sUserCode!='SDT')
+	sResultDesc=sResultDesc + 'userCode in request contains wrong value. Allowed is only SDT!'
+// check wnegativeBalanceUsageFlag
+else if (sNegativeUsageFlag==null || sNegativeUsageFlag!='yes')
+	sResultDesc=sResultDesc + 'negativeBalanceUsageFlag in request contains wrong value. Allowed is only yes!'
+// Two last signs in applicationId must be = first two signs in reference and in rechargeType
+else if (sApplicationID[1..2]!=sReference[0..1])
+	sResultDesc=sResultDesc + 'Media type in applicationId and reference from request is not identical!'
+else	// all values in request are valid, clear error description.
+	sResultDesc=''
+
+// if error description is not empty, send error response with error-message
+if(sResultDesc!=''){
+	context.mockService.setPropertyValue('Exception-ErrorCode',sResultCode)
+	context.mockService.setPropertyValue('Exception-ErrorText',sResultDesc)
+	return 'Response-soapFault-ServiceException'  
+}
+ 
+ // make sure, soap fault response is ordered
+ if (sMSISDN.length()==14 &amp;&amp; sMSISDN[0..4]==sMSISDNPrefixException){
+	// create ordered soap fault exception and set error code, if response is soap fault
+	context.mockService.setPropertyValue('Exception-ErrorCode',sERRORCODE_PREFIX+sMSISDN.substring(6))
+	switch ( sMSISDN[5] ) {
+    		case '1':		// service exception, permanent    		
+         		return 'Response-soapFault-ServiceException' 
+    		case '2':		// service exception, transient   
+    			context.mockService.setPropertyValue('Exception-ErrorType','TEMPORARY')        	
+          	return 'Response-soapFault-ServiceException' 
+    		case '3':		// policy exception, transient        	
+        		return 'Response-soapFault-PolicyException'   
+    		default:
+        		return 'Response-soapFault-ServiceException' 
+	}
+ }
+
+  //set balance and set first all balances to 0
+ context.mockService.setPropertyValue('decrementBalance-balanceChange',sAmount)
+ context.mockService.setPropertyValue('decrementBalance-balance','0')
+ context.mockService.setPropertyValue('decrementBalance-negativBalance','0')
+ /* !Note
+ Decrement in negativ area are supported. negativeBalanceUsageFlag=true is contstant in drc-request to ocs12
+ totalFlag	FlagType	No	‘yes’ if the whole amount needs to be deducted. In this case, service exception “Insufficient balance? will be returned if the amount to be deducted is larger than available balance.
+ negativeBalanceUsageFlag	FlagType	No	Flag indicating whether a Negative Balance is granted or not. It only makes sense when totalFlag is activated.
+ */
+
+  // convert balance change to integer and count difference 
+ def iBalanceDelta=iDEFAULTBalance-sAmount.toInteger()
+ if (iBalanceDelta>=0) {
+	// set balance to default balance + change balance
+	context.mockService.setPropertyValue('decrementBalance-balance',(iBalanceDelta).toString())
+	return 'Response-Default'	
+ } 
+ else {
+ 	// set negative balance and balance to 0
+ 	context.mockService.setPropertyValue('decrementBalance-negativBalance',(-iBalanceDelta).toString())
+	return 'Response-Default'
+ }</con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="4900a829-39f4-4ce5-823b-c8191148dd99" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+   <S:Header>
+      <add:MessageID xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing">urn:uuid:${#Project#GUID}</add:MessageID>
+   </S:Header>
+   <S:Body>
+      <ns3:decrementBalanceResponse xmlns="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types" xmlns:ns2="http://www.telefonica.com/schemas/UNICA/SOAP/common/v2" xmlns:ns3="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns5="http://schemas.xmlsoap.org/ws/2002/04/secext" xmlns:ns6="http://www.w3.org/2000/09/xmldsig#">
+         <result>
+            <opReference>
+               <opId>${#Project#GUID_Moved-}</opId>
+            </opReference>
+            <opExecutionDate>${#Project#Date_Future_Offset}</opExecutionDate>
+            <opCost exponent="${#MockService#DEFAULT-exponent}">${#MockService#DEFAULT-opCost}</opCost>
+            <balanceActivityInfo>
+               <balance exponent="${#MockService#DEFAULT-exponent}">${#MockService#decrementBalance-balance}</balance>
+               <walletInfoList>
+                  <walletInfo>
+                     <walletId>${#MockService#DEFAULT-walletId}</walletId>
+                     <balance exponent="${#MockService#DEFAULT-exponent}">${#MockService#decrementBalance-balance}</balance>
+                     <expirationDate>${#Project#Date_Future_Offset}</expirationDate>
+                     <status>A</status>
+                     <detailedInfo>
+                        <balanceNotAccumulated exponent="${#MockService#DEFAULT-exponent}">0</balanceNotAccumulated>
+                        <changedBalance exponent="${#MockService#DEFAULT-exponent}">${#MockService#decrementBalance-balanceChange}</changedBalance>
+                     </detailedInfo>
+                  </walletInfo>
+               </walletInfoList>
+               <negativeBalance exponent="${#MockService#DEFAULT-exponent}">${#MockService#decrementBalance-negativBalance}</negativeBalance>
+               <negativeBalanceInfoList>
+                  <negativeBalanceInfo>
+                     <negativeBalanceId>1</negativeBalanceId>
+                     <balance exponent="${#MockService#DEFAULT-exponent}">${#MockService#decrementBalance-negativBalance}</balance>
+                  </negativeBalanceInfo>
+               </negativeBalanceInfoList>
+            </balanceActivityInfo>
+         </result>
+      </ns3:decrementBalanceResponse>
+   </S:Body>
+</S:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="decrementBalance"/>
+  </con:response>
+  <con:response name="Response-soapFault-ServiceException" id="48294cd4-e972-4459-a471-4345382b7951" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns2:serverException xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:ns2="http://www.telefonica.com/schemas/UNICA/SOAP/common/v2" xmlns:ns3="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/v1/types" xmlns:ns4="http://www.telefonica.com/schemas/UNICA/SOAP/altamiraProvision/balanceManagement/v1/types" xmlns:ns5="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns6="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns2:exceptionCategory>SVR</ns2:exceptionCategory>
+               <ns2:exceptionId>${#MockService#Exception-ErrorCode}</ns2:exceptionId>
+               <ns2:text>${#MockService#Exception-ErrorText}</ns2:text>
+               <ns2:exceptionPersistence>${#MockService#Exception-ErrorType}</ns2:exceptionPersistence>
+            </ns2:serverException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="decrementBalance"/>
+  </con:response>
+  <con:response name="Response-soapFault-PolicyException" id="23eb1749-3bc0-4792-88ae-225d94bbfddf" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <tns:clientException xsi:schemaLocation="http://www.telefonica.com/schemas/UNICA/SOAP/common/v2 UNICA_API_SOAP_common_types_v2_1.xsd " xmlns:tns="http://www.telefonica.com/schemas/UNICA/SOAP/common/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <tns:exceptionCategory>POL</tns:exceptionCategory>
+               <tns:exceptionId>${#MockService#Exception-ErrorCode}</tns:exceptionId>
+               <tns:text>${#MockService#Exception-ErrorText}</tns:text>
+               <tns:variables>topUpAccount_POL_1</tns:variables>
+               <tns:exceptionPersistence>${#MockService#DEFAULT-ErrorType}</tns:exceptionPersistence>
+            </tns:clientException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="decrementBalance"/>
+  </con:response>
+</con:mockOperation>

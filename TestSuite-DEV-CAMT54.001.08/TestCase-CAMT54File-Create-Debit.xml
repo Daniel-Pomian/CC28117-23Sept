@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="7a98c100-1dbd-47c9-82f5-48328ed39540" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CAMT54File-Create-Debit" searchProperties="true" timeout="0" maxResults="5" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create camt054 file for clawback from charged msisdn</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@disable_log">true</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@errors_only">false</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@follow">false</con:setting>
+    <con:setting id="326b2850-a89f-462f-8f88-082fd06e3548fileName">TestCase-CAMT54File-Create-Debit</con:setting>
+    <con:setting id="7a98c100-1dbd-47c9-82f5-48328ed39540fileName">TestCase-CAMT54File-Create-Debit</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="c79c1428-2953-461a-9857-4d57b568640e">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTargetFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TotalAmount</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Count</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecActions-Pain008" id="fed88681-692b-4ed3-83e1-d135f90fccdf">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>b501dca9-bffd-4723-be42-3c85f090e6d9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-OCS-Notification</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-CreateNewPain008-Tenant-1</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-CreateNewPain008-Tenant-2</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Notification</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report-Manager</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-SendEmail</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-GetCounts" id="26850b85-c8bf-4afc-b0f8-c7b07103f34e">
+    <con:settings>
+      <con:setting id="com.eviware.soapui.impl.wsdl.teststeps.datasource.DataSourceContainer@prepared-properties">&lt;entry key="msisdn" value="${#TestCase#inMSISDN}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+    </con:settings>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Data Connection">
+        <con:configuration><Connection>drc-db( Default environment )</Connection><query>Select Count(PAIN00800302_OUTPUT_ENTRY.END_TO_END_ID) "Count" ,
+SUM(TOPUPS.AMOUNT) "TotalAMOUNT"
+From SEPA_FILE Inner Join
+  PAIN00800302_OUTPUT_ENTRY On SEPA_FILE.ID =
+    PAIN00800302_OUTPUT_ENTRY.SEPA_FILE_ID Inner Join
+  TOPUPS On PAIN00800302_OUTPUT_ENTRY.TOPUP_ID = TOPUPS.ID
+Where TOPUPS.MSISDN = :msisdn</query><fetchSize/><stored-procedure>false</stored-procedure></con:configuration>
+      </con:dataSource>
+      <con:preload>true</con:preload>
+      <con:property>Count</con:property>
+      <con:property>TotalAmount</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>false</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-FormatTotalAmount" id="5a87a053-091e-475e-8a47-d17a86e4e330">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ca257555-0d77-46c3-9c98-a55549f936d0</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inAmount</con:name>
+          <con:value>${DataSource-GetCounts#TotalAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outFormatedAmount</con:name>
+          <con:value>20.00</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outFormatedAmount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-FromDB" id="64365667-031b-468d-b56c-0f6072edb0f3">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="true" transferChildNodes="false">
+        <con:name>Count</con:name>
+        <con:sourceType>Count</con:sourceType>
+        <con:sourceStep>DataSource-GetCounts</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Count</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="true" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>TotalAmount</con:name>
+        <con:sourceType>outFormatedAmount</con:sourceType>
+        <con:sourceStep>Run TestCase-FormatTotalAmount</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TotalAmount</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-Header" id="791df58e-9997-47e8-b35a-0e1dff038b51">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>b4f62d6d-d7cd-4916-9341-e2155c85d8a9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestSuite#TargetDir}/${#TestSuite#TargetFileDebit}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Count</con:name>
+          <con:value>${#TestCase#Count}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+          <con:value>${#TestCase#TotalAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Type</con:name>
+          <con:value>${#TestSuite#Type-CdtDbtInd-Debit}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20220929183829171-CAMT54-Debit.xml</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-TargetPath" id="f3e481e8-21d1-4703-830e-8e88fe67e8b7">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="true" transferChildNodes="false">
+        <con:name>Path</con:name>
+        <con:sourceType>outTargetFile</con:sourceType>
+        <con:sourceStep>Run TestCase-Header</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outTargetFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-FormatFee" id="c5999e8b-5604-44a8-8e03-562fee81d5c8">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>d45825e7-5ca4-4ac0-8a65-76749f4b0991</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inAmount</con:name>
+          <con:value>${#TestCase#inFee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outFormatedAmount</con:name>
+          <con:value>3.00</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outFormatedAmount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-GetPain008-IDs" id="66b86cfe-4413-4f92-8063-d75e0ffc0178">
+    <con:settings>
+      <con:setting id="com.eviware.soapui.impl.wsdl.teststeps.datasource.DataSourceContainer@prepared-properties">&lt;entry key="msisdn" value="${#TestCase#inMSISDN}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+    </con:settings>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Data Connection">
+        <con:configuration><Connection>drc-db( Default environment )</Connection><query>Select p.END_TO_END_ID, t.MSISDN, 
+decode(t.AMOUNT_PRECISION, 2, t.AMOUNT, trunc(t.AMOUNT / power(10, (t.AMOUNT_PRECISION - 2))))  as  AMOUNT
+From SEPA_FILE s
+Inner Join  PAIN00800302_OUTPUT_ENTRY p On s.ID = p.SEPA_FILE_ID 
+Inner Join  TOPUPS t On p.TOPUP_ID = t.ID
+Where t.MSISDN = :msisdn
+Order By t.ID Desc</query><fetchSize/><stored-procedure>false</stored-procedure></con:configuration>
+      </con:dataSource>
+      <con:preload>true</con:preload>
+      <con:property>END_TO_END_ID</con:property>
+      <con:property>MSISDN</con:property>
+      <con:property>Amount</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>false</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-FormatAmount" id="bd6cfda9-39cd-4dc4-bbe5-f555dc74e64c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>d45825e7-5ca4-4ac0-8a65-76749f4b0991</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inAmount</con:name>
+          <con:value>${DataSource-GetPain008-IDs#Amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outFormatedAmount</con:name>
+          <con:value>4.00</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outFormatedAmount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-Middle" id="45de8586-d2ba-4678-b52f-d25916f936a6">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>1ab6adca-db14-4ab4-b2b5-f1cb2c229da1</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>MSISDN</con:name>
+          <con:value>${#TestCase#inMSISDN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>EndToEndID</con:name>
+          <con:value>${DataSource-GetPain008-IDs#END_TO_END_ID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+          <con:value>${Run TestCase-FormatAmount#outFormatedAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Fee</con:name>
+          <con:value>${Run TestCase-FormatFee#outFormatedAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount+Fee</con:name>
+          <con:value>${Run TestCase-FormatAmount#outFormatedAmount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>ReasonCode</con:name>
+          <con:value>${#TestCase#inFeeCode}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop" id="6f224c6c-2ab3-47d8-996b-e0971cbb95f3">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-GetPain008-IDs</dataSourceStep>
+      <targetStep>Run TestCase-FormatAmount</targetStep>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-Footer" id="1d230f1a-93f3-4e08-b32c-43a46432bbc2">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>d1162a12-1424-48e5-ac67-8f99ca624ff2</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-GoTo-SkipLastSteps" id="affc6d9d-fd1a-4090-9092-3e18b5971045">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script skip last steps based on value in input property
+ * Date: 28.06.2016
+ * Autor: Michael Gordon
+*/
+
+ String isSkip = context.expand( '${#TestCase#inBool-SkipLoadAndExecSteps}' )
+ if( isSkip=='true')
+ 	testRunner.gotoStepByName( "LastStep")</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-LoadFile" id="34936a60-afc8-425b-b084-907cae2d9f6e">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>9466dcb9-dbc1-4743-9ba7-c00921b22003</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>sourcePath</con:name>
+          <con:value>${#TestCase#outTargetFile}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>targetPath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>targetUser</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecActions" id="fc3a90b8-50d3-4f3d-9b02-8308af972a49">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>058ef689-975d-4f94-a27d-f238cc3913d7</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Assign</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Prepare-ClawBack</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Return</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Fee</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Credit</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Notify</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process_CAMT054_Report</con:name>
+          <con:value xsi:nil="true"/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Email</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="LastStep" id="93e59f92-fcec-413b-869b-f78f3026d5de">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outTargetFile</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20220929183829171-CAMT54-Debit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inMSISDN</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>inFee</con:name>
+      <con:value>300</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inFeeCode</con:name>
+      <con:value>AC01</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inBool-SkipLoadAndExecSteps</con:name>
+      <con:value>false</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Count</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">5</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TotalAmount</con:name>
+      <con:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">20.00</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>3732b0cd-fab8-4ea2-b914-feed3cf8732f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e763faa-cd50-4583-b575-17cdd1a23452</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9f163fc3-5e3c-4bd2-9572-4a07e33193be</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>52c3cfd8-ffae-442f-b606-98128b70ceb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27ee7f82-96d6-4563-8f0c-17d9b67814c6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dc88923-d84e-4e21-803c-4e1b0331118d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b4d5788c-fc24-42e1-a64e-f6a9db39f4f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>88141c7a-89e4-45c6-9aca-bb420dfccf9b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>96a93738-9468-449c-8c28-f9487777da5e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>551aa75e-624e-432c-a6c4-56b33155d8c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4065b03e-83a6-4107-8ba4-49733b35b91d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be391b53-aafa-4ab3-8c64-668c30269afc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b55ebcfe-5530-4ab1-b1d0-f791da075b09</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f9cd107d-cd39-46af-940d-0a897e70e3f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8145b46a-b7ea-4d4f-95b8-7d591b3bfb09</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>65036bea-0d33-4360-b651-1339b415a053</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4df91019-3379-4304-be0f-f7ba5e48fe5f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1a9ed43c-0041-4f4b-bcc0-c7808f68f157</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62b57949-9088-41e4-a84e-07f5b59cb606</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>701829bb-6933-4922-9dd3-a0b33c92791a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c79485c9-715f-41aa-a7c6-78a14908aac5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6ab05242-50aa-486a-a995-cca79018aae8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a321498a-bea6-4922-a526-6273c80f215e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ba404b85-74de-4ed7-9c06-aac7b9012cf5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4197515d-f0f8-40b3-891e-1ca76b71a31b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e9c33742-cd89-43db-a6c4-fdea934d3f71</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e8f42ca6-faad-4cf4-aad6-b1a768576490</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a10492c-d350-45dc-a555-d461d3c0d5d5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1702ee2f-9d4b-4c77-9eaf-8be0b97d3cb7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b9fd4ae5-2c8e-4c93-841f-7e3e3d829cd5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c79c1428-2953-461a-9857-4d57b568640e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fed88681-692b-4ed3-83e1-d135f90fccdf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>26850b85-c8bf-4afc-b0f8-c7b07103f34e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a87a053-091e-475e-8a47-d17a86e4e330</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>64365667-031b-468d-b56c-0f6072edb0f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>791df58e-9997-47e8-b35a-0e1dff038b51</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f3e481e8-21d1-4703-830e-8e88fe67e8b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c5999e8b-5604-44a8-8e03-562fee81d5c8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>66b86cfe-4413-4f92-8063-d75e0ffc0178</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bd6cfda9-39cd-4dc4-bbe5-f555dc74e64c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>45de8586-d2ba-4678-b52f-d25916f936a6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6f224c6c-2ab3-47d8-996b-e0971cbb95f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1d230f1a-93f3-4e08-b32c-43a46432bbc2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>affc6d9d-fd1a-4090-9092-3e18b5971045</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34936a60-afc8-425b-b084-907cae2d9f6e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fc3a90b8-50d3-4f3d-9b02-8308af972a49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93e59f92-fcec-413b-869b-f78f3026d5de</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

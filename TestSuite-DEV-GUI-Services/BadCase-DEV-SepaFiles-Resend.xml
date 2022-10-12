@@ -1,0 +1,1546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="59c0e97d-94b8-43b8-8023-e5119b76f48f" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-SepaFiles-Resend" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests gui-service methods required for resend sepa files with wrong values.
+https://www.sg.de.o2.com/jira/browse/DRC-2787</con:description>
+  <con:settings>
+    <con:setting id="11705c86-d1b6-4386-a0d8-6d3ca1aac991fileName">GoodCase-DEV-Schwellenwert-Prerequisites</con:setting>
+    <con:setting id="70bc877f-01ae-4e3f-b761-cf2505743c05fileName">GoodCase-DEV-SepaFiles</con:setting>
+    <con:setting id="59c0e97d-94b8-43b8-8023-e5119b76f48ffileName">BadCase-DEV-SepaFiles-Resend</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" id="8de4a08a-e706-4a59-bd67-cffbcbacc9f4" name="_getSepaFiles-CAMT054">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSepaFiles</con:operation>
+      <con:request name="_getSepaFiles-CAMT054" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9b684d0a-9ae7-474c-9e29-a77c0c3838cf">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getSepaFiles>\r
+         <first>0</first>\r
+         <count>1</count>\r
+         <timeFrame/>\r
+         <!--type: extendedSepaFileType - enumeration: [PAIN_008_003_02,PAIN_008_001_02,CAMT_054_001_02,PAIN_001_002_03,PAIN_001_001_03,PAIN_001,PAIN_008,CAMT_054,ALL]-->\r
+         <sepaFileType>CAMT_054</sepaFileType>\r
+      </v1:getSepaFiles>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="5f68d09f-ba42-4991-8618-d76b2f7023ea" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="ceb90dd9-899c-444b-b4f3-f9a9f05e1a6a" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="bd42eeee-0dc6-47d1-8bc7-1f21cb223fa4" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getSepaFiles"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e0ab0474-4123-4bd5-909e-0bf1003ce9e6" name="5900N_executeProcessAction-CAMT054File-NotAllowed">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5900N_executeProcessAction-CAMT054File-NotAllowed" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>sepaFileProcessEngine</processName>\r
+         <!--type: string-->\r
+         <actionName>updateSepaFileStatusFromFailedPerToNew</actionName>\r
+         <!--type: long-->\r
+         <entryId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="0785b853-557a-4f10-9684-6dabf2c630d4" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="570c1533-bdb8-4fd4-95b0-818e3ca24bad" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="c0075931-39ff-419e-a5bd-1cb66ed49a6d" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="62ac3077-b805-4a3a-99a4-4f3db3a8ca4f" name="Match content of [specificFaultType]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns2:fault[1]/specificFaultType[1]/text()</path>
+            <content>BUSINESS_ERROR_FORBIDDEN_ACTION</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8e7c2869-4663-41da-9430-1de4879293e7" name="5905N_executeProcessAction-idUknown">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5905N_executeProcessAction-idUknown" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>sepaFileProcessEngine</processName>\r
+         <!--type: string-->\r
+         <actionName>updateSepaFileStatusFromFailedPerToNew</actionName>\r
+         <!--type: long-->\r
+         <entryId>${#Project#Random8}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="9306f627-94c8-4656-a219-c449cc94ef43" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="570c1533-bdb8-4fd4-95b0-818e3ca24bad" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4df500a3-094c-478b-a329-70f9465b6e78" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="a42ccfc0-7227-4f31-93d3-ee0e73eeadf0" name="Match content of [specificFaultType]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns2:fault[1]/specificFaultType[1]/text()</path>
+            <content>BUSINESS_ERROR_DATA_NOT_AVAILABLE</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ba60658d-5d9e-4e21-a75a-13e6b1ae14af" name="5910N_executeProcessAction-idEmpty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5910N_executeProcessAction-idEmpty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>sepaFileProcessEngine</processName>\r
+         <!--type: string-->\r
+         <actionName>updateSepaFileStatusFromFailedPerToNew</actionName>\r
+         <!--type: long-->\r
+         <entryId/>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="9306f627-94c8-4656-a219-c449cc94ef43" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="570c1533-bdb8-4fd4-95b0-818e3ca24bad" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4df500a3-094c-478b-a329-70f9465b6e78" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2b2f0031-0f08-45b1-a30b-ff6e0f35d085" name="5915N_executeProcessAction-wrongProcessName">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5915N_executeProcessAction-wrongProcessName" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>UnknownProcessName</processName>\r
+         <!--type: string-->\r
+         <actionName>updateSepaFileStatusFromFailedPerToNew</actionName>\r
+         <!--type: long-->\r
+         <entryId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="9306f627-94c8-4656-a219-c449cc94ef43" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="570c1533-bdb8-4fd4-95b0-818e3ca24bad" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4df500a3-094c-478b-a329-70f9465b6e78" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="71c39ef4-1472-41b2-963e-eee866e685ac" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>COMMON_TECHNICAL_ERROR</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorMessage[1]</con:xpath>
+              <con:element>errorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>108</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>No bean named 'UnknownProcessName' available</faultstring>
+         <detail>
+            <ns2:fault xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+               <specificFaultType>COMMON_TECHNICAL_ERROR</specificFaultType>
+               <errorMessage>No bean named 'UnknownProcessName' available</errorMessage>
+               <errorCode>108</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c64ebc65-63cb-440a-8152-b462dc24c849" name="5920N_executeProcessAction-emptyProcessName">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5920N_executeProcessAction-emptyProcessName" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName/>\r
+         <!--type: string-->\r
+         <actionName>updateSepaFileStatusFromFailedPerToNew</actionName>\r
+         <!--type: long-->\r
+         <entryId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="fe3d1467-9054-4ce7-96e2-b24b208ce50c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="e3618003-dc64-48ee-b305-58f45f0e8664">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="16bbda3a-8479-46d6-ad8f-27379eb77d75"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="80b2308f-2d56-4c0a-926f-7c3ee16dbc8d">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>COMMON_TECHNICAL_ERROR</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorMessage[1]</con:xpath>
+              <con:element>errorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>108</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>No bean named 'UnknownProcessName' available</faultstring>
+         <detail>
+            <ns2:fault xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+               <specificFaultType>COMMON_TECHNICAL_ERROR</specificFaultType>
+               <errorMessage>No bean named 'UnknownProcessName' available</errorMessage>
+               <errorCode>108</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="691b95ba-3322-4403-b8c5-64c3398fe814" name="5925N_executeProcessAction-wrongActionName">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5925N_executeProcessAction-wrongActionName" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>sepaFileProcessEngine</processName>\r
+         <!--type: string-->\r
+         <actionName>unknownactionName</actionName>\r
+         <!--type: long-->\r
+         <entryId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="5ccdc96c-98dc-4956-927b-aaabfda317c8"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="cea19490-59ff-4fba-8dee-92398fcc51a8">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="60af7841-8bc6-4683-989d-3ad36027462b"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="ee4af75e-6ef9-4352-98e0-9d18430b9e65">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>COMMON_TECHNICAL_ERROR</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorMessage[1]</con:xpath>
+              <con:element>errorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>108</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>No bean named 'UnknownProcessName' available</faultstring>
+         <detail>
+            <ns2:fault xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+               <specificFaultType>COMMON_TECHNICAL_ERROR</specificFaultType>
+               <errorMessage>No bean named 'UnknownProcessName' available</errorMessage>
+               <errorCode>108</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="5a30a131-8a26-4ca4-a9bf-a720430098ba" name="5930N_executeProcessAction-emptyActionName">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>executeProcessAction</con:operation>
+      <con:request name="5930N_executeProcessAction-emptyActionName" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="855c6485-7cdb-4ef0-827d-507685021ffc">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:executeProcessAction>\r
+         <!--type: string-->\r
+         <processName>sepaFileProcessEngine</processName>\r
+         <!--type: string-->\r
+         <actionName/>\r
+         <!--type: long-->\r
+         <entryId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</entryId>\r
+      </v1:executeProcessAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="73f219de-f9e2-4fcc-a613-f03e8a6fdf9f"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="eab3d877-79e6-45cb-9ecd-0ffeadd0f8cf">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" name="SOAP Fault" id="6c97761e-d8eb-4104-bbad-cc7b15a1a72b"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="142a7672-6e9b-42e9-a129-85f33e385be1">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>COMMON_TECHNICAL_ERROR</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorMessage[1]</con:xpath>
+              <con:element>errorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No bean named 'UnknownProcessName' available</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>108</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>No bean named 'UnknownProcessName' available</faultstring>
+         <detail>
+            <ns2:fault xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+               <specificFaultType>COMMON_TECHNICAL_ERROR</specificFaultType>
+               <errorMessage>No bean named 'UnknownProcessName' available</errorMessage>
+               <errorCode>108</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="executeProcessAction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8b574cca-fff1-487c-88f9-9d807b456df8" name="5931N_manualMftFileUpload-idCAMT054">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftFileUpload</con:operation>
+      <con:request name="5931N_manualMftFileUpload-idCAMT054" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b0c10c56-496e-4ccd-a3ed-30139a9383ef">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualMftFileUpload>\r
+         <!--type: mftUploadType - enumeration: [MANUAL_QIT_RESEND]-->\r
+         <mftUploadType>MANUAL_DIRECTDEBIT_RESEND</mftUploadType>\r
+         <!--type: long-->\r
+         <fileId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</fileId>\r
+      </v1:manualMftFileUpload>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="04cc0edf-e019-425b-80f3-e62afffdf8d1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d318966b-6fb9-49a6-a4ab-3ceaf8568a1c" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="f6ef352b-4a4c-4800-a2f3-3a5e62f302cd" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="a7cb6b76-f640-4095-b408-2f34df5b74d7" name="Match content of [transferStatus]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftFileUploadResponse[1]/transferStatus[1]/text()</path>
+            <content>FAILED</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftFileUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a640fcc4-e777-45f3-b3b2-e54794cd8fdb" name="5935N_manualMftFileUpload-idUnknown">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftFileUpload</con:operation>
+      <con:request name="5935N_manualMftFileUpload-idUnknown" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b0c10c56-496e-4ccd-a3ed-30139a9383ef">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualMftFileUpload>\r
+         <!--type: mftUploadType - enumeration: [MANUAL_QIT_RESEND]-->\r
+         <mftUploadType>MANUAL_DIRECTDEBIT_RESEND</mftUploadType>\r
+         <!--type: long-->\r
+         <fileId>${#Project#Random8}</fileId>\r
+      </v1:manualMftFileUpload>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="04cc0edf-e019-425b-80f3-e62afffdf8d1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d318966b-6fb9-49a6-a4ab-3ceaf8568a1c" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="beb16182-4f00-406a-830d-b8dd34a3882c" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="93f432ab-bdd1-452e-a145-8e883563a55a" name="Match content of [transferStatus]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftFileUploadResponse[1]/transferStatus[1]/text()</path>
+            <content>FAILED</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftFileUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e072f788-2a0b-47f4-b68b-fd4c9416219b" name="5940N_manualMftFileUpload-idEmpty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftFileUpload</con:operation>
+      <con:request name="5940N_manualMftFileUpload-idEmpty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b0c10c56-496e-4ccd-a3ed-30139a9383ef">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualMftFileUpload>\r
+         <!--type: mftUploadType - enumeration: [MANUAL_QIT_RESEND]-->\r
+         <mftUploadType>MANUAL_DIRECTDEBIT_RESEND</mftUploadType>\r
+         <!--type: long-->\r
+         <fileId/>\r
+      </v1:manualMftFileUpload>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="04cc0edf-e019-425b-80f3-e62afffdf8d1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d318966b-6fb9-49a6-a4ab-3ceaf8568a1c" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="ec33fffe-c053-4656-8504-70454ab51aaf" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftFileUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c89fb791-3894-486c-9bfb-4426bab9b0f6" name="5945N_manualMftFileUpload-uploadType-wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftFileUpload</con:operation>
+      <con:request name="5945N_manualMftFileUpload-uploadType-wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b0c10c56-496e-4ccd-a3ed-30139a9383ef">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualMftFileUpload>\r
+         <!--type: mftUploadType - enumeration: [MANUAL_QIT_RESEND]-->\r
+         <mftUploadType>unknownUploadType</mftUploadType>\r
+         <!--type: long-->\r
+         <fileId>${#TestCase#entryID-pain001-ok}</fileId>\r
+      </v1:manualMftFileUpload>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="04cc0edf-e019-425b-80f3-e62afffdf8d1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d318966b-6fb9-49a6-a4ab-3ceaf8568a1c" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="ec33fffe-c053-4656-8504-70454ab51aaf" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftFileUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c65fa3e9-b9ed-473f-a489-96ca48d58c96" name="5950N_manualMftFileUpload-uploadType-empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftFileUpload</con:operation>
+      <con:request name="5950N_manualMftFileUpload-uploadType-empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b0c10c56-496e-4ccd-a3ed-30139a9383ef">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualMftFileUpload>\r
+         <!--type: mftUploadType - enumeration: [MANUAL_QIT_RESEND]-->\r
+         <mftUploadType/>\r
+         <!--type: long-->\r
+         <fileId>${#TestCase#entryID-pain001-ok}</fileId>\r
+      </v1:manualMftFileUpload>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="04cc0edf-e019-425b-80f3-e62afffdf8d1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d318966b-6fb9-49a6-a4ab-3ceaf8568a1c" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="ec33fffe-c053-4656-8504-70454ab51aaf" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftFileUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ebecac3d-dd5e-42a8-ba14-6d8e18413a14" name="5955N_getFileContentById-idUnknown">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getFileContentById</con:operation>
+      <con:request name="5955N_getFileContentById-idUnknown" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a5df9edc-8198-4b61-a1af-11907cf0eda8">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getFileContentById>\r
+         <!--type: paymentType - enumeration: [DIRECT_DEBIT]-->\r
+         <paymentType>DIRECT_DEBIT</paymentType>\r
+         <fileId>${#Project#Random8}</fileId>\r
+      </v1:getFileContentById>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="fd8d410c-ba0f-4d86-b5c4-c4de187e3b5e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="899eb0ff-33e3-400a-8f55-ee4ab8436dd4" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4a5c2248-3d88-4985-b983-121bb2890f3b" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="fdac6d75-8128-4394-954f-43753a6bf5e4" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SepaFileVO entry with id=98781893 does not exist.</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>BUSINESS_ERROR_DATA_NOT_AVAILABLE</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorMessage[1]</con:xpath>
+              <con:element>errorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SepaFileVO entry with id=98781893 does not exist.</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>2000001116</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>SepaFileVO entry with id=98781893 does not exist.</faultstring>
+         <detail>
+            <ns2:fault xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+               <specificFaultType>BUSINESS_ERROR_DATA_NOT_AVAILABLE</specificFaultType>
+               <errorMessage>SepaFileVO entry with id=98781893 does not exist.</errorMessage>
+               <errorCode>2000001116</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getFileContentById"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="84f9e3f3-e11b-4a14-886d-ab422ab35ba2" name="5960N_getFileContentById-idEmpty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getFileContentById</con:operation>
+      <con:request name="5960N_getFileContentById-idEmpty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a5df9edc-8198-4b61-a1af-11907cf0eda8">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getFileContentById>\r
+         <!--type: paymentType - enumeration: [DIRECT_DEBIT]-->\r
+         <paymentType>DIRECT_DEBIT</paymentType>\r
+         <fileId/>\r
+      </v1:getFileContentById>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="fd8d410c-ba0f-4d86-b5c4-c4de187e3b5e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="899eb0ff-33e3-400a-8f55-ee4ab8436dd4" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4a5c2248-3d88-4985-b983-121bb2890f3b" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getFileContentById"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="96594add-79f4-4f64-9cd6-0205f942ce5d" name="5965N_getFileContentById-Type-wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getFileContentById</con:operation>
+      <con:request name="5965N_getFileContentById-Type-wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a5df9edc-8198-4b61-a1af-11907cf0eda8">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getFileContentById>\r
+         <!--type: paymentType - enumeration: [DIRECT_DEBIT]-->\r
+         <paymentType>paymentTypeUnknown</paymentType>\r
+         <fileId>${#TestCase#entryID-pain001-ok}</fileId>\r
+      </v1:getFileContentById>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="fd8d410c-ba0f-4d86-b5c4-c4de187e3b5e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="899eb0ff-33e3-400a-8f55-ee4ab8436dd4" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="4a5c2248-3d88-4985-b983-121bb2890f3b" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getFileContentById"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0f710dbf-82de-4da7-a461-b42cc56947b2" name="5970P_getFileContentById-idFromCamt054">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getFileContentById</con:operation>
+      <con:request name="5970P_getFileContentById-idFromCamt054" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a5df9edc-8198-4b61-a1af-11907cf0eda8">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getFileContentById>\r
+         <!--type: paymentType - enumeration: [DIRECT_DEBIT]-->\r
+         <paymentType>DIRECT_DEBIT</paymentType>\r
+         <fileId>${_getSepaFiles-CAMT054#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:getSepaFilesResponse[1]/sepaFiles[1]/fileId[1]}</fileId>\r
+      </v1:getFileContentById>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="fd8d410c-ba0f-4d86-b5c4-c4de187e3b5e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="899eb0ff-33e3-400a-8f55-ee4ab8436dd4" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c3684731-8ee7-4dab-bf4b-b96d6d9a16b5" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="90e9cbd1-2e92-4356-ba52-296f5e8bd51d" name="Check for existence of [content]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+exists( //ns2:getFileContentByIdResponse/fileContentData/content)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getFileContentById"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>70f6613c-6de3-49ba-a27d-54c6628ea9cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c23adc00-91b1-4aa6-aff1-998e14298d3d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>91966984-0613-452a-9406-b6bc7c3671c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8fce6e3e-54f0-4b57-941d-f3209c92882e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a91a1aa-9da1-4318-9930-dd11f912b0dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>87079cf6-5c1a-4aad-b8a0-ff4121ab76cb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8ce51e6a-8cb3-4f28-a550-6d96031eddf2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9291d6be-3930-4283-98ef-d7d56db3cbc9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a540ba87-5dc2-4d7e-ab22-7d5c64ac74a6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>957496bf-2e8e-4549-bf79-abba0648c7ce</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cfd958ac-2c42-4b89-8409-428623c23449</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f627ba93-18bc-4dab-b247-b23b1352b828</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>677ec2c5-be08-4049-9153-73308a9e5585</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>182470d1-104a-4ea5-ac9f-3ecc5137510a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bbbc445a-9883-4e48-a760-f2ca4d93d535</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca042ced-9ec2-4337-aaa1-2f33c1699cc9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a44184d-b305-4cb1-9682-b3abbad41fb5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c10d7512-d7b5-43b7-a97e-062eb3581885</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0d862a9b-3b6d-4a2d-baac-d2d1465ecad0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>06cd3fcd-b62e-4aee-89e2-efa9f6cf222b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>98d763f1-d96a-48be-8aba-7b768ec7d3de</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>147a3fc6-ebd6-4785-9c2d-013671975a12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b22d81c-7246-468e-a423-12a0e21e011d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>690100a3-81ee-42e8-9333-7139dfd62442</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>67c2395f-732d-470d-98eb-67d1d0fd9376</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7e225ba-d97b-46d3-8b29-d78cd4678357</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ac368d2e-678a-4d0a-954c-8c11d7eab8d1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>485f5560-2e9f-494a-b731-4dba003b0bc7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a707e83d-0a95-4a6e-a7df-91d3c0e3a7f0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>75a99239-3d9e-4869-a9ee-c9acdd41e1bd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c97908be-3e2a-4ac2-9b38-3a6a7760d493</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d952a8f4-6452-462b-89e1-1a1f410331ea</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e433282-69e6-451f-a6f3-7d869db29b95</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62f7d034-3931-4a0b-80c9-b12919beb807</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>506c125f-1008-49b7-a600-f5fc21dc4c06</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>22dc9799-9567-4b43-b090-5e3ae5f9041f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>969a93df-01e0-473e-89d4-64db95558fe9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5780312a-3878-4bed-8f4f-f5dc0465b1cc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e02db5ea-62e5-4d2d-9b70-a47eb7dc743f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>879d9022-4fa5-4c39-ba1e-135b6f0ad71a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>25b6b983-4ee8-44ef-9610-10e55f2eba7d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d2e4e9a4-adc0-4656-91d2-490d8e826236</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6c6b751d-779c-4a31-9804-3f2df60f2b37</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6cc28efc-2fd1-4dae-859c-ced868a3ee9b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4c2c61eb-526a-4ab3-8559-6d6c1e03f527</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d8a5eb75-d644-4af6-96ba-3926ce28085f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>801448f7-b6bf-4d4e-a33e-97317793a577</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6d4463c0-9ec5-4fe3-bb76-14ecf617ba99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>41f37142-7e83-4501-a483-5ffce3f66dde</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>26ffdd7f-710d-4229-9bd1-5495e02c4916</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d8c4f07d-5e80-47fd-923f-cef4f15d0b69</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7b268797-2a6c-4f14-8184-67f67aa969e3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>95425ed6-754a-4871-bf3b-eb029da4a5f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a91fb21-8437-4101-a95f-7a326e2378db</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>09787a94-0ccd-4d8f-902d-98eb65e7592c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8db7225e-8444-4ba5-868d-770ecf02c523</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>09fe4abe-db23-4b47-bc7a-f1e475a38070</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c2c4b472-a738-465d-9e9d-5cb529f9e02d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ebdfef3b-594d-48b9-a288-2910e30e1c78</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2fdd4d0-4c99-4c85-a70d-19a076d2165d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c8d65383-9e3e-40ae-b693-2c5bbf34b681</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>090e2bb0-494a-4f5a-a72f-96e1b3226d58</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c8204fad-7161-443a-af5b-26eef2acf132</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>15cc2c8d-330d-49ba-af72-93813ad1645a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2cec8001-9723-40f6-b7e5-c89f1fa91425</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c3d60e8b-d077-4ada-993c-c3eafb7c8138</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8e7c2869-4663-41da-9430-1de4879293e7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ba60658d-5d9e-4e21-a75a-13e6b1ae14af</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c64ebc65-63cb-440a-8152-b462dc24c849</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2b2f0031-0f08-45b1-a30b-ff6e0f35d085</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>691b95ba-3322-4403-b8c5-64c3398fe814</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a30a131-8a26-4ca4-a9bf-a720430098ba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b574cca-fff1-487c-88f9-9d807b456df8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0f710dbf-82de-4da7-a461-b42cc56947b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>96594add-79f4-4f64-9cd6-0205f942ce5d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

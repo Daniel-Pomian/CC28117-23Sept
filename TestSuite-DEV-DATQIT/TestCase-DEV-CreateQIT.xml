@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="4f2f77dc-13ac-4dc1-aa4c-35612b2b55a2" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-CreateQIT" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create new local QIT file with DAT-Filename and error from input parameters.
+Optional can additional lines added in the middle of content.
+Note!
+To set additional content in QIT-File call this test-case with inAddLines=${#TestSuite#QIT_Middle}
+Let  inAddLines empty for qit-file without additional content</con:description>
+  <con:settings>
+    <con:setting id="aa1634b1-9921-4c7e-9c2e-0a74292503aafileName">TestCase-DEV-CreateDAT</con:setting>
+    <con:setting id="4f2f77dc-13ac-4dc1-aa4c-35612b2b55a2fileName">TestCase-DEV-CreateQIT</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="6601e89d-8ef9-4832-88eb-353626cc9313">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-setTargetPath" id="fdc552e4-c203-46e3-b541-a47868d2deb5">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script create target path for qit -file
+ * Athor: Michael Gordon
+ * Date: 2019-12-03
+ */
+
+// build local target path for local 
+// get target directory from local directory for dat files.
+String sTargetDir = context.expand( '${#TestSuite#TargetDir}' )
+
+// Build file name. Replace extension dat with qit.
+String sFileName=context.expand( '${#TestCase#inDateFile}' ).toString().replace('.DAT','.QIT')
+String sPath= (sTargetDir +sFileName).replace('\\','/')
+
+// set to test-case properties
+ testRunner.testCase.setPropertyValue( "outFile",  sFileName )
+ testRunner.testCase.setPropertyValue( "outPath",  sPath )
+ 
+ // log final path
+ log.info('File path from DAT is: -'+  sPath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-saveHeader" id="6bcb59b5-a78b-4ad1-8a8a-ed1de6f732ac">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>false</append><encoding>utf-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>fileContent</con:name>
+          <con:value>Q005PBANKPROD${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern( "yyyyMMddHHmmss" ))}${#TestCase#inDateFile}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-GoTo-Footer" id="7d43f404-5035-4432-ac83-2aa9d92b75c7">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script allow to create qit file without additional lines
+ * Date: 03.12.2019
+ * Autor: Michael Gordon
+*/
+
+String sAddLines = context.expand( '${#TestCase#inbAddLines}' )
+
+// if current setting for ocs=ngocs, go to test-steps for ngocs.
+if(sAddLines!='true')
+	testRunner.gotoStepByName(["DataSink-saveFooter"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-MiddleLine" id="60cdbfef-5738-4cb4-b808-a2d287363b4f">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845816173120190128185193002&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845816173120190128185193004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845821180620190128185596004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845811052120190128184521004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845816564820190128185324004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845817033120190128185366004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845817120820190128185432004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">I5700845817223420190128185501004&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>line</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-saveMiddle" id="3890d4c9-7e49-4361-8d6e-8c5a2b228077">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>true</append><encoding>utf-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>fileContent</con:name>
+          <con:value>${DataSource-MiddleLine#line}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-MiddleLine" id="2bde86ae-796e-4159-8d75-f6bd134a8495">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-MiddleLine</dataSourceStep>
+      <targetStep>DataSink-saveMiddle</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-saveFooter" id="1bd6d95a-0acf-43bc-ae5d-9d60516d5aa3">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>true</append><encoding>utf-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>fileContent</con:name>
+          <con:value>${#TestCase#inError}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inDateFile</con:name>
+      <con:value>ORTELDEV00520221003160620.DAT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inError</con:name>
+      <con:value>S0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inbAddLines</con:name>
+      <con:value>false</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>/DATQIT/ORTELDEV00520221003160620.QIT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFile</con:name>
+      <con:value>ORTELDEV00520221003160620.QIT</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>9bd59269-20c5-4ce3-91d9-d53cfb0d7f96</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5ea42e3a-84db-416a-bfd8-80088396f7b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fdc552e4-c203-46e3-b541-a47868d2deb5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6601e89d-8ef9-4832-88eb-353626cc9313</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6bcb59b5-a78b-4ad1-8a8a-ed1de6f732ac</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7d43f404-5035-4432-ac83-2aa9d92b75c7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3890d4c9-7e49-4361-8d6e-8c5a2b228077</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1bd6d95a-0acf-43bc-ae5d-9d60516d5aa3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60cdbfef-5738-4cb4-b808-a2d287363b4f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

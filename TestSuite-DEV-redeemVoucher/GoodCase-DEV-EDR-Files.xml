@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="7922bfa2-9a97-4a53-a960-65124677451c" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-EDR-Files" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>This test-case implement test-scenario from us:
+https://www.sg.de.o2.com/jira/browse/DRC-3049
+
+- Copy some file with extension .trans to mucsgdp08: /var/EDR/dev[i]/pickUp
+- Exec redeemVoucher pack
+- Exec Job:  PROCESS_EDR_RECORDS
+Expected: 
+ - New created file from EDR is not moved and exist in pickUp directory
+- File with extension: .trans   is moved to /var/EDR/dev5/archive</con:description>
+  <con:settings>
+    <con:setting id="7922bfa2-9a97-4a53-a960-65124677451cfileName">GoodCase-DEV-EDR-Files</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" name="_DRCGUI-PROCESS_EDR_RECORDS" id="8cac41b7-62eb-4c20-bc71-aa1e1048b8d9">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="_DRCGUI-PROCESS_EDR_RECORDS" id="ed6a8062-e73c-460c-adac-b00b5436da8e">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <jobName>com.o2.directrecharge.core.job.JobAction.PROCESS_EDR_RECORDS</jobName>
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="bb14e6f7-3e98-4e77-9cdf-2ff18ab24504"/>
+        <con:assertion type="Schema Compliance" id="01691f52-f854-475f-af63-7c7b1d52d166">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="163cb7e1-016e-47fa-b0ad-7683d12450cc"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-getCountFiles-pickUp" id="e38add1b-3271-48a1-ae5f-0dfb2bc86c94">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>37c731dc-d790-447a-ad6d-e23f5283b105</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inHostName</con:name>
+          <con:value>${#Project#drc-host}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#Project#drc-host-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inRelSFTPPath</con:name>
+          <con:value>${#TestCase#targetPickUp}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFileNameOrExtension</con:name>
+          <con:value>*</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outCountFiles</con:name>
+          <con:value>219</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outCountFiles</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-getCountFiles-Archive" id="f479c862-bde9-4591-893f-682ae0eb5e62">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>37c731dc-d790-447a-ad6d-e23f5283b105</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inHostName</con:name>
+          <con:value>${#Project#drc-host}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#Project#drc-host-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inRelSFTPPath</con:name>
+          <con:value>${#TestCase#targetArchive}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFileNameOrExtension</con:name>
+          <con:value>*</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outCountFiles</con:name>
+          <con:value>70</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outCountFiles</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-createFileAndsetProperties" id="a980e404-5bf6-4087-a597-f710a2c9d294">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ *  This script create test-file with extension .trans for copy to mft and set properteis to test-case
+ *  Autor : Michael Gordon
+ *  Date:  2-06-20
+ */
+import java.io.File 
+
+// prepare pathes and names
+String sText='Test moving .trans file  to archive in EDR processing'
+String sFileSuffix='_EDR_toArchive.trans'
+
+String sFilePrefix = context.expand( '${#Project#DateTime_Current_String_yyyyMMddHHmmssSSS}' )
+String sTargetDir =(context.expand( '${drc_target_dir}' )+'/Logs/').replace('\\','/')
+String sFile=sFilePrefix+ sFileSuffix
+String filePath=sTargetDir+sFile
+log.info('File is:- ' + sFile)
+log.info('Path is:- ' + filePath)
+
+// create test-file with extension .trans local
+def newFile = new File(filePath).write(sText)
+
+// set values in properties
+testRunner.testCase.setPropertyValue('filePath', filePath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-copyFiletoMFT" id="98bb02af-c7b5-4c31-9bbb-d5ba8ce2029f">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>791db6b3-a507-480d-a3b6-07ff3032ff54</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inFTPDomain</con:name>
+          <con:value>${#Project#drc-host}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#Project#drc-host-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inPswd</con:name>
+          <con:value>${#Project#drc-host-password}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#filePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inTargetPath</con:name>
+          <con:value>${#TestCase#targetPickUp}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="redeemVoucher_Package" id="04eafbc3-c010-4f39-a26f-166f21224835">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>VoucherRedemptionEvolutionServiceSoapBinding</con:interface>
+      <con:operation>redeemVoucher</con:operation>
+      <con:request name="redeemVoucher_Package" useWsAddressing="true" id="2e105074-7815-403e-a90c-38fdfd244022" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <soap:RedeemVoucher>
+         <msisdn>${#Project#MSISDN-Piranha-OK}</msisdn>
+         <voucherCode>${#TestSuite#voucher-Pack-OK}</voucherCode>
+      </soap:RedeemVoucher>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1c0367f3-2a65-43fc-974a-65e559731c57"/>
+        <con:assertion type="Schema Compliance" id="8c854cff-f1f0-4d59-8566-b53c1c678fe3">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c5e1e49d-7245-4e77-8b7b-49dc0e146fb4"/>
+        <con:assertion type="MessageContentAssertion" id="ae4900b4-078e-46b8-b299-4eaefbd0669e" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/success[1]</con:xpath>
+              <con:element>success</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>true</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/result[1]/resultCode[1]</con:xpath>
+              <con:element>resultCode</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/voucherType[1]</con:xpath>
+              <con:element>voucherType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PACK</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://soap.types.soa.voucherredemption.service.directrecharge.o2.com';
+//ns1:RedeemVoucherResponse[1]/packName[1]</con:xpath>
+              <con:element>packName</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>TestPack</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <Action xmlns="http://www.w3.org/2005/08/addressing">urn:tefo2de:VoucherRedemptionEvolutionService:VoucherRedemptionEvolutionServicePort:redeemVoucherResponse</Action>
+      <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:cef94c2e-be62-4db0-9f7c-c238ad7af52b</MessageID>
+      <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+      <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:4f4217e0-2206-4a7c-9608-d95df894a80c</RelatesTo>
+   </soap:Header>
+   <soap:Body>
+      <ns2:RedeemVoucherResponse xmlns:ns2="http://soap.types.soa.voucherredemption.service.directrecharge.o2.com">
+         <result>
+            <success>true</success>
+            <resultCode>0</resultCode>
+         </result>
+         <voucherType>PACK</voucherType>
+         <packName>TestPack</packName>
+      </ns2:RedeemVoucherResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:username>${#Project#drc-voucherRedemptionEvolutionService-User}</con:username>
+          <con:password>${#Project#drc-voucherRedemptionEvolutionService-Password}</con:password>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:environmentSpec>
+          <con:entry environmentId="18ada261-dd9a-45b4-9a95-6c2beddd0498">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>${#Project#drc-voucherRedemptionEvolutionService-URL}</con:authProfile>
+            <con:username>intf_mce</con:username>
+            <con:password>pwdmcedrc</con:password>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+            <con:username>${#Project#drc-voucherRedemptionEvolutionService-User}</con:username>
+            <con:password>${#Project#drc-voucherRedemptionEvolutionService-Password}</con:password>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+            <con:username>${#Project#drc-voucherRedemptionEvolutionService-User}</con:username>
+            <con:password>${#Project#drc-voucherRedemptionEvolutionService-Password}</con:password>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+            <con:username>${#Project#drc-voucherRedemptionEvolutionService-User}</con:username>
+            <con:password>${#Project#drc-voucherRedemptionEvolutionService-Password}</con:password>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Service</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" addDefaultAction="true" from="urn:${#TestSuite#Partner-MCE-All}" messageID="" generateMessageId="true"/>
+        <con:wsrmConfig version="1.2"/>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DRCGUI-PROCESS_EDR_RECORDS" id="9d42dace-147e-40d2-8240-3112288c5752">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="DRCGUI-PROCESS_EDR_RECORDS" id="ed6a8062-e73c-460c-adac-b00b5436da8e">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <jobName>com.o2.directrecharge.core.job.JobAction.PROCESS_EDR_RECORDS</jobName>
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="bb14e6f7-3e98-4e77-9cdf-2ff18ab24504"/>
+        <con:assertion type="Schema Compliance" id="01691f52-f854-475f-af63-7c7b1d52d166">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="163cb7e1-016e-47fa-b0ad-7683d12450cc"/>
+        <con:assertion type="XPath Match" id="2fe09f1a-e561-4787-8103-5bf9010f0313" name="Check count of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/common/job/v1/';
+count( //ns2:triggerJobManagerResponse/taskId)>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-getCountFiles-pickUp" id="93ba180a-f030-442e-ac4b-264717b14f47">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>37c731dc-d790-447a-ad6d-e23f5283b105</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inHostName</con:name>
+          <con:value>${#Project#drc-host}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#Project#drc-host-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inRelSFTPPath</con:name>
+          <con:value>${#TestCase#targetPickUp}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFileNameOrExtension</con:name>
+          <con:value>*</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outCountFiles</con:name>
+          <con:value>219</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outCountFiles</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-getCountFiles-Archive" id="eeb65654-bdd4-4ca7-b5e2-9a9af041e516">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>37c731dc-d790-447a-ad6d-e23f5283b105</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inHostName</con:name>
+          <con:value>${#Project#drc-host}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inUser</con:name>
+          <con:value>${#Project#drc-host-user}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inRelSFTPPath</con:name>
+          <con:value>${#TestCase#targetArchive}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFileNameOrExtension</con:name>
+          <con:value>*</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outCountFiles</con:name>
+          <con:value>71</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outCountFiles</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-validateCountFiles" id="63d33018-6575-4187-8ace-613eab84712d">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ *  This script make sure in each directory count of files old value + 1 
+ *  Autor : Michael Gordon
+ *  Date:  03-06-20
+ */
+
+// read count of files on mft before  job execution
+def countFiles_pickup_before = context.expand( '${_Run TestCase-getCountFiles-pickUp#outCountFiles}' ).toInteger()
+def  countFiles_archive_before = context.expand( '${_Run TestCase-getCountFiles-Archive#outCountFiles}' ).toInteger()
+//  after job execution
+def countFiles_pickup_after = context.expand( '${Run TestCase-getCountFiles-pickUp#outCountFiles}' ).toInteger()
+def countFiles_archive_after = context.expand( '${Run TestCase-getCountFiles-Archive#outCountFiles}' ).toInteger()
+log.info('Files count in pickup directory before:- ' + countFiles_pickup_before+ ' and after-  ' +countFiles_pickup_after + ' job execution' )
+log.info('Files count in archive directory before:- ' + countFiles_archive_before+ ' and after-  ' +countFiles_archive_after + ' job execution' )
+
+// expectation
+assert countFiles_pickup_after==countFiles_pickup_before+1
+assert countFiles_archive_after==countFiles_archive_before+1</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>targetPickUp</con:name>
+      <con:value>${drc_target_EDRPath}/pickUp</con:value>
+    </con:property>
+    <con:property>
+      <con:name>targetArchive</con:name>
+      <con:value>${drc_target_EDRPath}/archive</con:value>
+    </con:property>
+    <con:property>
+      <con:name>filePath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/Logs/20221004102502165_EDR_toArchive.trans</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>b0dfcb1f-7691-45db-9589-7d6a1ad1495a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c3eb20a6-6d1f-4b03-b463-156ed8a941f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c7223fef-1b6d-41f2-9c49-f147bbc66b08</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>aa15e6e5-9748-443e-be3c-7f4ee5ffb4fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b53d90ee-cfcc-4b97-a342-7fa277265264</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fc0866b5-1998-4925-ae01-b3c95b525572</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6146ebc6-eb35-4e5c-8c07-7a4aa17734e6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d58cc17f-06c4-4e70-ad66-13d2c98c754f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7f3dbae7-b67f-4453-91e6-8c67ad1b0072</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d571c27c-ba39-477d-8382-0614a6050cb1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4f9f2209-03ba-4fe8-8286-d37d28f59b91</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d362f9e0-b070-466f-bbf9-d4319fa77ed3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b29fa92-05cb-45d9-b544-6018b6892007</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0fc9e72f-fffa-4a5b-9328-9ec6484a0e14</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d6a9666b-adf8-4f57-ae26-b2f2aaf7c1e1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>42fe2223-af6d-4328-8b46-00e9119290e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6248655d-e8cd-4e39-86ec-883776d99d31</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6ff508be-e790-4ef4-9dfd-06990e56350b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f4a82f81-23f1-4ecb-a2c8-9c4a9998d2f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>29c60d8d-18e6-4a35-b120-9712054b1630</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f1571ee2-13ac-4fb7-8376-06d63a9528ec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f16cf667-58f2-4e17-a132-b9148465cdd2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b84f3ae-305f-4293-806f-cfbc6f0b540b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>04eafbc3-c010-4f39-a26f-166f21224835</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8cac41b7-62eb-4c20-bc71-aa1e1048b8d9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9d42dace-147e-40d2-8240-3112288c5752</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e38add1b-3271-48a1-ae5f-0dfb2bc86c94</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eeb65654-bdd4-4ca7-b5e2-9a9af041e516</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f479c862-bde9-4591-893f-682ae0eb5e62</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>98bb02af-c7b5-4c31-9bbb-d5ba8ce2029f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a980e404-5bf6-4087-a597-f710a2c9d294</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93ba180a-f030-442e-ac4b-264717b14f47</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63d33018-6575-4187-8ace-613eab84712d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

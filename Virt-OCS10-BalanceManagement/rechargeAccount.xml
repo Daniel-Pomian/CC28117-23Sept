@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="rechargeAccount" id="9f8cd98c-1a8b-4325-b8a9-86a13a9e5bfc" interface="BalanceManagement-SOAPBinding" operation="rechargeAccount" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="9a80b192-f540-4a9c-af3c-066fe17e99e8fileName">rechargeAccount</con:setting>
+    <con:setting id="9f8cd98c-1a8b-4325-b8a9-86a13a9e5bfcfileName">rechargeAccount</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Date: 11.03.2016
+ * Autor: Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using OCS 10 mock service.
+
+Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+Mock service despatch default response with values from request and default values from mock service like current response below.
+Default balance configured by mock is - ${#MockService#DEFAULT-balance}
+
+To order custom soap fault response with expected values, MSISDN in request must be in format:
+
+- MSISDN prefix must be:
+	- for rechargeAccount exceptions	- ${#Project#MOCK-Prefix-OCS10-rechargeAccount-CustomException}
+	- for deductBalance exceptions	- ${#Project#MOCK-Prefix-OCS10-deductBalance-CustomException}
+
+- Position 6:
+	1 - for service exception with  errorType=PERMANENT
+	2 - for service exception with  errorType=TRANSIENT
+	3 - for policy exception	with  errorType=PERMANENT
+	4 - for service exception with errorType=TRANSIENT and all parameters 
+	x - for service exception default responseall parameters 
+	
+- Positions 7-14 = last 8 signs from expected error code in response
+	Ex. MSISDN = 49111198800012 returns <ns3:errorCode>1098800012</ns3:errorCode>
+
+Example soap fault response for MSISDN above: 
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Mock: OCS10-BalanceManagement-Service. Soap fault exception</faultstring>
+         <detail>
+            <ns3:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns3:errorCode>98800012</ns3:errorCode>
+               <ns3:errorType>Permanent</ns3:errorType>
+               <ns3:text>Account in wrong status</ns3:text>
+            </ns3:serviceException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>
+
+ End of documentation  
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+ // read default values from project properties
+ def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-OCS10-rechargeAccount-CustomException}') 
+ def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+  						
+ // set default values from virt properties
+ def iDEFAULTBalance = context.expand('${#MockService#DEFAULT-balance}').toInteger() 
+ def sErrorCode_Default = context.expand('${#MockService#DEFAULT-ErrorCode}')
+ def sErrorType_Default = context.expand('${#MockService#DEFAULT-ErrorType}')
+ def sErrorText_Default = context.expand('${#MockService#DEFAULT-ErrorText}')
+  
+ // read values from header in incommning request
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+ def sHeaderMsgId=holder.getNodeValue("declare namespace ns1='http://schemas.xmlsoap.org/ws/2004/08/addressing'; //ns1:MessageID[1]")
+  // remove prefix from message id in header
+ def sHeaderReplyToAdress=holder.getNodeValue("declare namespace ns1='http://schemas.xmlsoap.org/ws/2004/08/addressing';//ns1:ReplyTo[1]/ns1:Address[1]")
+ // read values from body in incommning request
+ def sApplicationID=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:rechargeAccountRequest[1]/ns1:appInfo[1]/ns1:applicationId[1]")
+ def sReference=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:rechargeAccountRequest[1]/ns1:appInfo[1]/ns1:reference[1]") 
+ def sMSISDN = holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:rechargeAccountRequest[1]/ns1:subscriberId[1]//ns1:e164Number[1]")
+ def sAmount=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //ns1:rechargeAccountRequest[1]/ns1:amount[1]")
+ def sRechargeType=holder.getNodeValue("declare namespace ns1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1';//ns1:rechargeAccountRequest[1]/ns1:rechargeType[1]")
+
+ // log out all values from request for check and validations in tests from mock gui via http-request 
+ log.info('OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn ' + sMSISDN)
+ log.info('MessageID is: ' + sHeaderMsgId) 	
+ log.info('ReplyTo.Address is: ' + sHeaderReplyToAdress)
+ log.info('applicationId is: ' + sApplicationID)
+ log.info('reference is: ' + sReference)
+ log.info('amount is: ' + sAmount)
+ log.info('rechargeType is: ' + sRechargeType)
+
+ // set virt properties for soap fault responses
+ context.mockService.setPropertyValue('Exception-ErrorType',sErrorType_Default)
+ context.mockService.setPropertyValue('Exception-ErrorCode',sErrorCode_Default)
+ context.mockService.setPropertyValue('Exception-ErrorText',sErrorText_Default)
+ 
+ // check msissdn
+ if(sMSISDN==null || sMSISDN.length()<1 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	context.mockService.setPropertyValue('Exception-ErrorCode','5')
+ 	context.mockService.setPropertyValue('Exception-ErrorText','Incoherent parameters: MSISDN is missed, to short, to long or contains not allowed signs')
+	return 'Response-soapFault-ServiceException'
+ }
+ // if msisd=constant msisdn unknown, return permanent errorcode=1
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	context.mockService.setPropertyValue('Exception-ErrorCode','1')
+ 	context.mockService.setPropertyValue('Exception-ErrorText','Unknown subscriberId')
+ 	return 'Response-soapFault-ServiceException'
+ }
+ 
+ // check input parameters from request
+String sResultCode='5'
+String sResultDesc='Incoherent parameters:-'
+def lstMediaType = ['23','25','27','28','35','38','39','40','43','44','60','61','70','71']
+def lstTopup=['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','MA','MB']
+// check: MessageId in soapHeader. Must be uuid and 36 signs long
+if (sHeaderMsgId==null || sHeaderMsgId.length()<1 ||
+	sHeaderMsgId.replace('urn:uuid:','').length()!=36)
+	sResultDesc=sResultDesc + 'MessageID in soapHeader is missed or not uuid!'
+// check applicationId. Must be D+mediaType. Ex. D35
+else if (sApplicationID==null ||  sApplicationID.length()!=3 || 
+	!lstMediaType.contains(sApplicationID[1..2]) || sApplicationID[0]!='D')
+	sResultDesc=sResultDesc + 'applicationId in request is emtpy or contains not allowed value! Must be D + media type'
+// check reference. Started with mediaType. Ex. 350000010006278
+else if (sReference==null ||  sReference.length()<9 ||  sReference.length()>64 ||
+	!lstMediaType.contains(sReference[0..1]))
+	sResultDesc=sResultDesc + 'reference in request is emtpy, not 9 till 64 signs long or does not contain media type!'
+// check rechargeType. MediaType+topup original. Ex: 35M4
+else if (sRechargeType==null || sRechargeType.length()!=4 || 
+	!lstMediaType.contains(sRechargeType[0..1]) || !lstTopup.contains(sRechargeType[2..3]))
+	sResultDesc=sResultDesc + 'rechargeType in request is emtpy or contains not allowed value!'
+// Two last signs in applicationId must be = first two signs in reference and in rechargeType
+else if (sApplicationID[1..2]!=sReference[0..1] || 
+	sReference[0..1]!=sRechargeType[0..1])
+	sResultDesc=sResultDesc + 'Media type in applicationId, reference and rechargeType from request is not identical!'
+else	// all values in request are valid, clear error description.
+	sResultDesc=''
+
+// if error description is not empty, send error response with error-message
+if(sResultDesc!=''){
+	context.mockService.setPropertyValue('Exception-ErrorCode',sResultCode)
+	context.mockService.setPropertyValue('Exception-ErrorText',sResultDesc)
+	return 'Response-soapFault-ServiceException'  
+}
+
+ 
+ // convert balance change to integer
+ def iBalanceChange=sAmount.toInteger()
+ // set request values to virt properties
+ context.mockService.setPropertyValue('rechargeAccount-applicationId',sApplicationID)
+ context.mockService.setPropertyValue('rechargeAccount-reference',sReference)
+ context.mockService.setPropertyValue('rechargeAccount-e164Number',sMSISDN)
+ context.mockService.setPropertyValue('rechargeAccount-balanceChange',sAmount)
+ // set balance to default balance + change balance
+ context.mockService.setPropertyValue('rechargeAccount-balance',(iDEFAULTBalance+iBalanceChange).toString())
+ 
+ // make sure, soap fault response is not ordered
+ if (sMSISDN.length()<14 || sMSISDN[0..4]!=sMSISDNPrefixException){
+ 	  // if request header contains not empty ReplyTo.Address --> return specialy defined ocs response. Bug in Jira: https://www.sg.de.o2.com/jira/browse/DRC-2259
+ 	if (sHeaderReplyToAdress!=null && sHeaderReplyToAdress!='')
+ 		return 'Response-soapFault-ocsAsyncException'
+	 else
+	 	return 'Response-Default'
+ } 
+
+ // create ordered soap fault exception
+ // set error code, if response is soap fault
+ context.mockService.setPropertyValue('Exception-ErrorCode',sMSISDN.substring(6).toInteger().toString())
+ switch ( sMSISDN[5] ) {
+    case '1':		// service exception, permanent    		
+         	return 'Response-soapFault-ServiceException' 
+         	
+    case '2':		// service exception, transient   
+    		context.mockService.setPropertyValue('Exception-ErrorType','TRANSIENT')        	
+          return 'Response-soapFault-ServiceException' 
+   
+    case '3':		// policy exception, transient        	
+        	return 'Response-soapFault-PolicyException'
+   
+    case '4':		// service exception, transient with opInfo=msisdn for positive reponse on mock common.queryOperationResult  
+    		context.mockService.setPropertyValue('Exception-ErrorType','TRANSIENT')        	
+          return 'Response-soapFault-ServiceExeption_AllParam'        
+    default:
+    		context.mockService.setPropertyValue('Exception-ErrorCode',sErrorCode_Default)
+        	return 'Response-soapFault-ServiceException' 
+}]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="b681654c-bd19-462f-a981-504abc962bab" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:v1="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1">
+   <soapenv:Header>
+      <add:MessageID>urn:uuid:${#Project#GUID}</add:MessageID>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:rechargeAccountResponse>
+         <v1:appInfo>
+            <v1:applicationId>${#MockService#rechargeAccount-applicationId}</v1:applicationId>
+            <v1:reference>${#MockService#rechargeAccount-reference}</v1:reference>
+         </v1:appInfo>
+         <v1:result>
+            <v1:opReference>${#Project#GUID_Moved-}</v1:opReference>
+            <v1:opExecutionDate>${#Project#DateTime_Current_Offset}</v1:opExecutionDate>
+            <v1:opCost exponent="${#MockService#DEFAULT-exponent}" currencyCode="${#MockService#DEFAULT-currencyCode}">${#MockService#DEFAULT-opCost}</v1:opCost>
+            <v1:subscriberId>
+               <v1:e164Number>${#MockService#rechargeAccount-e164Number}</v1:e164Number>
+            </v1:subscriberId>
+            <v1:serviceProviderId>${#MockService#DEFAULT-serviceProviderId}</v1:serviceProviderId>
+            <v1:balance exponent="${#MockService#DEFAULT-exponent}" currencyCode="${#MockService#DEFAULT-currencyCode}">${#MockService#rechargeAccount-balance}</v1:balance>
+            <v1:lifeCycleStatus>
+               <v1:state>A</v1:state>
+               <v1:subState>R</v1:subState>
+            </v1:lifeCycleStatus>
+            <v1:tariffPlanId>${#MockService#DEFAULT-tariffPlanId}</v1:tariffPlanId>
+         </v1:result>
+         <v1:changedWalletInfoList>
+            <v1:walletId>${#MockService#DEFAULT-walletId}</v1:walletId>
+            <v1:balance exponent="${#MockService#DEFAULT-exponent}" currencyCode="${#MockService#DEFAULT-currencyCode}">${#MockService#rechargeAccount-balance}</v1:balance>
+            <v1:balanceChange exponent="${#MockService#DEFAULT-exponent}" currencyCode="${#MockService#DEFAULT-currencyCode}">${#MockService#rechargeAccount-balanceChange}</v1:balanceChange>
+            <v1:expirationDate>${#Project#Date_Future_Offset}</v1:expirationDate>
+         </v1:changedWalletInfoList>
+      </v1:rechargeAccountResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="rechargeAccount"/>
+  </con:response>
+  <con:response name="Response-soapFault-ServiceException" id="02ef185b-e255-48ad-ab54-c9d662bb3ee2" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns3:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns3:errorCode>${#MockService#Exception-ErrorCode}</ns3:errorCode>
+               <ns3:errorType>${#MockService#Exception-ErrorType}</ns3:errorType>
+               <ns3:text>${#MockService#Exception-ErrorText}</ns3:text>             
+            </ns3:serviceException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="rechargeAccount"/>
+  </con:response>
+  <con:response name="Response-soapFault-PolicyException" id="dd44ebc9-b584-401f-876d-b7be62d2e0d6" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns4:policyException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://schemas.xmlsoap.org/ws/2002/04/secext" xmlns:ns4="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1">
+               <ns4:errorCode>${#MockService#Exception-ErrorCode}</ns4:errorCode>
+               <ns4:errorType>${#MockService#DEFAULT-ErrorType}</ns4:errorType>
+               <ns4:text>${#MockService#Exception-ErrorText}</ns4:text>
+               <ns4:variables>${#Project#Random10}${#Project#Random10}</ns4:variables>
+            </ns4:policyException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="rechargeAccount"/>
+  </con:response>
+  <con:response name="Response-soapFault-ServiceExeption_AllParam" id="27b4e1af-6220-4b60-a0ae-66a5400ecea4" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <detail>
+            <ns3:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns3:errorCode>${#MockService#Exception-ErrorCode}</ns3:errorCode>
+               <ns3:errorType>${#MockService#Exception-ErrorType}</ns3:errorType>
+               <ns3:text>${#MockService#Exception-ErrorText}</ns3:text>
+               <ns3:variables>${#Project#Random10}${#Project#Random10}</ns3:variables> 
+             </ns3:serviceException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="rechargeAccount"/>
+  </con:response>
+  <con:response name="Response-soapFault-ocsAsyncException" id="9c4d3b55-8f84-4c4f-a334-f19d846d2dc0" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+   <S:Header>
+      <add:MessageID xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing">urn:uuid:${#Project#GUID}</add:MessageID>
+   </S:Header>
+   <S:Body>
+      <ns2:Fault xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope">
+         <faultcode>ns2:Server</faultcode>
+         <faultstring>Policy Exception</faultstring>
+         <detail>
+            <ns4:policyException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://schemas.xmlsoap.org/ws/2002/04/secext" xmlns:ns4="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1">
+               <ns4:errorCode>1</ns4:errorCode>
+               <ns4:errorType>TRANSIENT</ns4:errorType>
+               <ns4:text>Service execution is pending</ns4:text>
+               <ns4:variables>${#Project#Random10}</ns4:variables>
+            </ns4:policyException>
+         </detail>
+      </ns2:Fault>
+   </S:Body>
+</S:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="rechargeAccount"/>
+  </con:response>
+</con:mockOperation>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockService id="88782324-42ef-4c6a-9a65-10ce24569718" port="8080" path="/Piranha/StackService" host="localhost" name="Virt-Piranha-StackService" routeModeEnabled="false" xmlns:con="http://eviware.com/soapui/config">
+  <con:description/>
+  <con:settings>
+    <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting>
+    <con:setting id="88782324-42ef-4c6a-9a65-10ce24569718fileName">Virt-Piranha-StackService</con:setting>
+  </con:settings>
+  <con:startScript/>
+  <con:properties>
+    <con:property>
+      <con:name>Doc</con:name>
+      <con:value><![CDATA[Documentation for using piranha mock service.
+
+Mock service despatch soapFault response, if MSISDN in request:
+	- null, empty or not numeric
+	- MSISDN < 7 or MSISDN>20 signs 
+	- doesn't start with 491
+	
+Mock service despatch default response like current below 
+for all valid MSISDNs in request and not in followed format.
+
+To order custom response with expected values MSISDN in request must be in format:
+- MSISDN must be started with = ${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}
+- If MSISDN has prefix above and wrong format, mock despatch soapFault response.
+
+- Position 6 set followed value for element virtualStack in response:
+virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]
+	1 = RCS
+	2 = BCS
+	3 = PREPAID
+	4 = SPAIN
+	5 = HERMES
+	
+- Position 7 set followed value for element paymentType in response:
+paymentType - enumeration: [POSTPAID,PREPAID]
+ 	1 = POSTPAID
+ 	2 = PREPAID 
+ 	
+- Position 8 set followed value for element subscriptionStatus in response:
+subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]
+	1 = ACTIVE
+	2 = DEACTIVATION_PENDING
+	3 = DEACTIVATING
+	4 = INACTIVE
+	
+- Position 9-11 set followed value for element sasName in response:
+sasName
+	SR + Position 9-11 from MSISDN. Ex. 49150221101 returns <sasName>SR101</sasName>
+	
+- Optional position 12-13 set followed value for element brandId in response:
+Optional: brandIdType
+	return position 12-13 converted to integer if not empty. 
+	Ex. 4915922110110 returns <brandId>10</brandId>
+
+Example response for MSISDN=4915022110100: 
+   <soapenv:Header/>
+   <soapenv:Body>   
+      <stac:getStackDetailsResponse>       
+         <virtualStack>BCS</virtualStack>      
+         <paymentType>PREPAID</paymentType>        
+         <subscriptionStatus>ACTIVE</subscriptionStatus>        
+         <sasName>SR101</sasName>        
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+
+ End of documentation]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>SAS-PREFIX</con:name>
+      <con:value>SP</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-virtualStack-Default</con:name>
+      <con:value>PREPAID</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-paymentType-Default</con:name>
+      <con:value>PREPAID</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-subscriptionStatus-Default</con:name>
+      <con:value>ACTIVE</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-sasName-Default</con:name>
+      <con:value>SP901</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-brandId-Default</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-brandId-CreditCard-Default</con:name>
+      <con:value>80</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-virtualStack</con:name>
+      <con:value>SPAIN</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-paymentType</con:name>
+      <con:value>PREPAID</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-subscriptionStatus</con:name>
+      <con:value>ACTIVE</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-sasName</con:name>
+      <con:value>SP901</con:value>
+    </con:property>
+    <con:property>
+      <con:name>getStack-brandId</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:afterRequestScript/>
+  <con:constraints>
+    <con:congestion>0</con:congestion>
+    <con:inputBandwidth>-1</con:inputBandwidth>
+    <con:outputBandwidth>-1</con:outputBandwidth>
+    <con:maxThreadPoolCapacity>20</con:maxThreadPoolCapacity>
+    <con:coreThreadPoolCapacity>5</con:coreThreadPoolCapacity>
+    <con:virtError>
+      <con:start>0</con:start>
+      <con:endless>true</con:endless>
+    </con:virtError>
+  </con:constraints>
+  <con:dataSources/>
+  <con:headerValidator type="NONE"/>
+</con:mockService>

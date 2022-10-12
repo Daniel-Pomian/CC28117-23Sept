@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="466fd0fd-4ef4-4675-9c97-e132d9f6b9c3" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DrillischService-queryBalance" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests bad-case scenarios for drillisch interface based on specification in SVN:
+svn://svn.sg.de.pri.o2.com/DealerPortal/DirectRecharge/trunk/SRs/Interfaces/Drillisch/ST_TD_DRC_U-036_Drillisch_Interface_Specification_for_Drillisch_V0.5.pdf
+§ 4.2.6  queryBalance</con:description>
+  <con:settings>
+    <con:setting id="466fd0fd-4ef4-4675-9c97-e132d9f6b9c3fileName">BadCase-DrillischService-queryBalance</con:setting>
+  </con:settings>
+  <con:testStep type="request" id="f3db858f-3a0b-4b98-9343-bd0c61e50dc7" name="5400N_queryBalance-MSISDN-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForDrillischSoapBinding</con:interface>
+      <con:operation>queryBalance</con:operation>
+      <con:request name="5400N_queryBalance-MSISDN-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a668b861-5ea7-46ed-91a2-7277abb2a82a">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForDrillisch-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ext="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:star="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/starcom/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ext1:queryBalance xmlns:ext1="http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/">
+         <DirectRechargeServiceQueryDto>
+            <!--type: string-->
+            <msisdn/>
+         </DirectRechargeServiceQueryDto>
+      </ext1:queryBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="175da3c3-dc43-4f22-9441-a0313f93523a" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="5f6dcad7-fa00-4af4-a970-3ac91e9e66af" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="be5736af-9d94-43eb-b7d1-90b7e4623695" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="8b9baffe-d145-41da-8bcf-20a8aa00c811" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Could not convert given MSISDN ()to a valid Msisdn</faultstring>
+         <detail>
+            <ns2:queryBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/" xmlns:ns3="http://directrecharge.o2.com/ws/evolutionservice/redeemvoucher/external/" xmlns:ns4="http://directrecharge.o2.com/ws/evolutionservice/deductbalance/external/" xmlns:ns5="http://directrecharge.o2.com/ws/evolutionservice/topupsynchronous/external/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+               <request>
+                  <msisdn/>
+               </request>
+            </ns2:queryBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/queryBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="d921cef9-941f-42ea-830b-d77c71b30aba" name="5410N_queryBalance-MSISDN-toLong>20">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForDrillischSoapBinding</con:interface>
+      <con:operation>queryBalance</con:operation>
+      <con:request name="5410N_queryBalance-MSISDN-toLong>20" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a668b861-5ea7-46ed-91a2-7277abb2a82a">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForDrillisch-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ext="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:star="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/starcom/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ext1:queryBalance xmlns:ext1="http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/">
+         <DirectRechargeServiceQueryDto>
+            <!--type: string-->
+            <msisdn>49178${#Project#Random10}${#Project#Random10}</msisdn>
+         </DirectRechargeServiceQueryDto>
+      </ext1:queryBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="175da3c3-dc43-4f22-9441-a0313f93523a" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="5f6dcad7-fa00-4af4-a970-3ac91e9e66af" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="be5736af-9d94-43eb-b7d1-90b7e4623695" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="8b9baffe-d145-41da-8bcf-20a8aa00c811" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/';
+//detail[1]/ns1:queryBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Could not convert given MSISDN ()to a valid Msisdn</faultstring>
+         <detail>
+            <ns2:queryBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/evolutionservice/querybalance/external/" xmlns:ns3="http://directrecharge.o2.com/ws/evolutionservice/redeemvoucher/external/" xmlns:ns4="http://directrecharge.o2.com/ws/evolutionservice/deductbalance/external/" xmlns:ns5="http://directrecharge.o2.com/ws/evolutionservice/topupsynchronous/external/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+               </fault>
+               <request>
+                  <msisdn/>
+               </request>
+            </ns2:queryBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/queryBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

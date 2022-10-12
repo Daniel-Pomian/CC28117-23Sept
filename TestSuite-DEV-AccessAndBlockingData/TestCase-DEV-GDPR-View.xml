@@ -1,0 +1,1278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="065bfea9-82c9-4d28-9cb0-65f7846888df" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-GDPR-View" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests view of valid data from all test-cases above usable for nova agent per msisdn</con:description>
+  <con:settings>
+    <con:setting id="065bfea9-82c9-4d28-9cb0-65f7846888dffileName">TestCase-DEV-GDPR-View</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="calltestcase" name="_Run TestCase-CreateAllUserRoles" id="aa836c27-1b41-4875-b866-6ce159cf948f">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>0fd3455d-60a0-400b-8ba1-dd549ace3685</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TimeStep</con:name>
+          <con:value>221003160645</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CS_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>CS_NOVA_SUPERVISOR</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>CS_NOVA_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>FINANCE_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>FINANCE_SUPERVISOR</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>MATCHING_SUPERVISOR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>REPORTING_SUPERVISOR</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>TimeStep</con:entry>
+        <con:entry>CS_AGENT</con:entry>
+        <con:entry>CS_NOVA_SUPERVISOR</con:entry>
+        <con:entry>CS_NOVA_AGENT</con:entry>
+        <con:entry>FINANCE_AGENT</con:entry>
+        <con:entry>FINANCE_SUPERVISOR</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecAll" id="a4ee3339-06da-4897-bd22-245bfa6ae37a">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>3a9b4088-ea61-480f-9d41-29490cb9a592</con:targetTestCase>
+      <con:properties/>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="1b006b06-93b4-496a-a9df-f1dadb171bd9" name="10010P_getGDPRData-MSISDN-1-CS_Nova_Agent">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10010P_getGDPRData-MSISDN-1-CS_Nova_Agent" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-1}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-1}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="ab1d251c-8bfc-469d-adff-8ac79a153014" name="Check for value of [amountValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="06d52bf4-c198-4bdf-9a1d-e4224d04760e" name="10020P_getGDPRData-MSISDN-2-CS_Nova_Agent">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10020P_getGDPRData-MSISDN-2-CS_Nova_Agent" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-2}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="6cf19687-7fec-45c4-a3ef-9c7e0b4d410d"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="773ce1f2-3ff5-4242-97fa-b47ba6c4e4da">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="0d07619c-fb62-48ee-86eb-a1b0e6f9a527">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-2}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="28f46528-ea11-42cb-80a1-b0b365c65f3b"/>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="1d0125e5-bc1a-4fbb-823a-a7794cd6ea89">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="57f21b00-daf0-4c4c-8251-917a6c652cf4" name="Contains-IBAN">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="c6c789bc-ddb0-4435-b044-b8bdb6ddff33" name="Contains-BIC">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>false</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="e32bf62a-fd2c-4be7-93d2-91d12f8fe9b2" name="Contains-accountOwner">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="2849b01a-038c-46fd-89ca-b70df31d673b" name="Check for value of [amountValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b562418a-ee17-479d-bb75-f1ba017b56aa" name="10030P_getGDPRData-MSISDN-ATM">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10030P_getGDPRData-MSISDN-ATM" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-ATM}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-ATM}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue]" id="7d01efc9-91ba-4097-bfd3-02310aa95302">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text()='${#TestSuite#amountGUI}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text()='-${#TestSuite#amountGUI}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ebb314b8-2b60-4c6a-a2e4-6767c557fa0c" name="10040P_getGDPRData-MSISDN-Charging">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10040P_getGDPRData-MSISDN-Charging" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-Charging}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-Charging}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="43d96492-1666-44c8-8826-10004de0eefc" name="Check count of [row]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>11</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="40694c35-2dac-4b3c-8364-be9edfda5c38" name="10050P_getGDPRData-MSISDN-CC">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10050P_getGDPRData-MSISDN-CC" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-CC}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-CC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="94830c31-609a-447a-bc51-cba663ebac25">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:getGDPRDataResponse/GDPRData/GDPRDataSet/GDPRData/row)</path>
+            <content>0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="c34687b9-8552-4c45-a5ca-4b9bc220fe05" name="Check for existence of [GDPRData]/row - No-CC-Data-InDSGVO-View">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+exists(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>false</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c2575cd7-a052-45b3-b554-495f34316547" name="10060P_getGDPRData-MSISDN-Voucher">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10060P_getGDPRData-MSISDN-Voucher" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-Voucher}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-Voucher}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="35ca0346-0f7c-486f-901b-de554008ad43">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>2</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="bc613dda-3a37-4cbe-8dee-45dde3a9e1d4" name="Check for amounts [amountValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue=0
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue>0</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="f9d2a2c4-59fa-4f78-9c88-0f882b4b9820" name="Check voucher codes [stringValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/stringValue >'8000000'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/stringValue >'9000000'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="cb90254c-be8a-4e6e-a069-f080add109d3" name="10070P_getGDPRData-MSISDN-manualCharging">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10070P_getGDPRData-MSISDN-manualCharging" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-manualCharging}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="7a0b78d7-583e-4b5e-bd92-a2d609572d8c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="60713849-b3ca-41aa-ba50-f64afde4650b">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3acadff0-eeff-438a-8988-d90c07538f72"/>
+        <con:assertion type="Simple Contains" id="5f78b342-f99f-4fc1-93a3-954e55ccc8b6" name="Contains-MSISDN">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-manualCharging}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="901296ba-d1da-4888-85a1-83a01eb9d09e">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3f8029aa-b5ea-4950-ba1a-15d11ad5fd25">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="64b7fc5d-dbc1-43e4-8112-72d91b83a04d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="9da20f5e-11a1-4ec2-960b-703e0a00066f">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="b8c1ffcb-66fc-4239-8e40-bf2553fba419" name="Check for existence of [amountValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text()='${#TestSuite#amountGUI}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text()='-${#TestSuite#amountGUI}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="3733c3be-4f15-4259-82b8-47f042542ab6">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>2</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a99cbdea-5a9c-4ccf-9f92-db94964c15d3" name="10100P_getGDPRData-MSISDN-Tchibo">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10100P_getGDPRData-MSISDN-Tchibo" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-Tchibo}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="933730cb-14f1-430c-86d8-85b7714f1186"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d1b34261-f68b-4501-b206-743a1d5f3181">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8cb0fe9e-1043-4c23-b590-0293658bf75b"/>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="96cfb62e-dcbd-4a42-9d8e-b79486985f26">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-Tchibo}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="e53c7312-50a6-4d2c-9f01-bfcab9dbdafa">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3c72aba0-3725-48f2-8002-2e23c8756fb5">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="866796cf-ab98-46aa-9a66-05bd1b59d22d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="6d0f4e55-8cf3-4408-93f3-65178fbfee97">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="8122ecc6-e592-42f2-b95c-088e7d8e23aa">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>2</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="6e5eacfe-90e5-4788-acdb-9d2b9b119e72" name="Contains">
+          <con:configuration>
+            <token>DeductedAmountInternal</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue]" id="d9a32d3f-50ba-416c-96b5-e36abd39f83a">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="f01a0523-c799-4159-a442-ddeef660a493" name="10120P_getGDPRData-MSISDN-MiPay">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10120P_getGDPRData-MSISDN-MiPay" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-MiPay}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="933730cb-14f1-430c-86d8-85b7714f1186"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d1b34261-f68b-4501-b206-743a1d5f3181">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8cb0fe9e-1043-4c23-b590-0293658bf75b"/>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="96cfb62e-dcbd-4a42-9d8e-b79486985f26">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-MiPay}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="e53c7312-50a6-4d2c-9f01-bfcab9dbdafa">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3c72aba0-3725-48f2-8002-2e23c8756fb5">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="866796cf-ab98-46aa-9a66-05bd1b59d22d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="6d0f4e55-8cf3-4408-93f3-65178fbfee97">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="e14f5834-575b-4ad7-bd15-0d74bf7ef472">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>2</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue] and Vouchercode" id="1dcb477a-4bf4-4b01-91cb-04b0b6d5ee6f">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and 
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/stringValue >'9000000'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="9198a7a4-f595-431b-aa41-488ac84efa63" name="10130P_getGDPRData-MSISDN-Rator">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10130P_getGDPRData-MSISDN-Rator" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-Rator}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="933730cb-14f1-430c-86d8-85b7714f1186"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d1b34261-f68b-4501-b206-743a1d5f3181">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8cb0fe9e-1043-4c23-b590-0293658bf75b"/>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="96cfb62e-dcbd-4a42-9d8e-b79486985f26">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-Rator}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="e53c7312-50a6-4d2c-9f01-bfcab9dbdafa">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3c72aba0-3725-48f2-8002-2e23c8756fb5">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="866796cf-ab98-46aa-9a66-05bd1b59d22d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="6d0f4e55-8cf3-4408-93f3-65178fbfee97">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="bb804465-42db-44ee-a68c-eae5988714b9">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>3</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue]" id="7e49811e-ee06-46db-ac0f-f4212b9da7e4">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="eda7712f-85fd-4b54-8585-8d2c45c37499" name="10140P_getGDPRData-MSISDN-Drillisch">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10140P_getGDPRData-MSISDN-Drillisch" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_AGENT}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-Drillisch}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="933730cb-14f1-430c-86d8-85b7714f1186"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d1b34261-f68b-4501-b206-743a1d5f3181">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8cb0fe9e-1043-4c23-b590-0293658bf75b"/>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="96cfb62e-dcbd-4a42-9d8e-b79486985f26">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-Drillisch}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="e53c7312-50a6-4d2c-9f01-bfcab9dbdafa">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3c72aba0-3725-48f2-8002-2e23c8756fb5">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="866796cf-ab98-46aa-9a66-05bd1b59d22d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="6d0f4e55-8cf3-4408-93f3-65178fbfee97">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="47cfe2cf-0bd3-4124-9e13-668ab4be75d7">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>3</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue]" id="d027521b-ce5c-40c1-9b9a-6e9ec3fbb99f">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="6e8bf09b-a68c-4734-88ad-a5cca660e1a1" name="10150P_getGDPRData-MSISDN-MoDe">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getGDPRData</con:operation>
+      <con:request name="10150P_getGDPRData-MSISDN-MoDe" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="008167d7-d16d-4c47-a26a-40423c7133dd">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestSuite#GDPR-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getGDPRData>
+         <msisdn>${#TestSuite#MSISDN-MoDe}</msisdn>
+         <fromDateTime>${#Project#Date_Current}</fromDateTime>
+         <tillDateTime>${#Project#Date_NextDay_yyyy-MM-dd}T00:00:00Z</tillDateTime>
+      </v1:getGDPRData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="933730cb-14f1-430c-86d8-85b7714f1186"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d1b34261-f68b-4501-b206-743a1d5f3181">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8cb0fe9e-1043-4c23-b590-0293658bf75b"/>
+        <con:assertion type="Simple Contains" name="Contains-MSISDN" id="96cfb62e-dcbd-4a42-9d8e-b79486985f26">
+          <con:configuration>
+            <token>${#TestSuite#MSISDN-MoDe}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-IBAN" id="e53c7312-50a6-4d2c-9f01-bfcab9dbdafa">
+          <con:configuration>
+            <token>${#Project#Customer-IBAN}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-BIC" id="3c72aba0-3725-48f2-8002-2e23c8756fb5">
+          <con:configuration>
+            <token>${#Project#Customer-BIC}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-bankAccountOwner" id="866796cf-ab98-46aa-9a66-05bd1b59d22d">
+          <con:configuration>
+            <token>${#TestSuite#bankAccountOwner}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple NotContains" name="Not Contains-ultimateDebtor" id="6d0f4e55-8cf3-4408-93f3-65178fbfee97">
+          <con:configuration>
+            <token>${#TestSuite#ultimateDebtor}</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check count of [row]" id="a409128d-aa83-473d-9f5a-4ebebee22e00">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count(//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row)</path>
+            <content>3</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Check for value of [amountValue]" id="859735c5-b37f-4ed1-a9a7-7d25e822a62c">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='${#TestSuite#amountGui}'
+and
+//ns4:getGDPRDataResponse/GDPRData/GDPRDataSet/tableData/rows/row/value/amountValue/text() ='-${#TestSuite#amountGui}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getGDPRData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>8e4d1627-3b9a-45a6-94fa-c414989c53ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>402b3b16-36b1-4557-9762-fe7ca0e02cb8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62b96612-9316-48fd-8d1b-983e216f061c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e54d5447-ba9b-4f43-acd6-6d59c207de00</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27642785-dd51-4b39-bbfe-4f65e09e7069</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c19951e1-3c13-4147-867f-1a7ae7d8f2d7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>592b64d7-54c4-45ea-b6c0-9bc70479120b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e8bc63d3-3ceb-4051-be55-1c1b9a9fabfd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>45e23365-81c5-4e6c-bcbe-b803154f2e94</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,1350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="1d66c06c-fbf8-4cae-bf46-6683ecc6ba41" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-RatorServices-balanceType=3" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests positive business cases from Rator / PSST  evolution services based on documentation in svn:
+...src\trunk\SRs\Interfaces\RATOR-PSST\ST_TD_DRC_U-036_PSST_Interface_Specification-V3.2.1.pdf
+§ 4.2.2
+
+Von: Stefan Peter [mailto:stefan.peter@telefonica.com] 
+Gesendet: 11 January 2018 15:02
+An: Gordon, Michael (Contractor) &lt;Michael.Gordon@cognizant.com>
+Cc: Wieczorek, Thomas (Cognizant) &lt;Thomas.Wieczorek@cognizant.com>; Christian Unbekannt &lt;christian.unbekannt@telefonica.com>
+Betreff: AW: RATOR: Erlaubte paymentUseCase für balanceType=3 in topupSynchronous requests
+
+Hallo Michael,
+
+nach meiner Kenntnis darf Balance 3 nur für die PaymentUseCases: FULL_WITH_SMS, FULL_NO_SMS und PARTIAL_NO_SMS und nur für Partner RATOR funktionieren
+
+Vielen Dank und Grüße
+Stefan
+
+Stefan Peter | Telefónica Germany GmbH &amp; Co. OHG
+TCP Lead, DRC, CRS, eSignature</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@errors_only">true</con:setting>
+    <con:setting id="1d66c06c-fbf8-4cae-bf46-6683ecc6ba41fileName">GoodCase-RatorServices-balanceType%3D3</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearValues" id="e79760d5-2df3-4ff1-8b56-67ef03749889">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-getSetting" id="f2901b1a-88e1-4c80-bd66-3aa5d6a4ca9a">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>e17d9c21-4e1d-492a-b204-766769a26d72</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrand</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outSetting</con:name>
+          <con:value>Not found any known ocs-setting for brand: - 1</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outSetting</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo" id="a3dc8b3f-7fec-44ea-a3d5-675e364b71bc">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script continues with test-steps below, if ocs-setting=ocs or springs to steps for ocs-setting=ngocs
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+
+def sCurrentSetting = context.expand( '${_Run TestCase-getSetting#outSetting}' )
+def oCSSetting_NEW = context.expand( '${#Project#OCSSetting_NEW}' )
+
+// if current setting for ocs=ngocs, go to test-steps for ngocs.
+if(sCurrentSetting==oCSSetting_NEW)
+	testRunner.gotoStepByName(["Assertion_for_NGOCS"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a268d002-251a-4792-a8b1-8a5835f76267" name="1250P_topupSynchronous_Mand">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="1250P_topupSynchronous_Mand" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d2a27eeb-3960-4067-a118-7a3f86a9dcd6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:topupSynchronous>
+         <topupDto>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <balanceType>3</balanceType>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>            
+         </topupDto>
+      </v3:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="931a0534-f313-4c68-9943-50e275e5951f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="eb4ff69d-9e04-4189-a6fc-cd382f38d7fd" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="16ea8199-7c5b-412b-866a-9adff9dfe376" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="97bc7f53-f5c0-449b-acf1-c953294a2467" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Amount-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balances[1]/balance[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1100</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balances[1]/balance[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>&lt;=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>600000000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/paymentUseCase[1]</con:xpath>
+              <con:element>paymentUseCase</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PARTIAL_NO_SMS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns5:topupSynchronousResponse xmlns:ns8="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/" xmlns:ns7="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupbulkasynchronous/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/gettopupbulkasynchronousresults/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/">
+         <topupResultDto>
+            <amount>100</amount>
+            <balanceType>2</balanceType>
+            <currency>EUR</currency>
+            <msisdn>4917610410733</msisdn>
+            <referenceId>0992c8b7431647ad854bd84473e91a40</referenceId>
+            <serviceProviderId>SP901</serviceProviderId>
+            <paymentUseCase>FULL_WITH_SMS</paymentUseCase>
+            <balances>
+               <balance>
+                  <balanceType>2</balanceType>
+                  <amount>1100</amount>
+                  <currency>EUR</currency>
+               </balance>
+            </balances>
+            <correlationId>601671445</correlationId>
+            <opReference>9173aa85716343279785f401d66a70a4</opReference>
+         </topupResultDto>
+      </ns5:topupSynchronousResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/topupSynchronous"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="27e7702b-40a4-41d3-8fd2-03a4a5f64f42" name="1260P_topupSynchronous-UseCase">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="1260P_topupSynchronous-UseCase" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d2a27eeb-3960-4067-a118-7a3f86a9dcd6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:topupSynchronous>
+         <topupDto>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <balanceType>3</balanceType>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <paymentUseCase>PARTIAL_NO_SMS</paymentUseCase>
+         </topupDto>
+      </v3:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="931a0534-f313-4c68-9943-50e275e5951f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="eb4ff69d-9e04-4189-a6fc-cd382f38d7fd" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="16ea8199-7c5b-412b-866a-9adff9dfe376" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="97bc7f53-f5c0-449b-acf1-c953294a2467" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Amount-Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balances[1]/balance[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1100</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/balances[1]/balance[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>&lt;=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>600000000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//ns1:topupSynchronousResponse[1]/topupResultDto[1]/paymentUseCase[1]</con:xpath>
+              <con:element>paymentUseCase</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PARTIAL_NO_SMS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns5:topupSynchronousResponse xmlns:ns8="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/" xmlns:ns7="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupbulkasynchronous/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/gettopupbulkasynchronousresults/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/">
+         <topupResultDto>
+            <amount>100</amount>
+            <balanceType>2</balanceType>
+            <currency>EUR</currency>
+            <msisdn>4917610410733</msisdn>
+            <referenceId>0992c8b7431647ad854bd84473e91a40</referenceId>
+            <serviceProviderId>SP901</serviceProviderId>
+            <paymentUseCase>FULL_WITH_SMS</paymentUseCase>
+            <balances>
+               <balance>
+                  <balanceType>2</balanceType>
+                  <amount>1100</amount>
+                  <currency>EUR</currency>
+               </balance>
+            </balances>
+            <correlationId>601671445</correlationId>
+            <opReference>9173aa85716343279785f401d66a70a4</opReference>
+         </topupResultDto>
+      </ns5:topupSynchronousResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/topupSynchronous"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="1265 _Property Transfer_MSISDNs" id="872fe454-b4e7-40e4-87ee-0f7dfe7356ad">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>1250P_topupSynchronous_Mand</con:sourceStep>
+        <con:sourcePath>declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//v3:topupSynchronous[1]/topupDto[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>1260P_topupSynchronous-UseCase</con:sourceStep>
+        <con:sourcePath>declare namespace v3='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//v3:topupSynchronous[1]/topupDto[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a6c3c876-380f-48d5-bf6b-2915ac546b97" name="1270P_GUI_searchTransactions_Mand">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="1270P_GUI_searchTransactions_Mand" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>${#TestCase#MSISDN-1}</msisdn>\r
+               <receptionDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </receptionDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-topUpDeduct}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d5f221d0-3996-4ced-88f6-352eb640c366"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="378de4de-2be5-4a86-81d0-5663c96bf988">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="a3262f42-9b30-4ec6-a9db-a33d328985b0"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="478ba83d-7362-4821-884d-37099a53b33d">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-1}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#DRC-PaymentType-topUpDeduct}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandName[1]</con:xpath>
+              <con:element>brandName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>o2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Amount-Gui-out}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandId[1]</con:xpath>
+              <con:element>brandId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/serviceProviderCode[1]</con:xpath>
+              <con:element>serviceProviderCode</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>LO</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>&lt;=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>600000000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]</con:xpath>
+              <con:element>ns2:searchTransactionsResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]</con:xpath>
+              <con:element>searchResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Generelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]</con:xpath>
+              <con:element>searchResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentUseCase[1]</con:xpath>
+              <con:element>paymentUseCase</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PARTIAL_NO_SMS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:searchTransactionsResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <searchResponse>
+            <viewTimeStamp>2017-02-20T18:16:36.557+01:00</viewTimeStamp>
+            <searchResponse xsi:type="ns2:directRechargeResponseType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <msisdn>4917662244156</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <correlationId>601671519</correlationId>
+               <id>12901833</id>
+               <amount>100</amount>
+               <receptionDate>2017-02-20T18:13:49+01:00</receptionDate>
+               <committedDate>2017-02-20T18:13:49+01:00</committedDate>
+               <paymentDate>2017-02-20T18:13:49+01:00</paymentDate>
+               <paymentType>60</paymentType>
+               <paymentTypeDescription>General TopUp (e.g. Bonus Gratification)</paymentTypeDescription>
+               <status>30</status>
+               <statusDescription>ausgeführt</statusDescription>
+               <serviceProviderCode>LO</serviceProviderCode>
+               <paymentUseCase>FULL_WITH_SMS</paymentUseCase>
+               <paymentUseCaseTranslation>Aufladung mit gesendeter SMS</paymentUseCaseTranslation>
+               <referenceId>80eaa28e17b8403a91b3e32a4878df75</referenceId>
+            </searchResponse>
+         </searchResponse>
+      </ns2:searchTransactionsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="34a181c1-76e2-4b87-80dd-70dd39920232" name="1280P_GUI_searchTransactions_UseCase">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="1280P_GUI_searchTransactions_UseCase" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>${#TestCase#MSISDN-2}</msisdn>\r
+               <receptionDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </receptionDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-topUpDeduct}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="d5f221d0-3996-4ced-88f6-352eb640c366"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="378de4de-2be5-4a86-81d0-5663c96bf988">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="a3262f42-9b30-4ec6-a9db-a33d328985b0"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="478ba83d-7362-4821-884d-37099a53b33d">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-2}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#DRC-PaymentType-topUpDeduct}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandName[1]</con:xpath>
+              <con:element>brandName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>o2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#Amount-Gui-out}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandId[1]</con:xpath>
+              <con:element>brandId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/serviceProviderCode[1]</con:xpath>
+              <con:element>serviceProviderCode</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>LO</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>&lt;=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>600000000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]</con:xpath>
+              <con:element>ns2:searchTransactionsResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]</con:xpath>
+              <con:element>searchResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Generelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]</con:xpath>
+              <con:element>searchResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentUseCase[1]</con:xpath>
+              <con:element>paymentUseCase</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PARTIAL_NO_SMS</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:searchTransactionsResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <searchResponse>
+            <viewTimeStamp>2017-02-20T18:16:36.557+01:00</viewTimeStamp>
+            <searchResponse xsi:type="ns2:directRechargeResponseType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <msisdn>4917662244156</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <correlationId>601671519</correlationId>
+               <id>12901833</id>
+               <amount>100</amount>
+               <receptionDate>2017-02-20T18:13:49+01:00</receptionDate>
+               <committedDate>2017-02-20T18:13:49+01:00</committedDate>
+               <paymentDate>2017-02-20T18:13:49+01:00</paymentDate>
+               <paymentType>60</paymentType>
+               <paymentTypeDescription>General TopUp (e.g. Bonus Gratification)</paymentTypeDescription>
+               <status>30</status>
+               <statusDescription>ausgeführt</statusDescription>
+               <serviceProviderCode>LO</serviceProviderCode>
+               <paymentUseCase>FULL_WITH_SMS</paymentUseCase>
+               <paymentUseCaseTranslation>Aufladung mit gesendeter SMS</paymentUseCaseTranslation>
+               <referenceId>80eaa28e17b8403a91b3e32a4878df75</referenceId>
+            </searchResponse>
+         </searchResponse>
+      </ns2:searchTransactionsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo-FinalStep" id="17d36189-485d-4baf-adc6-fe87a80a6056">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script replace goto-step: go to final step
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+ testRunner.gotoStepByName(["_Delay-FinalStep"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="Assertion_for_NGOCS" id="7168f4ce-1de7-4520-9ca7-7367308db3dc" disabled="true">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="1ac0cffb-2fd8-436d-8bbc-bc723dbad492" name="Assertion_for_NGOCS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="64d256dd-0f5c-4512-a55e-4b73b3b1a6ed" name="1290N_topupSynchronous_methodNotSupported">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTgpsV3SoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="1290N_topupSynchronous_methodNotSupported" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="d2a27eeb-3960-4067-a118-7a3f86a9dcd6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTgpsV3-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v3:topupSynchronous>
+         <topupDto>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <balanceType>3</balanceType>
+            <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>            
+         </topupDto>
+      </v3:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="931a0534-f313-4c68-9943-50e275e5951f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="eb4ff69d-9e04-4189-a6fc-cd382f38d7fd" name="Schema Compliance">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="7b975088-cd16-4682-82a9-7694240b7a6b" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="4a0a93e8-1dc4-4401-84a9-5d4369e86556" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>//faultcode[1]</con:xpath>
+              <con:element>faultcode</con:element>
+              <con:type>XmlQName</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>soap:Server</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>//faultstring[1]</con:xpath>
+              <con:element>faultstring</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No valid data for request</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/originatorMessage[1]</con:xpath>
+              <con:element>originatorMessage</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No valid data for request</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/message[1]</con:xpath>
+              <con:element>message</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>No valid data for request</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/fault[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>700000384</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/request[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>100</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/request[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/request[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>4917610321518</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/';
+//detail[1]/ns1:topupSynchronousFault[1]/request[1]/referenceId[1]</con:xpath>
+              <con:element>referenceId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>6395a479569041d4be8b6db491119ce3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>No valid data for request</faultstring>
+         <detail>
+            <ns5:topupSynchronousFault xmlns:ns6="http://directrecharge.o2.com/ws/directrechargeevolutionservice/subscribepackage/tgps/v3/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tgps/v3/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/tgps/v3/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/tgps/v3/" xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tgps/v3/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>No valid data for request</message>
+                  <correlationId>700000384</correlationId>
+               </fault>
+               <request>
+                  <amount>100</amount>
+                  <balanceType>3</balanceType>
+                  <msisdn>4917610321518</msisdn>
+                  <referenceId>6395a479569041d4be8b6db491119ce3</referenceId>
+               </request>
+            </ns5:topupSynchronousFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTgpsV3PortType/topupSynchronous"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="_Delay-FinalStep" id="5a93d803-6907-4ada-a6ec-cb6e35b0d037">
+    <con:settings/>
+    <con:config>
+      <delay>100</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN-1</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-2</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>510bbaf8-9df8-46d5-bf03-202df7eccae1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>796b3350-3371-43d0-b63d-d93563b6fb9c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34d00a30-2a47-4872-adeb-1fb53bba0d6d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6f84a16e-83ad-44fd-a9b4-7fe2ced55bf1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>46ad269b-564f-4c1c-8adc-4ea50293edd5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c5e38a23-94ce-43f1-b3b0-fe54337f1af5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>27e7702b-40a4-41d3-8fd2-03a4a5f64f42</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a6c3c876-380f-48d5-bf6b-2915ac546b97</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a268d002-251a-4792-a8b1-8a5835f76267</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e79760d5-2df3-4ff1-8b56-67ef03749889</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>872fe454-b4e7-40e4-87ee-0f7dfe7356ad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f2901b1a-88e1-4c80-bd66-3aa5d6a4ca9a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a3dc8b3f-7fec-44ea-a3d5-675e364b71bc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>17d36189-485d-4baf-adc6-fe87a80a6056</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7168f4ce-1de7-4520-9ca7-7367308db3dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>64d256dd-0f5c-4512-a55e-4b73b3b1a6ed</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34a181c1-76e2-4b87-80dd-70dd39920232</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a93d803-6907-4ada-a6ec-cb6e35b0d037</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

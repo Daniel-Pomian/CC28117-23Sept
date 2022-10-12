@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="d45825e7-5ca4-4ac0-8a65-76749f4b0991" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-FormatAmount" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Set amount to money format with point between euro and cent like: 1000 --> 10.00</con:description>
+  <con:settings>
+    <con:setting id="5e14fdb9-0d47-47b1-901e-9b0e8363448ffileName">TestCase-FormatAmount</con:setting>
+    <con:setting id="d45825e7-5ca4-4ac0-8a65-76749f4b0991fileName">TestCase-FormatAmount</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-Cleare" id="41e34b7f-7adc-436e-84f5-2fad843f63c8">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>outParameter</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath xsi:nil="true"/>
+        <con:targetType>outFormatedAmount</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath xsi:nil="true"/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-FormatAmount" id="c5cf5e54-4135-4959-95d6-3480c38b78ac">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script format amount to money format. Ex. 40000 to 4.00
+ * Date: 28.06.2016
+ * Autor: Michael Gordon
+*/
+
+ import java.text.DecimalFormat
+ import java.text.DecimalFormatSymbols;
+  // set format for money 
+ def moneyform = new DecimalFormat("#####0.00", new DecimalFormatSymbols(Locale.US))
+ // read input amount
+ def sAmount = context.expand( '${#TestCase#inAmount}' ).toString()
+ // set error message to return for wrong amount format 
+ String targetAmount=sAmount + ' - Amount is in wrong format. Please set amount in euro-cent like: 400 for 4€'
+
+ // if input amount is not empty and numeric, convert
+ if (sAmount!=null &amp;&amp; sAmount.length()>=1 &amp;&amp; sAmount.isNumber() ) {
+ 	targetAmount=moneyform.format(sAmount.toFloat()/100)
+ } 
+ 
+ // set convertet value to test-case properties	
+ testRunner.testCase.setPropertyValue('outFormatedAmount',targetAmount)</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inAmount</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFormatedAmount</con:name>
+      <con:value>10.00</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>2d6c6177-505b-4811-930a-55a8e0cf4b5e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>75cd1727-3ef5-44ff-84c7-8d96365b02d6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

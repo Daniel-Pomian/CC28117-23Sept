@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="92a5ac65-506a-498f-8c39-f6fa0f411550" discardOkResults="false" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-getDAT-FileName" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Return valid file name from dat-file</con:description>
+  <con:settings>
+    <con:setting id="aa1634b1-9921-4c7e-9c2e-0a74292503aafileName">TestCase-DEV-CreateDAT</con:setting>
+    <con:setting id="92a5ac65-506a-498f-8c39-f6fa0f411550fileName">TestCase-DEV-getDAT-FileName</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="675e44e0-ce8c-477d-b07f-a839884b49dd">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-setFileName" id="71b89a85-b84b-4e7f-9d33-afbf1ad7fb86">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script create valid file name for dat-file
+ * Athor: Michael Gordon
+ * Date: 2019-12-03
+ */
+
+// get target directory from local directory for dat files.
+String sEnv='DEV'+context.expand( '${drc_env}' ).toUpperCase()
+
+// Build file name. Constant length is 26 signs with  extension .DAT
+String sFileName=('ORTEL'+sEnv+'005'+java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))+'.DAT')
+
+// set to test-case properties
+ testRunner.testCase.setPropertyValue( "outFile",  sFileName )</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outFile</con:name>
+      <con:value>ORTELDEV00520221003160620.DAT</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>9bd59269-20c5-4ce3-91d9-d53cfb0d7f96</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5ea42e3a-84db-416a-bfd8-80088396f7b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

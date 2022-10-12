@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="a6db9d56-01cb-4556-b019-12b35867c123" discardOkResults="false" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="rechargeOnDemand" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="a6db9d56-01cb-4556-b019-12b35867c123fileName">rechargeOnDemand</con:setting>
+  </con:settings>
+  <con:testStep type="restrequest" name="recharge_OnDemand" id="46337637-61a6-4765-8ce1-90f846e9945f">
+    <con:settings/>
+    <con:config service="Recharge Service" resourcePath="/transaction/rechargeOnDemand" methodName="rechargeOnDemand" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="recharge_OnDemand" id="3f50044c-d252-4c49-8e9c-bb6fea9f36cd" mediaType="application/json" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:endpoint>${#Project#drc-mfe-URL}</con:endpoint>
+        <con:request>{\r
+  "subscriptionId" : "${#Project#MSISDN-chargeCustomer-OK}",\r
+  "paymentMethodReference" : "${#Project#Random8}",\r
+  "amount" : ${#TestCase#amount},\r
+  "currency" : "${#Project#Currency_Default}",\r
+  "paymentDate" : "2022-09-27T23:32:09+02:00"
+}</con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/drc/ws/recharge/v1/transaction/rechargeOnDemandSMS</con:originalUri>
+        <con:assertion type="DataAndMetadataAssertion" id="d7e2b5d2-adc0-42f9-a0fa-854f96e2975d" name="Smart Assertion-Header">
+          <con:configuration xsi:type="con:DataAndMetadataAssertion">
+            <con:mode>Received Metadata</con:mode>
+            <con:elements>
+              <con:path>$['Headers']['date']</con:path>
+              <con:element>date</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Thu, 10 Feb 2022 16:34:12 GMT</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['transfer-encoding']</con:path>
+              <con:element>transfer-encoding</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>chunked</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['content-type']</con:path>
+              <con:element>content-type</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>application/json</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['Headers']['#status#']</con:path>
+              <con:element>#status#</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>HTTP/1.1 200</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:originalMessage>{"Headers":{"date":"Thu, 10 Feb 2022 16:34:12 GMT","transfer-encoding":"chunked","content-type":"application/json","#status#":"HTTP/1.1 200 "}}</con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="DataAndMetadataAssertion" id="4ce56825-c571-48d4-8914-017c00cf8378" name="Smart Assertion">
+          <con:configuration xsi:type="con:DataAndMetadataAssertion">
+            <con:mode>Received Data</con:mode>
+            <con:elements>
+              <con:path>$['isDuplicate']</con:path>
+              <con:element>isDuplicate</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>3</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['correlationId']</con:path>
+              <con:element>correlationId</con:element>
+              <con:operatorId>13</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>35</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['mainBalance']</con:path>
+              <con:element>mainBalance</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>${#TestCase#Expected_amount}</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>true</con:numberType>
+              <con:expectedDataType>2</con:expectedDataType>
+            </con:elements>
+            <con:elements>
+              <con:path>$['currency']</con:path>
+              <con:element>currency</con:element>
+              <con:operatorId>1</con:operatorId>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>EUR</con:expectedValue>
+              <con:caseSensitive>true</con:caseSensitive>
+              <con:numberType>false</con:numberType>
+              <con:expectedDataType>1</con:expectedDataType>
+            </con:elements>
+            <con:originalMessage>{"isDuplicate":false,"correlationId":"350000010003264","mainBalance":110000,"currency":"EUR"}</con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>mfe-drc-basic</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="X-O2DRC-ClientId" value="${#TestSuite#clientId_MCE}"/>
+          <con:entry key="X-O2DRC-ActivityId" value="${#Project#GUID}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="c0283aa8-a2f8-42fb-b94d-307e10c6901f">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>amount</con:name>
+      <con:value>4.99</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+</con:testCase>

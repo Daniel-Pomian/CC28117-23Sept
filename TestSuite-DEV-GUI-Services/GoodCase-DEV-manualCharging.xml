@@ -1,0 +1,2481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="7837c1ba-860d-430a-baec-3de68c529cc8" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-manualCharging" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests different test-case for charge and recharge money for msisdn.
+Prerequisites: OCS-Mock contains for each valid msisdn balance = 10 €</con:description>
+  <con:settings>
+    <con:setting id="7837c1ba-860d-430a-baec-3de68c529cc8fileName">GoodCase-DEV-manualCharging</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="9b07b6fe-d5b1-4f25-9630-80f1e91513be">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TenantAdmin-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="_HTTP-ClearMockLogs" id="931aec34-fe92-4ec8-892f-45096a056202">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="56778dc8-8217-495c-b383-214c79b1d8a9" name="_HTTP-ClearMockLogs" downloadIncludedResources="false" postQueryString="false" mediaType="application/xml" multiValueDelimiter="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        <con:setting id="com.eviware.soapui.settings.CommonSettings@entitizeProperties">false</con:setting>
+        <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@dump-file"/>
+        <con:setting id="discardResponse">false</con:setting>
+      </con:settings>
+      <con:encoding/>
+      <con:endpoint>${#Project#drc-Mocks-URL}log?clear</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="153285f9-6e44-4544-a2fc-7890d817d456" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateTenantAdmin" id="42b1d307-f4c1-4f82-a2e2-333e83a81a80">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>1e33221f-1bff-4353-b9e9-1c867ab39443</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inTenant-ID</con:name>
+          <con:value>${#Project#ChargeCustomer-1-TenantID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outTenant-Name</con:name>
+          <con:value>TELEFONICA</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outAdminLogin</con:name>
+          <con:value>TenantAdmin-20221004102520105</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTenant-Name</con:entry>
+        <con:entry>outAdminLogin</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-AdminName" id="37a847c5-a743-487e-b507-9ba952c00ffc">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>Name</con:name>
+        <con:sourceType>outAdminLogin</con:sourceType>
+        <con:sourceStep>Run TestCase-CreateTenantAdmin</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TenantAdmin-Name</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a48dc29c-7676-4998-963c-f5ccc2b49244" name="1000P-queryBalance-Charge">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>queryBalance</con:operation>
+      <con:request name="1000P-queryBalance-Charge" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a19255c9-bc45-4d8b-8ee8-ea58d605345a">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:queryBalance>
+         <!--type: string-->
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>
+      </v1:queryBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="fd06e250-0a5c-4d06-880b-9855053c94c7" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="8c56b208-82e9-4124-970b-9bd98c7788a1" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="a4a76974-cb06-4992-9708-1ac8fc4b0e09" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="e44debc2-a6ff-4a1e-90d5-c4b2e704c46e" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#MSISDN-Balance-Gui}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/type[1]/negative[1]</con:xpath>
+              <con:element>negative</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/type[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:queryBalanceResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <queryBalanceResults>
+            <msisdn>4917676814912</msisdn>
+            <balances>
+               <amount>1000</amount>
+               <currency>EUR</currency>
+               <type>
+                  <id>2</id>
+                  <negative>false</negative>
+               </type>
+            </balances>
+         </queryBalanceResults>
+      </ns2:queryBalanceResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/queryBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c46ffd20-3677-41da-a932-d374947a2eba" name="1010P-queryBalance-Deduct">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>queryBalance</con:operation>
+      <con:request name="1010P-queryBalance-Deduct" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a19255c9-bc45-4d8b-8ee8-ea58d605345a">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:queryBalance>\r
+         <!--type: string-->\r
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>\r
+      </v1:queryBalance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="76ee824d-fa2e-4030-a052-85f22e420263"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="b42cf02f-bb56-42d3-862d-7ad6e0f47087">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="b2ab980d-eeec-4e43-b179-a2fbd6aa2ec7"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="71c21e17-2600-403b-8bed-fcfb85eea3c9">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestSuite#MSISDN-Balance-Gui}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:queryBalanceResponse[1]/queryBalanceResults[1]/balances[1]/type[1]/negative[1]</con:xpath>
+              <con:element>negative</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:queryBalanceResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <queryBalanceResults>
+            <msisdn>4917676814912</msisdn>
+            <balances>
+               <amount>1000</amount>
+               <currency>EUR</currency>
+               <type>
+                  <id>2</id>
+                  <negative>false</negative>
+               </type>
+            </balances>
+         </queryBalanceResults>
+      </ns2:queryBalanceResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/queryBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-MSISDNs" id="acf80404-3cb0-4af0-b093-3404c3d32273">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>1000P-queryBalance-Charge</con:sourceStep>
+        <con:sourcePath>declare namespace v1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//v1:queryBalance[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>RawRequest</con:sourceType>
+        <con:sourceStep>1010P-queryBalance-Deduct</con:sourceStep>
+        <con:sourcePath>declare namespace v1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//v1:queryBalance[1]/msisdn[1]</con:sourcePath>
+        <con:targetType>MSISDN-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0893f033-f353-49f4-b905-69be9e593cfb" name="1020P-manualPayment-charge-Max">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualPayment</con:operation>
+      <con:request name="1020P-manualPayment-charge-Max" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c32d1df-601f-4ab8-9e2b-6ec0d0c1c29d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:manualPayment>
+         <manualPaymentData>
+            <!--type: string-->
+            <msisdn>${#TestCase#MSISDN-1}</msisdn>
+            <amount>${#TestCase#defaultAmount}</amount>
+            <balanceType>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</balanceType>
+            <comment>Charge positive amount 5 euro</comment>
+            <deductToTheMax>false</deductToTheMax>
+         </manualPaymentData>
+      </v1:manualPayment>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="5f1f54c0-6b76-43b6-9145-3d7ebec7cfea" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="d5198dce-7939-4065-83ad-66786735ff06" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="b6a2ab98-6274-4b55-8764-bd97179513c1" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="4f46736b-13eb-47d9-850c-acce4e42e506" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#defaultAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-1}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Manuelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/sasCode[1]</con:xpath>
+              <con:element>sasCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-SP}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualPaymentResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <manualPaymentDataResponse>
+            <msisdn>4917691248415</msisdn>
+            <correlationId>280037646</correlationId>
+            <id>12899906</id>
+            <amount>500</amount>
+            <receptionDate>2016-05-17T16:31:35.925+02:00</receptionDate>
+            <committedDate>2016-05-17T16:31:36.012+02:00</committedDate>
+            <paymentDate>2016-05-17T16:31:35.925+02:00</paymentDate>
+            <paymentType>40</paymentType>
+            <paymentTypeDescription>Manuelle Aufladung</paymentTypeDescription>
+            <status>30</status>
+            <statusDescription>ausgeführt</statusDescription>
+            <serviceProviderCode>LO</serviceProviderCode>
+            <currency>EUR</currency>
+            <balanceType>2</balanceType>
+            <comment>Charge positive amount 5 euro</comment>
+            <sasCode>SP901</sasCode>
+         </manualPaymentDataResponse>
+      </ns2:manualPaymentResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/manualPayment"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4eb22449-abbf-433d-9822-0880f341d593" name="1025P-manualPayment-charge-Min">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualPayment</con:operation>
+      <con:request name="1025P-manualPayment-charge-Min" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c32d1df-601f-4ab8-9e2b-6ec0d0c1c29d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:manualPayment>
+         <manualPaymentData>
+            <!--type: string-->
+            <msisdn>${#TestCase#MSISDN-1}</msisdn>
+            <amount>${#TestCase#defaultAmount}</amount>
+            <balanceType>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</balanceType>
+         </manualPaymentData>
+      </v1:manualPayment>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="c144c202-0d41-4997-9120-21e052d9d2f7"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ed2fe929-b2ae-4dbd-ab55-7c0a182e87fa">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="587824a9-8270-49a7-a9a4-76ab3ea59fc3"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="e0d4b5a8-aa92-49fd-9176-653ca5d1e5c8">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#defaultAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-1}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Manuelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/sasCode[1]</con:xpath>
+              <con:element>sasCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-SP}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualPaymentResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <manualPaymentDataResponse>
+            <msisdn>4917691248415</msisdn>
+            <correlationId>280037646</correlationId>
+            <id>12899906</id>
+            <amount>500</amount>
+            <receptionDate>2016-05-17T16:31:35.925+02:00</receptionDate>
+            <committedDate>2016-05-17T16:31:36.012+02:00</committedDate>
+            <paymentDate>2016-05-17T16:31:35.925+02:00</paymentDate>
+            <paymentType>40</paymentType>
+            <paymentTypeDescription>Manuelle Aufladung</paymentTypeDescription>
+            <status>30</status>
+            <statusDescription>ausgeführt</statusDescription>
+            <serviceProviderCode>LO</serviceProviderCode>
+            <currency>EUR</currency>
+            <balanceType>2</balanceType>
+            <comment>Charge positive amount 5 euro</comment>
+            <sasCode>SP901</sasCode>
+         </manualPaymentDataResponse>
+      </ns2:manualPaymentResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/manualPayment"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a55c81bf-1079-457d-ab11-bb47b1bf33df" name="1040P-manualPayment-deduct-Min">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualPayment</con:operation>
+      <con:request name="1040P-manualPayment-deduct-Min" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c32d1df-601f-4ab8-9e2b-6ec0d0c1c29d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualPayment>\r
+         <manualPaymentData>\r
+            <!--type: string-->\r
+            <msisdn>${#TestCase#MSISDN-2}</msisdn>\r
+            <!--type: int-->\r
+            <amount>-${#TestCase#defaultAmount}</amount>\r
+            <!--type: string-->\r
+            <balanceType>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</balanceType>\r
+            <deductToTheMax>false</deductToTheMax>\r
+         </manualPaymentData>\r
+      </v1:manualPayment>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="6bb92038-3868-48df-9c53-903d105d2a35"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="a985b637-215d-435c-82f7-104825d2ae8c">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="6268df60-cd71-4eb8-991e-5c14cf78c838"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="b14849d2-5aff-4428-854f-8bd88c0923b6">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-2}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Manuelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#Currency_Default}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/sasCode[1]</con:xpath>
+              <con:element>sasCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#Project#ChargeCustomer-1-SP}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>-${#TestCase#defaultAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualPaymentResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <manualPaymentDataResponse>
+            <msisdn>4917691248415</msisdn>
+            <correlationId>280037646</correlationId>
+            <id>12899906</id>
+            <amount>500</amount>
+            <receptionDate>2016-05-17T16:31:35.925+02:00</receptionDate>
+            <committedDate>2016-05-17T16:31:36.012+02:00</committedDate>
+            <paymentDate>2016-05-17T16:31:35.925+02:00</paymentDate>
+            <paymentType>40</paymentType>
+            <paymentTypeDescription>Manuelle Aufladung</paymentTypeDescription>
+            <status>30</status>
+            <statusDescription>ausgeführt</statusDescription>
+            <serviceProviderCode>LO</serviceProviderCode>
+            <currency>EUR</currency>
+            <balanceType>2</balanceType>
+            <comment>Charge positive amount 5 euro</comment>
+            <sasCode>SP901</sasCode>
+         </manualPaymentDataResponse>
+      </ns2:manualPaymentResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/manualPayment"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c0fd5ff7-8175-45b5-88e0-419cfe010afa" name="1050P-manualPayment-deduct-Max">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualPayment</con:operation>
+      <con:request name="1050P-manualPayment-deduct-Max" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c32d1df-601f-4ab8-9e2b-6ec0d0c1c29d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualPayment>\r
+         <manualPaymentData>\r
+            <!--type: string-->\r
+            <msisdn>${#TestCase#MSISDN-2}</msisdn>\r
+            <!--type: int-->\r
+            <amount>-${#TestCase#overBalanceAmount}</amount>\r
+            <!--type: string-->\r
+            <balanceType>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</balanceType>\r
+            <comment>Deduct 11 from balance 10 --> Deduct 10</comment>\r
+            <deductToTheMax>true</deductToTheMax>\r
+         </manualPaymentData>\r
+      </v1:manualPayment>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="dd4c52ee-892f-4f5b-b971-7059ff07acd2"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="70e3cc0d-2093-4e7c-83a8-aed62447dd54">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="8dc5783f-6aa0-433e-b800-a69517ca0c9e"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="76b0ec56-b977-4c9c-8ac0-3d70e85812ee">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN-2}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>Manuelle Aufladung</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/currency[1]</con:xpath>
+              <con:element>currency</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>EUR</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/balanceType[1]</con:xpath>
+              <con:element>balanceType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/sasCode[1]</con:xpath>
+              <con:element>sasCode</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>SP901</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>-${#TestCase#overBalanceAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualPaymentResponse[1]/manualPaymentDataResponse[1]/deductedAmount[1]</con:xpath>
+              <con:element>deductedAmount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>-${#TestSuite#MSISDN-Balance-GUI}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualPaymentResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <manualPaymentDataResponse>
+            <msisdn>4917693510043</msisdn>
+            <tenantId>1</tenantId>
+            <brandId>1</brandId>
+            <correlationId>280038056</correlationId>
+            <id>12911884</id>
+            <amount>-110000</amount>
+            <receptionDate>2019-06-28T11:28:00.021+02:00</receptionDate>
+            <committedDate>2019-06-28T11:28:00.073+02:00</committedDate>
+            <paymentDate>2019-06-28T11:28:00.021+02:00</paymentDate>
+            <paymentType>40</paymentType>
+            <paymentTypeDescription>Manuelle Aufladung</paymentTypeDescription>
+            <status>31</status>
+            <statusDescription>ausgeführt und rückgemeldet</statusDescription>
+            <currency>EUR</currency>
+            <balanceType>2</balanceType>
+            <comment>Deduct 11 from balance 10 --> Deduct 10</comment>
+            <deductedAmount>-100000</deductedAmount>
+            <sasCode>SP901</sasCode>
+         </manualPaymentDataResponse>
+      </ns2:manualPaymentResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/manualPayment"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ed7313b5-c504-4718-a70b-09554672a7bb" name="1060N-manualPayment-deductOverBalance">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualPayment</con:operation>
+      <con:request name="1060N-manualPayment-deductOverBalance" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="6c32d1df-601f-4ab8-9e2b-6ec0d0c1c29d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#TestCase#TenantAdmin-Name}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualPayment>\r
+         <manualPaymentData>\r
+            <!--type: string-->\r
+            <msisdn>${#TestCase#MSISDN-2}</msisdn>\r
+            <!--type: int-->\r
+            <amount>-${#TestCase#overBalanceAmount}</amount>\r
+            <!--type: string-->\r
+            <balanceType>${#[TestSuite-DEV-ChargeCustomer]#chargeCustomer.balanceType}</balanceType>\r
+            <comment>Deduct 11 from balance 10 must be not possible</comment>\r
+            <deductToTheMax>false</deductToTheMax>\r
+         </manualPaymentData>\r
+      </v1:manualPayment>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="dd5ec6b8-3e65-4967-87ef-3e1677948cb3"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="ad5cbf0f-e789-4328-9d80-bc552543adcf">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="5005a95c-e0dd-4e95-8623-341c84007abf" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="46bfd0f7-c682-4557-b8e0-cb93e4a18262" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/specificFaultType[1]</con:xpath>
+              <con:element>specificFaultType</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>THIRD_PARTY_CALL_ERROR_OCS_INSUFFICIENT_BALANCE</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/commonservice/v1/';
+//detail[1]/ns1:fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>4000009</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Insufficient balance in the balance transfer wallet</faultstring>
+         <detail>
+            <ns2:fault xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+               <specificFaultType>THIRD_PARTY_CALL_ERROR_OCS_INSUFFICIENT_BALANCE</specificFaultType>
+               <errorMessage>Insufficient balance in the balance transfer wallet</errorMessage>
+               <errorCode>1000000107</errorCode>
+            </ns2:fault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/manualPayment"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-getSetting" id="277a1027-ddab-417c-a71c-0587cca0eb64">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>e17d9c21-4e1d-492a-b204-766769a26d72</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrand</con:name>
+          <con:value>${#Project#ChargeCustomer-1-BrandID}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outSetting</con:name>
+          <con:value>OCS</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outSetting</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo" id="bfca406d-b44b-4240-8971-57762d097496">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script continues with test-steps below, if ocs-setting=ocs or springs to steps for ocs-setting=ngocs
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+
+def sCurrentSetting = context.expand( '${_Run TestCase-getSetting#outSetting}' )
+def oCSSetting_NEW = context.expand( '${#Project#OCSSetting_NEW}' )
+
+// if current setting for ocs=ngocs, go to test-steps for ngocs.
+if(sCurrentSetting==oCSSetting_NEW)
+	testRunner.gotoStepByName(["Assertion_for_NGOCS"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="1070P_HTTP-ValidateResponsesFromMocks" id="14d053e2-a9d2-4200-aae6-a981bada1520">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="1ac0cffb-2fd8-436d-8bbc-bc723dbad492" name="1070P_HTTP-ValidateResponsesFromMocks" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="61f57801-b402-497d-ac2b-af4d1e06ea88" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="4059fef6-a968-411b-b725-4aa98c2d01f1" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[5]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[7]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ReplyTo.Address is: null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[8]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[10]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>amount is: ${#TestCase#defaultAmount-Response}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[11]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>rechargeType is: 28M1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[12]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[13]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[15]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ReplyTo.Address is: null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[16]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[19]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>rechargeType is: 28M1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[23]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[26]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>all or nothing flag is: true</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[20]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[21]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[27]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[28]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[30]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[33]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>all or nothing flag is: false</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[34]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[35]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[37]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>applicationId is: D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[40]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>all or nothing flag is: true</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[18]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>amount is: ${#TestCase#defaultAmount-Response}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[25]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>amount is: ${#TestCase#defaultAmount-Response}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[32]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>amount is: ${#TestCase#overBalanceAmount-Response}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[39]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>amount is: ${#TestCase#overBalanceAmount-Response}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<html>
+   <head>
+      <title>Virt Groovy Log</title>
+      <meta http-equiv="refresh" content="15"/>
+      <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+   </head>
+   <body>
+      <p>
+         <b>Groovy Log output</b>
+         : [
+         <a href="log">Refresh</a>
+         ] [
+         <a href="log?clear">Clear</a>
+         ]
+      </p>
+      <table border="1">
+         <tr>
+            <td/>
+            <td>Timestamp</td>
+            <td>Message</td>
+         </tr>
+         <tr>
+            <td>1</td>
+            <td>Tue Apr 23 09:12:52 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917660893114</td>
+         </tr>
+         <tr>
+            <td>2</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917638372190</td>
+         </tr>
+         <tr>
+            <td>3</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917660893114</td>
+         </tr>
+         <tr>
+            <td>4</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn 4917660893114</td>
+         </tr>
+         <tr>
+            <td>5</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>MessageID is: urn:uuid:437c5be3-1d99-4d86-8d23-4abb6eeb1ae7</td>
+         </tr>
+         <tr>
+            <td>6</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>ReplyTo.Address is: null</td>
+         </tr>
+         <tr>
+            <td>7</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>applicationId is: D28</td>
+         </tr>
+         <tr>
+            <td>8</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>reference is: 280037742</td>
+         </tr>
+         <tr>
+            <td>9</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>amount is: 500</td>
+         </tr>
+         <tr>
+            <td>10</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>rechargeType is: 28M1</td>
+         </tr>
+         <tr>
+            <td>11</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917660893114</td>
+         </tr>
+         <tr>
+            <td>12</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>OCS10-BalanceManagement.rechargeAccount: Return response for request with msisdn 4917660893114</td>
+         </tr>
+         <tr>
+            <td>13</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>MessageID is: urn:uuid:41b74380-5dbd-4632-afad-b5ea61509c6a</td>
+         </tr>
+         <tr>
+            <td>14</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>ReplyTo.Address is: null</td>
+         </tr>
+         <tr>
+            <td>15</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>applicationId is: D28</td>
+         </tr>
+         <tr>
+            <td>16</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>reference is: 280037743</td>
+         </tr>
+         <tr>
+            <td>17</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>amount is: 500</td>
+         </tr>
+         <tr>
+            <td>18</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>rechargeType is: 28M1</td>
+         </tr>
+         <tr>
+            <td>19</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917638372190</td>
+         </tr>
+         <tr>
+            <td>20</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn 4917638372190</td>
+         </tr>
+         <tr>
+            <td>21</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>MessageID is: urn:uuid:76755c17-6d06-4abd-ae76-2f891fed483f</td>
+         </tr>
+         <tr>
+            <td>22</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>applicationId is: D28</td>
+         </tr>
+         <tr>
+            <td>23</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>reference is: 280037744</td>
+         </tr>
+         <tr>
+            <td>24</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>amount is: 500</td>
+         </tr>
+         <tr>
+            <td>25</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>all or nothing flag is: true</td>
+         </tr>
+         <tr>
+            <td>26</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917638372190</td>
+         </tr>
+         <tr>
+            <td>27</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn 4917638372190</td>
+         </tr>
+         <tr>
+            <td>28</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>MessageID is: urn:uuid:a14d1f29-b5da-49ad-b24b-b9158eddc4b9</td>
+         </tr>
+         <tr>
+            <td>29</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>applicationId is: D28</td>
+         </tr>
+         <tr>
+            <td>30</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>reference is: 280037745</td>
+         </tr>
+         <tr>
+            <td>31</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>amount is: 1100</td>
+         </tr>
+         <tr>
+            <td>32</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>all or nothing flag is: false</td>
+         </tr>
+         <tr>
+            <td>33</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917638372190</td>
+         </tr>
+         <tr>
+            <td>34</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>OCS10-BalanceManagement.deductBalance: Return response for request with msisdn 4917638372190</td>
+         </tr>
+         <tr>
+            <td>35</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>MessageID is: urn:uuid:48a547b5-f325-4fbd-aa71-ff4eb1cfb8ac</td>
+         </tr>
+         <tr>
+            <td>36</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>applicationId is: D28</td>
+         </tr>
+         <tr>
+            <td>37</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>reference is: 280037746</td>
+         </tr>
+         <tr>
+            <td>38</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>amount is: 1100</td>
+         </tr>
+         <tr>
+            <td>39</td>
+            <td>Tue Apr 23 09:12:53 CEST 2019</td>
+            <td>all or nothing flag is: true</td>
+         </tr>
+      </table>
+   </body>
+</html>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="db815a20-0c54-4e74-ab7f-1ccfcb2c09d6" name="Contains-MessageID">
+        <con:configuration>
+          <token>MessageID is: urn:uuid:</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="ed8b8124-e55e-415c-995e-756d7d7566e3" name="Contains-reference-28">
+        <con:configuration>
+          <token>reference is: 28</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-GoTo-FinalStep" id="92f47d23-fb1d-4e74-88fc-18ad23b23107">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script replace goto-step: go to final step
+ * Date: 27.05.2019
+ * Autor: Michael Gordon
+*/
+ testRunner.gotoStepByName(["_Delay-FinalStep"])</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="httprequest" name="Assertion_for_NGOCS" id="607eca87-1b82-41d9-bab3-27bf4bf4657a">
+    <con:settings/>
+    <con:config method="GET" xsi:type="con:HttpRequest" id="1ac0cffb-2fd8-436d-8bbc-bc723dbad492" name="Assertion_for_NGOCS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:settings>
+        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+      </con:settings>
+      <con:endpoint>${#Project#drc-Mocks-URL}log</con:endpoint>
+      <con:request/>
+      <con:assertion type="Valid HTTP Status Codes" id="61f57801-b402-497d-ac2b-af4d1e06ea88" name="Valid HTTP Status Codes">
+        <con:settings/>
+        <con:configuration>
+          <codes>200</codes>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" id="4059fef6-a968-411b-b725-4aa98c2d01f1" name="Message Content Assertion">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[3]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.queryBalance: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[2]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[5]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.queryBalance: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[7]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[8]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: Amount=${#TestCase#defaultAmount}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[10]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF04=28M1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[11]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05=280037792</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[12]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF06=D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[13]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[15]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: Amount=${#TestCase#defaultAmount}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[16]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF03=null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[19]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF06=D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[23]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037794</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[26]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[20]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[21]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[27]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Amount=${#TestCase#overBalanceAmount}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[28]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037795</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[30]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[33]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037796</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[34]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[18]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05=280037793</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[25]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[32]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Amount=${#TestCase#overBalanceAmount}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[4]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[6]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>Piranha-StackService.getStackDetails: Return response for request with MSISDN: ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[9]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF03=null</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[14]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: Return response for request with msisdn ${#TestCase#MSISDN-1}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[17]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF04=28M1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[22]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Amount=${#TestCase#defaultAmount}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[24]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[31]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn ${#TestCase#MSISDN-2}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//html[1]/body[1]/table[1]/tr[29]/td[3]</con:xpath>
+            <con:element>td</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<html>
+   <head>
+      <title>Virt Groovy Log</title>
+      <meta http-equiv="refresh" content="15"/>
+      <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+   </head>
+   <body>
+      <p>
+         <b>Groovy Log output</b>
+         : [
+         <a href="log">Refresh</a>
+         ] [
+         <a href="log?clear">Clear</a>
+         ]
+      </p>
+      <table border="1">
+         <tr>
+            <td/>
+            <td>Timestamp</td>
+            <td>Message</td>
+         </tr>
+         <tr>
+            <td>1</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917618707699</td>
+         </tr>
+         <tr>
+            <td>2</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.queryBalance: Return response for request with msisdn 4917618707699</td>
+         </tr>
+         <tr>
+            <td>3</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917664527584</td>
+         </tr>
+         <tr>
+            <td>4</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.queryBalance: Return response for request with msisdn 4917664527584</td>
+         </tr>
+         <tr>
+            <td>5</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917618707699</td>
+         </tr>
+         <tr>
+            <td>6</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: Return response for request with msisdn 4917618707699</td>
+         </tr>
+         <tr>
+            <td>7</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: Amount=50000</td>
+         </tr>
+         <tr>
+            <td>8</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF03=null</td>
+         </tr>
+         <tr>
+            <td>9</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF04=28M1</td>
+         </tr>
+         <tr>
+            <td>10</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05=280037792</td>
+         </tr>
+         <tr>
+            <td>11</td>
+            <td>Tue May 28 14:28:40 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF06=D28</td>
+         </tr>
+         <tr>
+            <td>12</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917618707699</td>
+         </tr>
+         <tr>
+            <td>13</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: Return response for request with msisdn 4917618707699</td>
+         </tr>
+         <tr>
+            <td>14</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: Amount=50000</td>
+         </tr>
+         <tr>
+            <td>15</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF03=null</td>
+         </tr>
+         <tr>
+            <td>16</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF04=28M1</td>
+         </tr>
+         <tr>
+            <td>17</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05=280037793</td>
+         </tr>
+         <tr>
+            <td>18</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF06=D28</td>
+         </tr>
+         <tr>
+            <td>19</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917664527584</td>
+         </tr>
+         <tr>
+            <td>20</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn 4917664527584</td>
+         </tr>
+         <tr>
+            <td>21</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Amount=50000</td>
+         </tr>
+         <tr>
+            <td>22</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037794</td>
+         </tr>
+         <tr>
+            <td>23</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</td>
+         </tr>
+         <tr>
+            <td>24</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917664527584</td>
+         </tr>
+         <tr>
+            <td>25</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn 4917664527584</td>
+         </tr>
+         <tr>
+            <td>26</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Amount=110000</td>
+         </tr>
+         <tr>
+            <td>27</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037795</td>
+         </tr>
+         <tr>
+            <td>28</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</td>
+         </tr>
+         <tr>
+            <td>29</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>Piranha-StackService.getStackDetails: Return response for request with MSISDN: 4917664527584</td>
+         </tr>
+         <tr>
+            <td>30</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Return response for request with msisdn 4917664527584</td>
+         </tr>
+         <tr>
+            <td>31</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: Amount=110000</td>
+         </tr>
+         <tr>
+            <td>32</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=280037796</td>
+         </tr>
+         <tr>
+            <td>33</td>
+            <td>Tue May 28 14:28:41 CEST 2019</td>
+            <td>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06=D28</td>
+         </tr>
+      </table>
+   </body>
+</html>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" id="ed8b8124-e55e-415c-995e-756d7d7566e3" name="Contains-28-recharge">
+        <con:configuration>
+          <token>ngOCS.BalanceManagement.recharge: C_DYN_ADDITIONALINF05=28</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple Contains" name="Contains-28-adjust" id="09f082cc-c294-48d6-9dbb-390e01793334">
+        <con:configuration>
+          <token>ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05=28</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:credentials>
+        <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+        <con:authType>No Authorization</con:authType>
+      </con:credentials>
+      <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+      <con:jmsPropertyConfig/>
+      <con:parameters/>
+      <con:environmentSpec>
+        <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+          <con:authProfile>No Authorization</con:authProfile>
+        </con:entry>
+        <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+          <con:authProfile>Inherit From Parent</con:authProfile>
+        </con:entry>
+      </con:environmentSpec>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="_Delay-FinalStep" id="b03ccb85-9ed1-414f-8213-f9f643e72f66">
+    <con:settings/>
+    <con:config>
+      <delay>100</delay>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>defaultAmount</con:name>
+      <con:value>50000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>overBalanceAmount</con:name>
+      <con:value>110000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>defaultAmount-Response</con:name>
+      <con:value>500</con:value>
+    </con:property>
+    <con:property>
+      <con:name>overBalanceAmount-Response</con:name>
+      <con:value>1100</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-1</con:name>
+      <con:value>4917680991722</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-2</con:name>
+      <con:value>4917697678037</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TenantAdmin-Name</con:name>
+      <con:value>TenantAdmin-20221004102520105</con:value>
+    </con:property>
+    <con:property>
+      <con:name>default</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>b5c6ef74-8a6c-40d3-97e0-9700a7d41b4f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>78e023aa-f242-41e5-b368-e2a0c80768ec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>420e80c7-6274-4d94-9afc-c82646872351</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9f6ca51d-3f02-4b5c-8bd9-bcf94e490eed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>72636431-3ce4-4957-b185-4f16bb2c2b48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>05a2cc4e-52c2-4a54-84b4-d655719f70eb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5308ccb2-d1ca-4638-8a91-310831bc36f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>437893e3-24de-4fe1-822d-c4b502544647</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>931aec34-fe92-4ec8-892f-45096a056202</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>277a1027-ddab-417c-a71c-0587cca0eb64</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bfca406d-b44b-4240-8971-57762d097496</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>607eca87-1b82-41d9-bab3-27bf4bf4657a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

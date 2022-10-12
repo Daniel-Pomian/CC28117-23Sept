@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="ecc2354e-f67c-4a1d-b32e-bfb6bb65163c" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-CalculateMSISDNCode" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Calculate check code for msisdn.</con:description>
+  <con:settings>
+    <con:setting id="ecc2354e-f67c-4a1d-b32e-bfb6bb65163cfileName">TestCase-CalculateMSISDNCode</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-Clear" id="8cdb0039-a5b3-42bc-8d75-f6763392b0cc">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" entitize="false" ignoreEmpty="false" transferToAll="false" transferChildNodes="false">
+        <con:name>clearcode</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:targetType>outCheckCode</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-CalculateMSISDNCheckCode" id="1fdbce90-9f2e-47de-b1f1-655a1b99c41d">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script generate check sum for msisdn with java code imported from drc implementation and rewritten in groovy 
+ * Date: 1.03.2016
+ * Autor: Michael Gordon
+*/
+
+String msisdn = context.expand( '${#TestCase#MSISDN}' )
+
+if(msisdn==null || msisdn=='' || msisdn.length()&lt;7 || msisdn.length()>14 ){
+	log.info('Wrong MSISDN - '+msisdn)
+	testRunner.testCase.setPropertyValue('outCheckCode', 'Wrong MSISDN - '+msisdn)
+	return
+}
+       
+        base = msisdn.substring(2);
+        base = "0" + base;                
+        int l = base.length();
+     
+        
+        // Calculate the four digits
+        int d1 = 0;
+        int d2 = 0;
+        int d3 = 0;
+        int d4 = 0;
+        int z;
+        int d4mul = 1;
+        int c0='0';
+        
+        for(int i=0; i&lt;l; i++) {
+
+            // Get the value of the digit at this position
+            char c = base.charAt(i);
+            int c1=c;
+            int value = c1-c0;
+            
+            // Calculate the first digit of the checksum
+            d1 ^= value;
+            
+            // Calculate the second digit of the checksum
+            if(i%2==0) {
+                z = 2*value;
+                if(z>9) z -= 9;
+            }
+            else z = value;
+            d2 += z;
+            
+            // Calculate the third digit of the checksum
+            d3 += value;
+            
+            // Calculate the fourth digit of the checksum
+            d4 += value*d4mul;
+            if(++d4mul>9) d4mul = 1;
+        }
+
+        // Complete calculation of the first digit
+        if(d1>9) d1 -= 6;
+        
+        // Complete calculation of the second digit
+        d2 %= 10;
+
+        // Complete calculation of the third digit
+        d3 %= 10;
+
+        // Complete calculation of the fourth digit
+        d4 %= 10;
+
+        // Build the checksum string
+        char [] chars = new char [4];
+        chars[0] = (char)(c0+d1);
+        chars[1] = (char)(c0+d2);
+        chars[2] = (char)(c0+d3);
+        chars[3] = (char)(c0+d4);
+        String calcualtedChecksum = new String(chars);
+        
+	// set checksum for msisdn in out property   
+	log.info('Sum for msisdn - '+ msisdn + ' is '+ calcualtedChecksum)           
+	testRunner.testCase.setPropertyValue('outCheckCode', calcualtedChecksum)	
+	return</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-OriginalJavaCodeForCalculation" id="edb47175-ae36-4120-8db3-99c434a41d9e" disabled="true">
+    <con:settings/>
+    <con:config>
+      <script>public static String getChecksum(String msisdn) {
+        if (AssertUtil.isNullOrEmpty(msisdn)) {
+            LOG.warn("checkChecksum() - invocation with null or empty parameter");
+            return null;
+        }
+        String base = format(msisdn);
+        if (base == null || base.length() &lt; 7) {
+            return null;
+        }
+        String fromatedMSISDN = base;
+        base = base.substring(2);
+        base = "0" + base;
+                
+        int l = base.length();
+        if(l!=11 &amp;&amp; l!=12) {
+            LOG.warn("checkChecksum() - invocation with invalid msisdn, MSISDN: " + fromatedMSISDN);
+            return null;
+        }
+        
+        // Calculate the four digits
+        int d1 = 0;
+        int d2 = 0;
+        int d3 = 0;
+        int d4 = 0;
+        int z;
+        int d4mul = 1;
+        
+        for(int i=0; i&lt;l; i++) {
+
+            // Get the value of the digit at this position
+            char c = base.charAt(i);
+            int value = c-'0';
+            
+            // Calculate the first digit of the checksum
+            d1 ^= value;
+            
+            // Calculate the second digit of the checksum
+            if(i%2==0) {
+                z = 2*value;
+                if(z>9) z -= 9;
+            }
+            else z = value;
+            d2 += z;
+            
+            // Calculate the third digit of the checksum
+            d3 += value;
+            
+            // Calculate the fourth digit of the checksum
+            d4 += value*d4mul;
+            if(++d4mul>9) d4mul = 1;
+        }
+
+        // Complete calculation of the first digit
+        if(d1>9) d1 -= 6;
+        
+        // Complete calculation of the second digit
+        d2 %= 10;
+
+        // Complete calculation of the third digit
+        d3 %= 10;
+
+        // Complete calculation of the fourth digit
+        d4 %= 10;
+
+        // Build the checksum string
+        char [] chars = new char [4];
+        chars[0] = (char)('0'+d1);
+        chars[1] = (char)('0'+d2);
+        chars[2] = (char)('0'+d3);
+        chars[3] = (char)('0'+d4);
+        String calcualtedChecksum = new String(chars);
+        return calcualtedChecksum;
+    }</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>491010000001</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outCheckCode</con:name>
+      <con:value>1438</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

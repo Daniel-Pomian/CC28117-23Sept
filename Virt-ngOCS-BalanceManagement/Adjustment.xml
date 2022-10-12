@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="Adjustment" id="0907de8a-e2fe-44ac-8723-64774a520d1e" interface="ArServicsBinding" operation="Adjustment" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="0907de8a-e2fe-44ac-8723-64774a520d1efileName">Adjustment</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Additional values in request are validated against specification for DRC in SVN:
+ * http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-5/SR-78280_NT-Enabler_Integration_of_NGOCS_with_legacy_prepaid_IT_systems_Drop_3/SR78280_U-036_DRC_ASRI.docx
+ * Date: 14.03.2018
+ * Autor: Michael Gordon
+ * 
+ * Note! Response with all parameters will be currently not implemented,
+ * because AdjustmentSerialNo is missed in WSDL from response, but should be assigned soon.
+*/
+
+String sDocumentation='''
+Documentation for using ngOCS mock service.
+
+## Mock service returns default response for all requests.
+## For wrong requests and msisdn<1 or msisdn>15 signs in request --> soupFault-Exception is returned
+## For MSISDN in request with präfix:
+${#Project#MOCK-Prefix-NgOCS-ajustment-CustomException}
+--> custom response will be send back.
+Custom response is special response with parameters,
+ordered in MSISDN on Position 6:		
+	1 - default response with Invalid-CurrencyId
+	2 - default response with wrong Main-Balances	
+	3 - default response with wrong Version
+	4 - response with error-code, behind position 7 in msisdn (for error codes between 40000 and 50000 in specification)
+		Ex. MSISDN = 49117404115 --> return error-code=4115	
+	x - for any error code in response, where:	
+- last 8 digit as ResultCode (number '1' will be added before those 8 digit in resultCode)
+	02050176 -->102050176
+	Ex. MSISDN = 49117X02050176(X= any number from 1 to 9) returns 
+	<cbs:ResultCode>102050176</cbs:ResultCode>
+     <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>        
+## Example Response-Custom-Exception for MSISDN above: 
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:AdjustmentResultMsg>
+         <ResultHeader>
+            <cbs:Version>1</cbs:Version>
+            <cbs:ResultCode>102050176</cbs:ResultCode>
+            <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:AdjustmentResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+ End of documentation 
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+// read default values from project properties
+def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-NgOCS-ajustment-CustomException}') 
+def sMSISDNUnknown = context.expand( '${#Project#MSISDN_OCS_Unknown}') 
+
+// set default values from virt properties
+def DEFAULT_Version = context.expand('${#MockService#DEFAULT-Version}')
+def DEFAULT_ResultCode = context.expand('${#MockService#DEFAULT-ResultCode}')
+def DEFAULT_ResultDesc = context.expand('${#MockService#DEFAULT-ResultDesc}')
+def DEFAULT_BalanceType = context.expand('${#MockService#DEFAULT-BalanceType}')
+def DEFAULT_BalanceTypeName = context.expand('${#MockService#DEFAULT-BalanceTypeName}')
+def DEFAULT_Currency = context.expand('${#MockService#DEFAULT-Currency}')
+def DEFAULT_Balance = context.expand('${#MockService#DEFAULT-Balance}')
+def DEFAULT_USDollar = context.expand('${#MockService#Currency-USDollar}')
+
+// read values from incommning request
+// read from soapHeader 
+def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+def sMsgSec=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/RequestHeader[1]/cbs:MessageSeq[1]")
+def sBeId=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/RequestHeader[1]/cbs:OwnershipInfo[1]/cbs:BEID[1]")
+def sLoginSystemCode=holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:LoginSystemCode[1]") 
+def sPassword = holder.getNodeValue("declare namespace cbs='http://www.huawei.com/bme/cbsinterface/cbscommon';declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/RequestHeader[1]/cbs:AccessSecurity[1]/cbs:Password[1]")
+// read from soapBody
+def sMSISDN = holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg[1]/AdjustmentRequest[1]/ars:AdjustmentObj[1]/ars:SubAccessCode[1]/arc:PrimaryIdentity[1]")
+def sOpType = holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/AdjustmentRequest[1]/ars:OpType[1]")
+def sAjustmentType= holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg[1]/AdjustmentRequest[1]/ars:AdjustmentInfo[1]/arc:AdjustmentType[1]")
+def sAmount= holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg[1]/AdjustmentRequest[1]/ars:AdjustmentInfo[1]/arc:AdjustmentAmt[1]")
+def sSerialNo=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';//ars:AdjustmentRequestMsg[1]/AdjustmentRequest[1]/ars:AdjustmentSerialNo[1]")
+
+// log info to mock gui
+log.info('ngOCS.BalanceManagement.adjustment: Return response for request with msisdn ' + sMSISDN)
+
+// check msissdn
+if(sMSISDN==null || sMSISDN.length()<11 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	context.mockService.setPropertyValue('ResultDesc','MSISDN is to short or to lonng. Must be between 11 and 15 signs')
+	return 'Response-SoapFault-Exception'
+ }
+// check balance
+if(sAmount==null || sAmount.length()<1 || !sAmount.toString().isNumber() ){
+	context.mockService.setPropertyValue('ResultDesc','Balance in request is missed or not numeric')
+	return 'Response-SoapFault-Exception'
+ }
+// check AjustmentType. Allowed is only: 1 - for increment and 2 - for decrement
+if(sAjustmentType==null || !['1','2'].contains(sAjustmentType)){
+	context.mockService.setPropertyValue('ResultDesc','AjustmentType in request is missed or wrong. Allowed only 1 or 2. 1-Increment. 2-Decrement')
+	return 'Response-SoapFault-Exception'
+ }
+ 
+ 
+// set current values for response to default values
+context.mockService.setPropertyValue('Version',DEFAULT_Version)
+context.mockService.setPropertyValue('Resultcode',DEFAULT_ResultCode)
+context.mockService.setPropertyValue('ResultDesc',DEFAULT_ResultDesc)
+context.mockService.setPropertyValue('BalanceType',DEFAULT_BalanceType)
+context.mockService.setPropertyValue('BalanceTypeName',DEFAULT_BalanceTypeName)
+context.mockService.setPropertyValue('Currency',DEFAULT_Currency)
+context.mockService.setPropertyValue('recharge.SerialNo',sSerialNo)
+
+// check login data from request
+if(sBeId==null || sBeId.length()<1 || sLoginSystemCode==null || sLoginSystemCode.length()<1 || sPassword==null || sPassword.length()<1){	
+	context.mockService.setPropertyValue('Resultcode','118040195')
+	context.mockService.setPropertyValue('ResultDesc','Failed to authenticate the LoginSystemCode, Password and RemoteIp in the WebService message.')
+	return 'Response-Custom-Exception'
+}
+
+// if msisd=constant msisdn unknown, return permanent errorcode=118013013
+ if (sMSISDN.toString()==sMSISDNUnknown.toString()){
+ 	context.mockService.setPropertyValue('Resultcode','118013013')
+	context.mockService.setPropertyValue('ResultDesc','Subscriber identification failed because the reported number is unknown.')
+ 	return 'Response-Custom-Exception'
+ }
+
+// read values from optional parameters in incomming request. Some of them are mandatory for DRC
+def sAddInfo5=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg/AdjustmentRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF05']/arc:Value[1]")
+def sAddInfo6=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg/AdjustmentRequest/ars:AdditionalProperty[arc:Code='C_DYN_ADDITIONALINF06']/arc:Value[1]")
+def sControlFlag=holder.getNodeValue("declare namespace ars='http://www.huawei.com/bme/cbsinterface/arservices';declare namespace arc='http://cbs.huawei.com/ar/wsservice/arcommon';//ars:AdjustmentRequestMsg/AdjustmentRequest/ars:AdditionalProperty[arc:Code='controlFlag_01']/arc:Value[1]")
+log.info('ngOCS.BalanceManagement.adjustment: Amount='+sAmount)
+log.info('ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF05='+sAddInfo5)
+log.info('ngOCS.BalanceManagement.adjustment: C_DYN_ADDITIONALINF06='+sAddInfo6)
+
+// /* START validation values in request
+// check input parameters from request
+String sResultCode='118045014'
+String sResultDesc='Invalid input parameter:-'
+def lstMediaType = ['23','25','27','28','35','38','39','40','43','44','60','61','70','71']
+def lstTopup=['M0','M1','M2','M3','M4','M5','M6']
+
+// check: MessageSeq and RechargeSerialNo. Must be uuid and 36 signs long
+if (sMsgSec==null || sMsgSec.length()!=36)
+	sResultDesc=sResultDesc + 'MessageSeq is missed or not uuid!'
+else if (sOpType==null || sOpType!='1')
+	sResultDesc=sResultDesc + 'OpType is missed or contains wrong value! Only value=1 is allowed for DRC'
+else if (sSerialNo==null || sSerialNo.length()!=36)
+	sResultDesc=sResultDesc + 'SerialNo is missed or not uuid!'
+// check key-value paire 5 for correlcation id. Started with mediaType and 9 -64 signs long
+else if (sAddInfo5==null ||  sAddInfo5.length()<9 ||  sAddInfo5.length()>64 ||
+	!lstMediaType.contains(sAddInfo5[0..1]))
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF05 is emtpy, not 9-64 signs long or contains not allowed value!'
+// check key-value paire 6. D+mediaType
+else if (sAddInfo6==null ||  sAddInfo6.length()<3 || 
+	!lstMediaType.contains(sAddInfo6[1..2]) || sAddInfo6[0]!='D')
+	sResultDesc=sResultDesc + 'C_DYN_ADDITIONALINF06 is emtpy or contains not allowed value! Must be D + media type'
+// check controlFlag, if AdjustmentType=2 for increment. Allowed is 0,1,2.
+else if (sAjustmentType=='2' && (sControlFlag==null || sControlFlag=='' 
+	|| !['0','1','2'].contains(sControlFlag)))
+	sResultDesc=sResultDesc + ' For adjustmentType=2=decrement is controlFlag missed or has wrong value'
+else	// all values in request are valid, clear error description.
+	sResultDesc=''
+
+// if error description is not empty, send error response with error-message
+if(sResultDesc!=''){
+	context.mockService.setPropertyValue('Resultcode',sResultCode)
+	context.mockService.setPropertyValue('ResultDesc',sResultDesc)
+	return 'Response-Custom-Exception'  
+}
+// */ FINISH validation values in request
+
+// set balance to: default balance +/- amount from request
+def iBalanceDelta=DEFAULT_Balance.toInteger()-sAmount.toInteger()
+// Increment
+if (sAjustmentType=='1') 
+	context.mockService.setPropertyValue('Balance',
+	(DEFAULT_Balance.toInteger()+sAmount.toInteger()).toString())
+// Decrement
+else if (iBalanceDelta>=0)	
+	context.mockService.setPropertyValue('Balance',iBalanceDelta.toString())
+else if (sControlFlag=='1') // decrement to 0
+	context.mockService.setPropertyValue('Balance','0')
+else if (sControlFlag=='2') // decrement to negativ
+	context.mockService.setPropertyValue('Balance',iBalanceDelta.toString())
+else {// all or nothing
+	context.mockService.setPropertyValue('Resultcode','118013302')
+	context.mockService.setPropertyValue('ResultDesc','The account balance of the subscriber is insufficient.')
+	return 'Response-Custom-Exception'
+	}
+
+	
+// if custom response is not ordered --> return defaul response
+if (sMSISDN[0..4]!=sMSISDNPrefixException){	
+	// return response based on random integer 0, 1, 2	
+	switch (new Random().nextInt(3)) {
+    		case 1:
+    			return 'Response-MandParams'
+    		case 2:
+    			return 'Response-MandParams'		
+	default:
+		return 'Response-Default'
+	}
+}
+ // choose reponse depend on first value after prefix for custom response
+ switch ( sMSISDN[5] ) {
+    case '1':		// Invalid-CurrencyId  
+    		context.mockService.setPropertyValue('Currency',DEFAULT_USDollar) 
+          return 'Response-Default' 
+    case '2':		// missed required balance type
+        	context.mockService.setPropertyValue('BalanceType',context.expand('${#MockService#BalanceType-Wrong}')) 
+        	return 'Response-Default'     
+    case '3':		// response with wrong version
+   	     context.mockService.setPropertyValue('Version','1.01')
+   	     return 'Response-Default' 
+    case '4':		// response with error cattegory
+   	     context.mockService.setPropertyValue('Resultcode',sMSISDN.substring(7).toInteger().toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'  
+	/*
+	case '5':	  // response with serialnumber not from request
+		context.mockService.setPropertyValue('recharge.SerialNo',new Date().format( "yyyyMMddHHmmssSSS"))
+		return 'Response-Default'  		 	    
+	*/
+    default:
+    		context.mockService.setPropertyValue('Resultcode','1'+sMSISDN.substring(6).toString())
+		context.mockService.setPropertyValue('ResultDesc','ngOcs Error')
+		return 'Response-Custom-Exception'
+ }]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="763292c9-7b67-46d3-af45-8777e122b0a7" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:AdjustmentResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+         <AdjustmentResult>
+            <ars:AcctKey>${#Project#GUID}</ars:AcctKey>
+            <ars:AdjustmentInfo>
+               <arc:BalanceType>${#MockService#BalanceType}</arc:BalanceType>
+               <arc:BalanceTypeName>${#MockService#BalanceTypeName}</arc:BalanceTypeName>
+               <arc:OldBalanceAmt>${#MockService#DEFAULT-Balance}</arc:OldBalanceAmt>
+               <arc:NewBalanceAmt>${#MockService#Balance}</arc:NewBalanceAmt>
+               <arc:CurrencyID>${#MockService#Currency}</arc:CurrencyID>
+            </ars:AdjustmentInfo>
+         </AdjustmentResult>
+      </ars:AdjustmentResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Adjustment"/>
+  </con:response>
+  <con:response name="Response-MandParams" id="05294686-40a7-4e9e-a681-2fc3bbfca519" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:AdjustmentResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+         <AdjustmentResult>
+            <ars:AcctKey>${#Project#GUID}</ars:AcctKey>
+            <ars:AdjustmentInfo>
+               <arc:BalanceType>${#MockService#BalanceType}</arc:BalanceType>
+               <arc:OldBalanceAmt>${#MockService#DEFAULT-Balance}</arc:OldBalanceAmt>
+               <arc:NewBalanceAmt>${#MockService#Balance}</arc:NewBalanceAmt>
+               <arc:CurrencyID>${#MockService#Currency}</arc:CurrencyID>
+            </ars:AdjustmentInfo>
+         </AdjustmentResult>
+      </ars:AdjustmentResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Adjustment"/>
+  </con:response>
+  <con:response name="Response-SoapFault-Exception" id="5fe33cb4-34cc-4105-9fce-4d5e5d520977" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <soapenv:Fault>
+         <faultcode>soapenv:Server</faultcode>
+         <faultstring>${#MockService#ResultDesc}</faultstring>
+      </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Adjustment"/>
+  </con:response>
+  <con:response name="Response-Custom-Exception" id="bb756d64-1634-45fa-8c81-3098343789fd" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:AdjustmentResultMsg>
+         <ResultHeader>
+            <cbs:Version>${#MockService#Version}</cbs:Version>
+            <cbs:ResultCode>${#MockService#Resultcode}</cbs:ResultCode>
+            <cbs:MsgLanguageCode>2002</cbs:MsgLanguageCode>
+            <cbs:ResultDesc>${#MockService#ResultDesc}</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:AdjustmentResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="Adjustment"/>
+  </con:response>
+</con:mockOperation>

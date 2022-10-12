@@ -1,0 +1,1890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="38c470c8-4d8a-47ef-b6dc-6a477ebec828" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-ProcessCAMT054-toReprotingDB" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Based on user stories:
+https://www.sg.de.o2.com/jira/browse/DRC-3360
+https://www.sg.de.o2.com/jira/browse/DRC-3455
+https://www.sg.de.o2.com/jira/browse/DRC-3611
+
+Tests creating camt054 file for atm, load to sftp and execute process and parsing jobs for loading 
+transactions to reporting_payment table from reporting db.</con:description>
+  <con:settings>
+    <con:setting id="38c470c8-4d8a-47ef-b6dc-6a477ebec828fileName">GoodCase-DEV-ProcessCAMT054-toReprotingDB</con:setting>
+    <con:setting id="GeneratableJUnitReport@Folder">D:\Projects\Telefonica\DirectReCharge\drc-qa\soapUI-Pro\DRC_Release_22-5\TestReports</con:setting>
+    <con:setting id="IncludeResults">true</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="83c10a8d-410c-4ab6-bf06-a235b3a894c9">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="true" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringZero</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>maxID-ReportingPaymemnt</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecJobs-ProcessCAMT054" id="69a6d30d-7310-45b4-a231-1eac92b7d98c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ec3b6ce6-848a-478d-9429-f7ac7d3228d3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Retrieve_Mipay</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Retrieve</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMax-Reporting_Payment" id="d1230396-98a7-4b48-ac85-2da5d914d43e">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db-report</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-report-connString}</con:connectionString>
+      <con:password>test</con:password>
+      <con:connectionProperties/>
+      <con:query>Select MAX(ID)
+From REPORTING_PAYMENT</con:query>
+      <con:assertion type="JDBC Status" id="da14ca4d-9f19-406e-922f-67c56abd43d3" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="8a0c6778-3b61-46c7-8ffc-6251f1e51bbd" name="Check for existence of [MAXID]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/MAXID)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-Data" id="1f5cf508-39c3-4fd8-98c0-3241e0430548">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="true" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>maxPayments</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getMax-Reporting_Payment</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/MAXID[1]/text()</con:sourcePath>
+        <con:targetType>maxID-ReportingPaymemnt</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath xsi:nil="true"/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="Data Source-getID-7digits" id="56f4bfa9-dcf8-456a-beb7-309213285c1b">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Data Generator">
+        <con:configuration><generatedDataCount>1</generatedDataCount><generatorsTotalNumber>1</generatorsTotalNumber><lastSelectedProperty>0</lastSelectedProperty><GeneratorType0>STR</GeneratorType0><PropertyName0>id</PropertyName0><repetitionCountid>0</repetitionCountid><repeatValuesid>false</repeatValuesid><PasswordDataGeneratorUseSpacesid>false</PasswordDataGeneratorUseSpacesid><PasswordDataGeneratorUsePunctuationMarksid>false</PasswordDataGeneratorUsePunctuationMarksid><PasswordDataGeneratorUseLettersid>false</PasswordDataGeneratorUseLettersid><PasswordDataGeneratorUseDigitsid>true</PasswordDataGeneratorUseDigitsid><PasswordDataGeneratorMaxCharacterCountid>7</PasswordDataGeneratorMaxCharacterCountid><PasswordDataGeneratorMinCharacterCountid>7</PasswordDataGeneratorMinCharacterCountid><escapeSpaceSequence/></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>id</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054-Create-ATM" id="f2fd5aac-5017-4fcc-ae54-7e6dae7f1b1d">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>6c3a50ce-cf7a-4ce8-83a0-4e25e8793dc3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>Target-path</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#Project#MSISDN-chargeCustomer-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CONST_COUNTTRANS</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sftp-user</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sumAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>transactAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>templatePath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outCount</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inAmountEUR</con:name>
+          <con:value>${#TestCase#amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeEUR</con:name>
+          <con:value>${#TestCase#fee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCorrelationID</con:name>
+          <con:value>3${Data Source-getID-7digits#id}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inIBAN</con:name>
+          <con:value>${#TestCase#ATM_IBAN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBIC</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-BIC}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>outCount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054-Create-MiPay" id="882f6f09-a998-417d-bfc0-f539a8cef6f9">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>caff8dea-a62f-431c-90b5-e96dede4c5c8</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>Target-path</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>creditorIBAN</con:name>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#Project#MSISDN-chargeCustomer-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CONST_COUNTTRANS</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sftp-user</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sumAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>transactAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>templatePath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outCount</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inAmountEUR</con:name>
+          <con:value>${#TestCase#amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeEUR</con:name>
+          <con:value>${#TestCase#fee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCorrelationID</con:name>
+          <con:value>40${Data Source-getID-7digits#id}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inIBAN</con:name>
+          <con:value>${#TestCase#MIPay_IBAN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBIC</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-BIC}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>outCount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054-Create-WrongValues" id="ea53c739-27f2-4f06-9bbf-c735724a189c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>6c3a50ce-cf7a-4ce8-83a0-4e25e8793dc3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>Target-path</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#Project#MSISDN-chargeCustomer-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CONST_COUNTTRANS</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sftp-user</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sumAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>transactAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>templatePath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outCount</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inAmountEUR</con:name>
+          <con:value>${#TestCase#amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeEUR</con:name>
+          <con:value>${#TestCase#fee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCorrelationID</con:name>
+          <con:value>23${Data Source-getID-7digits#id}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inIBAN</con:name>
+          <con:value>DE######IBAN##IS$$WRONG!"§$%&amp;/&amp;</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBIC</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-BIC}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>outCount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054-Create-IBAN-Unknown" id="3e0a8c47-575d-460a-a0e4-e0b3b3c50fc6">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>6c3a50ce-cf7a-4ce8-83a0-4e25e8793dc3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>Target-path</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#Project#MSISDN-chargeCustomer-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CONST_COUNTTRANS</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sftp-user</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sumAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>transactAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>templatePath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outCount</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inAmountEUR</con:name>
+          <con:value>${#TestCase#amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeEUR</con:name>
+          <con:value>${#TestCase#fee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCorrelationID</con:name>
+          <con:value>23${Data Source-getID-7digits#id}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inIBAN</con:name>
+          <con:value>DE89370400440532013000</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBIC</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-BIC}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>outCount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CAMT054-Create-IBAN-Empty" id="2b1a1ac4-fd21-4deb-882b-ccf531ed5d11">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>6c3a50ce-cf7a-4ce8-83a0-4e25e8793dc3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>Target-path</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inMSISDN</con:name>
+          <con:value>${#Project#MSISDN-chargeCustomer-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CONST_COUNTTRANS</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sftp-user</con:name>
+        </con:property>
+        <con:property>
+          <con:name>sumAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>transactAmountEUR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>templatePath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outCount</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>inAmountEUR</con:name>
+          <con:value>${#TestCase#amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inFeeEUR</con:name>
+          <con:value>${#TestCase#fee}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inCorrelationID</con:name>
+          <con:value>23${Data Source-getID-7digits#id}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inIBAN</con:name>
+          <con:value>*</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBIC</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-BIC}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+        <con:entry>outCount</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecJobs-ProcessCAMT054" id="02ff342a-66b7-4cce-a715-9206a0f7d1e1">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ec3b6ce6-848a-478d-9429-f7ac7d3228d3</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Retrieve_Mipay</con:name>
+          <con:value xsi:nil="true"/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Retrieve</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+        <con:entry>taskCount-Retrieve_Mipay</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="assertionteststep" name="Assertion-TaskCount" id="2f67ea90-b0c3-48f7-accb-55fe67b6283f">
+    <con:settings/>
+    <con:config xsi:type="con:AssertionTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:entry>
+        <con:id>975d9d7a-e56b-4b65-922b-7275099644dd</con:id>
+        <con:isGroup>false</con:isGroup>
+        <con:sourceId>02ff342a-66b7-4cce-a715-9206a0f7d1e1</con:sourceId>
+        <con:propertyName>taskCount-Retrieve</con:propertyName>
+        <con:assertion type="Simple Equals" name="Equals-retrieve" id="15ccb185-a098-42c5-8c67-fb632956a245">
+          <con:configuration>
+            <patternText>4</patternText>
+            <caseSensitive>true</caseSensitive>
+          </con:configuration>
+        </con:assertion>
+      </con:entry>
+      <con:entry>
+        <con:id>53ded7ce-ef20-4af4-ab77-9d8d3e894aa0</con:id>
+        <con:isGroup>false</con:isGroup>
+        <con:sourceId>02ff342a-66b7-4cce-a715-9206a0f7d1e1</con:sourceId>
+        <con:propertyName>taskCount-Parse</con:propertyName>
+        <con:assertion type="Simple Equals" name="Equals-process" id="74f51b2c-a669-4e9a-8b84-b8f6d699f2d0">
+          <con:configuration>
+            <patternText>2</patternText>
+            <caseSensitive>true</caseSensitive>
+          </con:configuration>
+        </con:assertion>
+      </con:entry>
+      <con:entry>
+        <con:id>533d6545-a7f6-40e2-bf63-26a057086024</con:id>
+        <con:isGroup>false</con:isGroup>
+        <con:sourceId>02ff342a-66b7-4cce-a715-9206a0f7d1e1</con:sourceId>
+        <con:propertyName>taskCount-Retrieve_Mipay</con:propertyName>
+        <con:assertion type="Simple Equals" name="Equals_process_mipay" id="278c2fb1-557c-4f9d-baa9-4b105de1791d">
+          <con:configuration>
+            <patternText>1</patternText>
+            <caseSensitive>false</caseSensitive>
+          </con:configuration>
+        </con:assertion>
+      </con:entry>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount-NewTransaction" id="8b870e10-f163-4e30-906a-4f6af799da73">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db-report</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-report-connString}</con:connectionString>
+      <con:password>test</con:password>
+      <con:connectionProperties/>
+      <con:query>Select COUNT(*) as Count
+From REPORTING_PAYMENT
+Where ID>'${#TestCase#maxID-ReportingPaymemnt}'</con:query>
+      <con:assertion type="JDBC Status" id="da14ca4d-9f19-406e-922f-67c56abd43d3" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="6908d632-d4ac-4142-9c73-73c2b7eefdb4" name="Check for existence of [COUNT]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/COUNT)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="ef233d46-c652-438c-878e-7cdd0db4a549" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]</path>
+          <content>11</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getNewTransactions-ATM" id="f9316c1b-4c75-479b-827e-85711692ed16">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db-report</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-report-connString}</con:connectionString>
+      <con:password>test</con:password>
+      <con:connectionProperties/>
+      <con:query>Select *
+From REPORTING_PAYMENT
+Where ID>'${#TestCase#maxID-ReportingPaymemnt}'
+AND RECONCILIATION_ID like '23%'
+ORDER BY ID DESC</con:query>
+      <con:assertion type="JDBC Status" id="da14ca4d-9f19-406e-922f-67c56abd43d3" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="4c74a28b-e442-4707-a540-f525412791ff" name="Check count of [Row]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>${Run TestCase-CAMT054-Create-ATM#outCount}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" name="Message Content Assertion-atm" id="81967924-890b-4d7b-af2d-fe57d05b9227">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/@fetchSize</con:xpath>
+            <con:element>@fetchSize</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>10</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/@rowNumber</con:xpath>
+            <con:element>@rowNumber</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/ID[1]</con:xpath>
+            <con:element>ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>5323</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_TX_TYPE[1]</con:xpath>
+            <con:element>PAYMENT_TX_TYPE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>10</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_ID[1]</con:xpath>
+            <con:element>RECONCILIATION_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>contains</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>23</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/MSISDN[1]</con:xpath>
+            <con:element>MSISDN</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>4917677261301</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TENANT_ID[1]</con:xpath>
+            <con:element>TENANT_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/BRAND_ID[1]</con:xpath>
+            <con:element>BRAND_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_DATE[1]</con:xpath>
+            <con:element>PAYMENT_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2020-10-26 00:00:00</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TOPUP_DATE[1]</con:xpath>
+            <con:element>TOPUP_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_INFO[1]</con:xpath>
+            <con:element>PAYMENT_INFO</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>/DOC/35818041/ 49.00/ -1.99</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/AMOUNT[1]</con:xpath>
+            <con:element>AMOUNT</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestCase#amount_4dp}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/CURRENCY[1]</con:xpath>
+            <con:element>CURRENCY</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>EUR</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/COMMISSION[1]</con:xpath>
+            <con:element>COMMISSION</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestCase#fee_4dp}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TAX[1]</con:xpath>
+            <con:element>TAX</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_CHANNEL[1]</con:xpath>
+            <con:element>PAYMENT_CHANNEL</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_STATUS[1]</con:xpath>
+            <con:element>RECONCILIATION_STATUS</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_BATCH[1]</con:xpath>
+            <con:element>RECONCILIATION_BATCH</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_ERROR_CODE[1]</con:xpath>
+            <con:element>RECONCILIATION_ERROR_CODE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_DATE[1]</con:xpath>
+            <con:element>RECONCILIATION_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_FILE_ID[1]</con:xpath>
+            <con:element>PAYMENT_FILE_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1056</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/REPORTING_TOPUP_ID[1]</con:xpath>
+            <con:element>REPORTING_TOPUP_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/CREATED_DATE[1]</con:xpath>
+            <con:element>CREATED_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2021-05-11 22:16:54.341</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/LAST_CHANGED_DATE[1]</con:xpath>
+            <con:element>LAST_CHANGED_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2021-05-11 22:16:54.341</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/LAST_CHANGED_USER_ID[1]</con:xpath>
+            <con:element>LAST_CHANGED_USER_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>DRC</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PARTNER[1]</con:xpath>
+            <con:element>PARTNER</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_REPORTED[1]</con:xpath>
+            <con:element>SAP_REPORTED</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_AMOUNT_POSTING_ID[1]</con:xpath>
+            <con:element>SAP_AMOUNT_POSTING_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_COMMISSION_POSTING_ID[1]</con:xpath>
+            <con:element>SAP_COMMISSION_POSTING_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/FINANCE_PARTNER[1]</con:xpath>
+            <con:element>FINANCE_PARTNER</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<Results>
+   <ResultSet fetchSize="10">
+      <Row rowNumber="1">
+         <ID>5323</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.341</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.341</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="2">
+         <ID>5322</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.34</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.34</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="3">
+         <ID>5321</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.339</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.339</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="4">
+         <ID>5320</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.338</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.338</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="5">
+         <ID>5319</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.337</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.337</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+   </ResultSet>
+</Results>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getNewTransactions-MiPay" id="01af3081-7384-4f21-845d-101ef90912b1">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db-report</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-report-connString}</con:connectionString>
+      <con:password>test</con:password>
+      <con:connectionProperties/>
+      <con:query>Select *
+From REPORTING_PAYMENT
+Where ID>'${#TestCase#maxID-ReportingPaymemnt}'
+AND RECONCILIATION_ID like '40%'
+ORDER BY ID DESC</con:query>
+      <con:assertion type="JDBC Status" id="da14ca4d-9f19-406e-922f-67c56abd43d3" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="4c74a28b-e442-4707-a540-f525412791ff" name="Check count of [Row]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>${Run TestCase-CAMT054-Create-MiPay#outCount}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="MessageContentAssertion" name="Message Content Assertion-mipay" id="61990e88-a3bc-4857-9fe9-ed13af9611c8">
+        <con:configuration xsi:type="con:MessageContentAssertion">
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/@fetchSize</con:xpath>
+            <con:element>@fetchSize</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>10</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/@rowNumber</con:xpath>
+            <con:element>@rowNumber</con:element>
+            <con:type/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/ID[1]</con:xpath>
+            <con:element>ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>5323</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_TX_TYPE[1]</con:xpath>
+            <con:element>PAYMENT_TX_TYPE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>10</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_ID[1]</con:xpath>
+            <con:element>RECONCILIATION_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>contains</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>40</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/MSISDN[1]</con:xpath>
+            <con:element>MSISDN</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>4917677261301</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TENANT_ID[1]</con:xpath>
+            <con:element>TENANT_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/BRAND_ID[1]</con:xpath>
+            <con:element>BRAND_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_DATE[1]</con:xpath>
+            <con:element>PAYMENT_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2020-10-26 00:00:00</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TOPUP_DATE[1]</con:xpath>
+            <con:element>TOPUP_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_INFO[1]</con:xpath>
+            <con:element>PAYMENT_INFO</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>/DOC/35818041/ 49.00/ -1.99</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/AMOUNT[1]</con:xpath>
+            <con:element>AMOUNT</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestCase#amount_4dp}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/CURRENCY[1]</con:xpath>
+            <con:element>CURRENCY</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>EUR</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/COMMISSION[1]</con:xpath>
+            <con:element>COMMISSION</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>true</con:enabled>
+            <con:expectedValue>${#TestCase#fee_4dp}</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/TAX[1]</con:xpath>
+            <con:element>TAX</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_CHANNEL[1]</con:xpath>
+            <con:element>PAYMENT_CHANNEL</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_STATUS[1]</con:xpath>
+            <con:element>RECONCILIATION_STATUS</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_BATCH[1]</con:xpath>
+            <con:element>RECONCILIATION_BATCH</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_ERROR_CODE[1]</con:xpath>
+            <con:element>RECONCILIATION_ERROR_CODE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/RECONCILIATION_DATE[1]</con:xpath>
+            <con:element>RECONCILIATION_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PAYMENT_FILE_ID[1]</con:xpath>
+            <con:element>PAYMENT_FILE_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>1056</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/REPORTING_TOPUP_ID[1]</con:xpath>
+            <con:element>REPORTING_TOPUP_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/CREATED_DATE[1]</con:xpath>
+            <con:element>CREATED_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2021-05-11 22:16:54.341</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/LAST_CHANGED_DATE[1]</con:xpath>
+            <con:element>LAST_CHANGED_DATE</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>2021-05-11 22:16:54.341</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/LAST_CHANGED_USER_ID[1]</con:xpath>
+            <con:element>LAST_CHANGED_USER_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>DRC</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/PARTNER[1]</con:xpath>
+            <con:element>PARTNER</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_REPORTED[1]</con:xpath>
+            <con:element>SAP_REPORTED</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>=</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue>0</con:expectedValue>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_AMOUNT_POSTING_ID[1]</con:xpath>
+            <con:element>SAP_AMOUNT_POSTING_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/SAP_COMMISSION_POSTING_ID[1]</con:xpath>
+            <con:element>SAP_COMMISSION_POSTING_ID</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:elements>
+            <con:xpath>//Results[1]/ResultSet[1]/Row[1]/FINANCE_PARTNER[1]</con:xpath>
+            <con:element>FINANCE_PARTNER</con:element>
+            <con:type xsi:nil="true"/>
+            <con:operator>exists</con:operator>
+            <con:enabled>false</con:enabled>
+            <con:expectedValue xsi:nil="true"/>
+            <con:hasValue>false</con:hasValue>
+            <con:numberType>false</con:numberType>
+          </con:elements>
+          <con:originalMessage><![CDATA[<Results>
+   <ResultSet fetchSize="10">
+      <Row rowNumber="1">
+         <ID>5323</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.341</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.341</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="2">
+         <ID>5322</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.34</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.34</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="3">
+         <ID>5321</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.339</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.339</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="4">
+         <ID>5320</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.338</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.338</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+      <Row rowNumber="5">
+         <ID>5319</ID>
+         <PAYMENT_TX_TYPE>10</PAYMENT_TX_TYPE>
+         <RECONCILIATION_ID>235818041</RECONCILIATION_ID>
+         <MSISDN>4917677261301</MSISDN>
+         <TENANT_ID/>
+         <BRAND_ID/>
+         <PAYMENT_DATE>2020-10-26 00:00:00</PAYMENT_DATE>
+         <TOPUP_DATE/>
+         <PAYMENT_INFO>/DOC/35818041/ 49.00/ -1.99</PAYMENT_INFO>
+         <AMOUNT>490000</AMOUNT>
+         <CURRENCY>EUR</CURRENCY>
+         <COMMISSION>-19900</COMMISSION>
+         <TAX>0</TAX>
+         <PAYMENT_CHANNEL>1</PAYMENT_CHANNEL>
+         <RECONCILIATION_STATUS>0</RECONCILIATION_STATUS>
+         <RECONCILIATION_BATCH/>
+         <RECONCILIATION_ERROR_CODE/>
+         <RECONCILIATION_DATE/>
+         <PAYMENT_FILE_ID>1056</PAYMENT_FILE_ID>
+         <REPORTING_TOPUP_ID/>
+         <CREATED_DATE>2021-05-11 22:16:54.337</CREATED_DATE>
+         <LAST_CHANGED_DATE>2021-05-11 22:16:54.337</LAST_CHANGED_DATE>
+         <LAST_CHANGED_USER_ID>DRC</LAST_CHANGED_USER_ID>
+         <PARTNER/>
+         <SAP_REPORTED>0</SAP_REPORTED>
+         <SAP_AMOUNT_POSTING_ID/>
+         <SAP_COMMISSION_POSTING_ID/>
+         <FINANCE_PARTNER/>
+      </Row>
+   </ResultSet>
+</Results>]]></con:originalMessage>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>ATM_IBAN</con:name>
+      <con:value>DE99999999999999999090</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MIPay_IBAN</con:name>
+      <con:value>DE99999999999999990090</con:value>
+    </con:property>
+    <con:property>
+      <con:name>amount</con:name>
+      <con:value>49.00</con:value>
+    </con:property>
+    <con:property>
+      <con:name>amount_4dp</con:name>
+      <con:value>490000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>fee</con:name>
+      <con:value>1.99</con:value>
+    </con:property>
+    <con:property>
+      <con:name>fee_4dp</con:name>
+      <con:value>19900</con:value>
+    </con:property>
+    <con:property>
+      <con:name>maxID-ReportingPaymemnt</con:name>
+      <con:value>0</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>75cf2691-af3f-45fe-ae68-a124fad6f8a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea457d3b-7747-4e92-90c0-2c862f0a66b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b7c2c975-58af-45cf-855d-add0c583c5e7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7e604f48-1ce3-4b67-8575-26d34eead713</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>294f268d-f94f-4477-ac45-b44233063b2e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ece66f2e-01d5-49c0-b169-1881ed697d48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>428ecc70-3e28-441d-89d4-6c3eea3bc525</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>601e946e-fff3-4959-8eca-6b2047a0309f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a75469a-c529-4201-9838-0a0ed75d4d50</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7dc43843-8247-479b-a486-b7cababbfdbd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>04954475-8690-4fdd-b2c7-69a9dbc1179f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b9e4c0d-c15b-4c9a-b891-0f92ddadf72d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b9c75b9a-37fb-46de-919f-e8f1bd702d28</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4b14addb-d888-40e5-b8ff-81d2c340b291</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>129c5786-9260-4599-8767-c8e26fc053f0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>80c8dc51-9b6f-405a-b720-96e4792b0733</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>19e6d56b-128b-4ebb-8827-7bda488e6160</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62d7eb4b-ff20-4629-b8d8-79e08b6ad936</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b1846d16-cf2b-4f92-85cc-25b67e323b65</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fca5f5e3-f2ae-4592-a071-c21fa7dae7f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e54e9ea1-da1e-4244-808b-e562aa140f84</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>26b145af-7c05-4afd-8258-846d1bd3b1bb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e381184d-3fa1-4382-9d94-223e77f81f09</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>68248299-8c53-4506-bd22-5bc752b7bf80</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a659b657-ff0c-4bd0-9a50-54e2efa15cbf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f95376eb-1266-4f3c-a27c-5948965940b5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c722818-85dd-4ab0-b376-d84bd14699d4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>041b6e1f-80ee-4059-b7e6-95ebba58f29d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>779484c1-2543-420d-ae35-58afc84b60a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5f37c695-09f4-4cb0-b4ee-db4f829eab31</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>47331817-2ff6-4b8f-b1b8-cfa3e8369774</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da94c83a-4bb5-44c6-8932-1b7481e0a294</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2600309f-34ce-4eed-a49a-0bafe141b7d4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>33b5d681-f3c2-444c-bd3f-e5ebc600c8f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5d8c111a-5d33-4f51-9a19-229f5d8b7864</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1e0437c7-1d5b-4353-b242-94df9e38be81</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8deceda0-7d4c-41b2-94b3-c9fc6656e42e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62dc1a12-d0f2-4221-a4f4-e9a7345913bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>547c2c03-b5c0-4085-b16f-5d1f88e83623</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>82b2d18a-4363-4ce3-a2a6-29b153195db0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1e6132d2-0de2-4bd7-acbc-cf82ff2d27c9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>20b01ad2-b8a1-4993-bc98-7b6dfffb8c34</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>bb06e5e5-377a-471a-8b1d-f6a6ce61db08</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c62c0f7e-2e93-442e-80e4-ad604b50e0df</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2ad6fc42-e7ed-48f9-b6cc-bd07c74dc2a3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>75e364b1-5140-48c0-aa2e-67cb3a86726e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9bf900a0-c782-4f8c-9ee9-78959e4e04a2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39865ebb-d4d0-4cb9-9e32-95ee09ab5283</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2a17afe3-00ed-439d-861d-a066af503165</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>327a12a2-4254-490b-83ea-7424632fad9d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>61c51bef-77f5-43be-b7ef-93e6791c6d01</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be0dcc2c-ed63-4cac-82f5-3e99522224f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e143d964-c0e2-474f-978d-83909b79ab13</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e124d8c-2a79-434a-8d31-209e1cec26e0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d2b65c2d-fe96-49a8-8372-afa9a17089eb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d1230396-98a7-4b48-ac85-2da5d914d43e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1f5cf508-39c3-4fd8-98c0-3241e0430548</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b870e10-f163-4e30-906a-4f6af799da73</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea53c739-27f2-4f06-9bbf-c735724a189c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>83c10a8d-410c-4ab6-bf06-a235b3a894c9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>69a6d30d-7310-45b4-a231-1eac92b7d98c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f2fd5aac-5017-4fcc-ae54-7e6dae7f1b1d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>02ff342a-66b7-4cce-a715-9206a0f7d1e1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f9316c1b-4c75-479b-827e-85711692ed16</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>56f4bfa9-dcf8-456a-beb7-309213285c1b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2f67ea90-b0c3-48f7-accb-55fe67b6283f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>882f6f09-a998-417d-bfc0-f539a8cef6f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>01af3081-7384-4f21-845d-101ef90912b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3e0a8c47-575d-460a-a0e4-e0b3b3c50fc6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2b1a1ac4-fd21-4deb-882b-ccf531ed5d11</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

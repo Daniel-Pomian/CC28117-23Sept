@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:restMockAction name="/gps/v1/transactions/{transactionId}/cancel" method="PATCH" resourcePath="/gps/v1/transactions/{transactionId}/cancel" id="ffd28cc4-d49b-4413-890f-ad9febe45c3c" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="ffd28cc4-d49b-4413-890f-ad9febe45c3cfileName">%2Fgps%2Fv1%2Ftransactions%2F%7BtransactionId%7D%2Fcancel</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath>/*
+  * This script select response based on id in url
+  * Date: 19.04.2017
+  * Autor: Michael Gordon
+ */
+ 
+ String sID = context.expand( '${#MockService#aliasId}' )
+ if(sID.startsWith('400_')) 
+ 	return 'Response-400=HTTP-Status'
+ else if (sID.startsWith('402_'))
+ 	return 'Response-402=HTTP-Status'
+ else if (sID.startsWith('500_'))
+ 	return 'Response-500=HTTP-Status'
+ else if (sID.startsWith('502_'))
+ 	return 'Response-502=HTTP-Status'
+ else if (sID.startsWith('503_'))
+ 	return 'Response-503=HTTP-Status'
+ else if (sID.startsWith('401_'))
+ 	return 'Response-401=HTTP-Status-EmptyBody'
+ else if (sID.startsWith('403_'))
+ 	return 'Response-403=HTTP-Status-EmptyBody'
+ else if (sID.startsWith('406_'))
+ 	return 'Response-406=HTTP-Status-EmptyBody'
+ else if (sID.startsWith('415_'))
+ 	return 'Response-415=HTTP-Status-EmptyBody' 
+ else
+ 	return 'Response-Default'</con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:parameterDispatcherRuleContainer/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="ba2fcf21-7962-4339-b98f-44df7e4879eb" httpResponseStatus="200" mediaType="application/xml" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<transaction targetNamespace="http://gps.telefonica.com/v1/types">
+   <transactionId>${#MockService#transactId}</transactionId>
+   <paymentMethod>CreditCard</paymentMethod>
+   <paymentProvider>Mastercard</paymentProvider>
+   <type>PAYMENT</type>
+   <status>CANCELLED</status>
+   <paymentAmount>
+      <value>${#MockService#amount}</value>
+      <currency>${#Project#Currency_Default}</currency>
+   </paymentAmount>
+   <saferpayTransactionInfo>
+      <saferpayTransactionId>${#MockService#transactId}</saferpayTransactionId>
+      <accountId>${#MockService#Default-saferpayAccountId}</accountId>
+      <terminalId>${#MockService#Default-saferpayTerminalId}</terminalId>
+   </saferpayTransactionInfo>
+   <authorizationDate>${#MockService#Default-regDate}</authorizationDate>
+   <cancelDate>${#MockService#Default-caDate}</cancelDate>
+   <creditCard>
+      <aliasId>${#MockService#aliasId}</aliasId>
+      <paymentProvider>Mastercard</paymentProvider>
+      <status>REGISTERED</status>
+      <creditCardBrandName>MasterCard</creditCardBrandName>
+      <maskedNumber>1234 5678 9012 3456</maskedNumber>
+      <expiryYear>2020</expiryYear>
+      <expiryMonth>1</expiryMonth>
+      <registrationDate>${#MockService#Default-regDate}</registrationDate>
+      <cardHolderName>cardHolderName contains max. allowed signs=50 5050</cardHolderName>
+      <countryCode>${#MockService#Default-countryCode}</countryCode>
+   </creditCard>
+   <threeDs>
+      <authenticated>true</authenticated>
+      <liabilityShift>true</liabilityShift>
+   </threeDs>
+</transaction>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-400=HTTP-Status" id="d1919eae-c1a4-4ad2-ac94-5ede084372ec" httpResponseStatus="400" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>VALIDATION_FAILED</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-402=HTTP-Status" id="e379e1f7-53bf-4602-b5ba-63c66b7588c8" httpResponseStatus="402" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>TRANSACTION_FAILED</errorCode>
+  <pspErrorCode>CARD_CHECK_FAILED</pspErrorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-500=HTTP-Status" id="81ca7bed-3e4c-4423-8c24-c9873f4a1590" httpResponseStatus="500" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>GPS_INTERNAL_ERROR</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-502=HTTP-Status" id="89425cf7-8997-4c61-a226-45424846620c" httpResponseStatus="502" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>PSP_ERROR</errorCode>
+  <pspErrorCode>INTERNAL_ERROR</pspErrorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-503=HTTP-Status" id="36d09229-e264-4119-903f-c8ef3965d56f" httpResponseStatus="503" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>PSP_ERROR</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-401=HTTP-Status-EmptyBody" id="894323ac-0895-42dd-8d25-7ff6d194dcd3" httpResponseStatus="401" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-403=HTTP-Status-EmptyBody" id="42f2d190-92c9-4ef2-b1a6-0822023a5cf4" httpResponseStatus="403" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-406=HTTP-Status-EmptyBody" id="7899748d-0358-4789-ba85-bc451aada884" httpResponseStatus="406" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-415=HTTP-Status-EmptyBody" id="1fbfcf5c-9beb-42e3-81f2-a64eb0657787" httpResponseStatus="415" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+</con:restMockAction>

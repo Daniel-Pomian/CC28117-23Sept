@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="55eee717-4585-4c5c-b6b7-cd90d1616603" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase 1" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="55eee717-4585-4c5c-b6b7-cd90d1616603fileName">TestCase-1</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-TestDateTime" id="95a77aae-f45d-453a-94ca-d2bfcc8f0910">
+    <con:settings/>
+    <con:config>
+      <script>/*
+Date_Current=${=new Date().format( "yyyy-MM-dd'T'00:00:00'Z'" )}
+Date_Current_yyyyMMdd=${=(new Date()).format( "yyyyMMdd" )}
+Date_Current_yyyy-MM-dd=${=(new Date()).format( "yyyy-MM-dd" )}
+Date_Current_SEPAFILE_Prefix=${=(new Date()).format( "yyyyMMdd_HHmmss" )}
+Date_NextDay_yyyy-MM-dd=${=(new Date()+1).format( "yyyy-MM-dd" )}
+DateTime_Current=${=new Date().format( "yyyy-MM-dd'T'HH:mm:ss" )}
+DateTime_Current_String_yyyyMMddHHmmssSSS=${=new Date().format( "yyyyMMddHHmmssSSS" )}
+DateTime_Current_String_yyyyMMddHHmm=${=new Date().format( "yyyyMMddHHmm" )}
+DateTime_Current_Offset=${=new Date().format( "yyyy-MM-dd'T'HH:mm:ssXXX" )}
+Date_Past=${=(new Date()-6).format( "yyyy-MM-dd'T'00:00:00'Z'" )}
+Date_Past_String_yyyyMMdd=${=(new Date()-6).format( "yyyy-MM-dd" )}
+Date_Future=${=(new Date()+31).format( "yyyy-MM-dd'T'00:00:00'Z'" )}
+Date_Future_Offset=${=(new Date()+31).format( "yyyy-MM-dd'T'HH:mm:ssXXX" )}
+DAY_OF_MONTH=${=new Date().getAt(Calendar.DAY_OF_MONTH)}
+
+
+import org.apache.groovy.datetime.extensions.DateTimeExtensions
+import   java.time. java.time.LocalDateTime
+import   java.time.format.java.time.format.DateTimeFormatter
+import  java.time.OffsetDateTime
+*/
+
+// future date time with offset after time changed
+log.info(java.time.LocalDateTime.now().plusMonths(1).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-ddXXX")))
+log.info(java.time.LocalDateTime.now().plusDays(30).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-ddXXX")))
+
+// current date time with offsets
+log.info(java.time.OffsetDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")))
+log.info(java.time.OffsetDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-ddXXX")))
+
+
+//Current date time string in different formats
+log.info( java.time.LocalDateTime.now())
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00'Z'")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyMMdd_HHmmss")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")))
+log.info( java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmm")))
+
+//date time in the future and past
+log.info( java.time.LocalDateTime.now().plusDays(1) .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"))) 
+log.info( java.time.LocalDateTime.now().minusDays(6) .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00'Z'"))) 
+log.info( java.time.LocalDateTime.now().minusDays(1) .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+log.info( java.time.LocalDateTime.now().plusMonths(1) .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00'Z'" )))
+log.info( java.time.LocalDateTime.now().minusMonths(1) .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+
+// get day of current month
+log.info( java.time.LocalDateTime.now().getDayOfMonth())
+log.info( java.time.LocalDateTime.now().getYear())</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e4cfca0c-b5c1-412d-8174-6ba2cb70c11d" name="SOAP Request">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="SOAP Request" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8a07d162-228d-40f5-9e72-0f009ad266e6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:searchTransactions>
+         <search>
+            <!--type: first-->
+            <first>0</first>
+            <!--type: count-->
+            <count>2</count>
+            <searchParam>
+               <msisdn>4917686122062</msisdn>
+               <correlationId>${=java.time.OffsetDateTime.now().plusMonths(1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-ddXXX"))}</correlationId>
+               <paymentDate>
+                  <fromDate>${=java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00'Z'"))}</fromDate>
+                  <toDate>${=new Date().format( "yyyy-MM-dd'T'HH:mm:ss" )}</toDate>
+               </paymentDate>
+            </searchParam>
+         </search>
+      </v1:searchTransactions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="5098af2d-abe4-4554-8aa8-7186025759cf" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="f66435b9-ece0-403e-94c0-d6b798812582" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="14df21d9-ced1-4191-b2f9-5eaf6cd9355f" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

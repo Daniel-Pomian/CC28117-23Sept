@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockService id="4f90a7bb-2df6-4ddd-a563-74cec11b88d0" port="8080" path="/MiPay/AutoTopupServices" host="localhost" name="Virt-MiPay-AutoTopup" incomingWss="" outgoingWss="" dispatchResponseMessages="false" httpSecure="false" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting>
+    <con:setting id="4f90a7bb-2df6-4ddd-a563-74cec11b88d0fileName">Virt-MiPay-AutoTopup</con:setting>
+  </con:settings>
+  <con:properties>
+    <con:property>
+      <con:name>Doc</con:name>
+      <con:value><![CDATA[
+ Documentation for using MiPay-AutoTopup mock service.
+
+ Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+ Mock service dispatch default response if msisdn doesn't contains prefix:
+ ${#Project#MOCK-Prefix-MiPay-CustomException}
+
+ If msisdn contains prefix above and defined error code from specification (5 digiits) after prefix,
+ mock return response with error code from msisdn and reason=rejected.
+
+ Ex. MSISDN=${#Project#MOCK-Prefix-MiPay-CustomException}300019999
+
+ Mock return:
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://mi-pay.com/webservices" xmlns:mip="http://schemas.datacontract.org/2004/07/MiPay.AutoTopup">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ReachedMVNOLowBalanceThresholdResponse>
+         <web:ReachedMVNOLowBalanceThresholdResult>
+            <mip:ErrorCode>30001</mip:ErrorCode>
+            <mip:ResponseCode>Rejected</mip:ResponseCode>
+         </web:ReachedMVNOLowBalanceThresholdResult>
+      </web:ReachedMVNOLowBalanceThresholdResponse>
+   </soapenv:Body>
+ </soapenv:Envelope>
+
+ End of documentation  
+ ]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>ErrorCode</con:name>
+      <con:value>40003</con:value>
+    </con:property>
+  </con:properties>
+  <con:constraints>
+    <con:congestion>0</con:congestion>
+    <con:inputBandwidth>-1</con:inputBandwidth>
+    <con:outputBandwidth>-1</con:outputBandwidth>
+    <con:maxThreadPoolCapacity>20</con:maxThreadPoolCapacity>
+    <con:coreThreadPoolCapacity>5</con:coreThreadPoolCapacity>
+    <con:virtError>
+      <con:start>0</con:start>
+      <con:endless>true</con:endless>
+    </con:virtError>
+  </con:constraints>
+  <con:dataSources/>
+  <con:headerValidator type="NONE"/>
+</con:mockService>

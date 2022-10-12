@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="5cb56316-658f-4960-b759-eb1efa660b0d" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-ReplaceValueInFileOnCondition" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="f2b82dbc-d62b-49bc-9538-15f7072cb59bfileName">TestCase-ReplaceValueInFile</con:setting>
+    <con:setting id="5cb56316-658f-4960-b759-eb1efa660b0dfileName">TestCase-ReplaceValueInFileOnCondition</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script-ReplaceValueInFile" id="fbf9545f-eea8-4a7d-b345-f8ecb731cd68">
+    <con:settings/>
+    <con:config>
+      <script>/*
+  * This script replace any value in file with new one from input in test-case if the condition is true
+  * Author: 	Michael Gordon, Masar Goga
+  * Date:		2020-11-12
+  */
+
+ // set reguired values from properties 
+ String sFilePath = context.expand( '${#TestCase#inFilePath}' ).replace('\\','/')
+ String sValue1 = context.expand( '${#TestCase#inOldValue}' )
+ String sValue2 = context.expand( '${#TestCase#inNewValue}')
+ String sCondition = context.expand( '${#TestCase#inCondition}')
+ 
+ // create file for read and write in created camt054 file credit
+ if (sCondition == 'true') {
+ 	File fFile=new File(sFilePath)
+	assert fFile.exists()
+	 
+	// read file content replace and save
+	String sContent=new File(sFilePath).getText('utf-8')
+	fFile.write( sContent.replaceAll( sValue1, sValue2), 'utf-8')
+	log.info('Replaced: ' +sValue1 + ' with ' +sValue2 + ' in file: '+ sFilePath)
+ } else {
+ 	log.info('Nothing replaced. Condition was: ' + sCondition)
+ }</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFilePath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20221004102821732-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inOldValue</con:name>
+      <con:value>&lt;BookgDt>.*&lt;/ValDt></con:value>
+    </con:property>
+    <con:property>
+      <con:name>inNewValue</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>inCondition</con:name>
+      <con:value>true</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

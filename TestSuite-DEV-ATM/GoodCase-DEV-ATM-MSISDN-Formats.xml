@@ -1,0 +1,2513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="84ce0053-2558-48c7-a22a-ec51ae3f63e9" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-ATM-MSISDN-Formats" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests charging via atm-proxy  from bank automat
+Based on documentation in subversion: ...\src\trunk\SRs\Interfaces\ISO-GW-Server\Anh. 1 _ POA GA Techn. Anhang V. 1.1.doc §5
+
+F0F6		Längenangabe der folgenden Nutzdaten: Immer 6 Byte
+
+RR RR RR RR RR RR	Format der Nummer ohne Verwendung CC.
+	Mobilfunkrufnummer mit führender 0 im Format 0&lt;NDC>&lt;SN>.  
+
+Die Rufnummer kann elf- oder zwölfstellig sein. Bei einer elfstelligen Nummer wird das letzte Zeichen mit einem `F`aufgefüllt. Die NDC muß mit einer 1 beginnen.
+
+Beispiel: 01 79 12 34 56 78
+
+Folgende Regeln müssen bei Verwendung des CC eingehalten werden:  Format der Mobilfunkrufnummer &lt;CC>&lt;NDC>&lt;SN>
+- Der CC kann aus zwei (beginnend mit 49) oder vier (beginnend mit   
+  zwei führenden Nullen plus 49) Stellen bestehen
+- Der NDC muss mit einer 1 beginnen und kann 3- oder 4-stellig sein.
+- Der SN kann aus 7 oder 8 Stellen bestehen.
+
+Die Längenangabe des Feldes muss entsprechend ihrer Nutzdaten angepasst werden. Bei einer ungeraden Zeichenanzahl der Rufnummer wird das letzte Zeichen (Halbbyte) mit einem ‚F‘ aufgefüllt.
+
+Beispiel:
+49 17 13 20 93 41
+49 17 13 20 93 41 1F
+00 49 17 13 20 93 41
+00 49 17 13 20 93 41 1F
+
+
+Beispiel Aufladung:
+F0 F1 F5 58 54 3A 01 01 20 01 F0 F6 01 71 32 09 34 1F
+
+F0 F1 F5		15 Byte
+4C 4F 3A		Kennung Mobilnetzbetreiber
+01			Bedienernummer 01
+01			Barzahlung
+20 01			Jahr 2001
+F0 F6 			6 Byte Nutzdaten
+01 79 32 09 34 1F	Handy-Rufnummer  01793209341 plus Auffüll-F
+
+Anmerkung: Bedienernummer und Zahlart können auch mit 00 belegt werden.</con:description>
+  <con:settings>
+    <con:setting id="HttpSettings@socket_timeout">${#TestSuite#Timeout}</con:setting>
+    <con:setting id="6893a9b4-e362-460c-b1c1-810a3710aa67fileName">GoodCase-DEV-ATM-MSISDN-Formats</con:setting>
+    <con:setting id="84ce0053-2558-48c7-a22a-ec51ae3f63e9fileName">GoodCase-DEV-ATM-MSISDN-Formats</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearProperties" id="1370d723-7cf1-40f3-937b-134426ef9d29">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-3</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-4</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-5</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>6</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-6</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>7</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>LocalTime</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-GetTraceNrs" id="35271b97-adfc-4f78-9fda-ce3ba67a0767">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>67753a20-5bc2-4bc5-98a3-c1ed94bd293e</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outMSISDN-1</con:name>
+          <con:value>017658980839</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-2</con:name>
+          <con:value>017651602921</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-11Signs</con:name>
+          <con:value>01768130532</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-1</con:name>
+          <con:value>124515</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-2</con:name>
+          <con:value>129269</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-3</con:name>
+          <con:value>124262</con:value>
+        </con:property>
+        <con:property>
+          <con:name>LocalTime</con:name>
+          <con:value>193448</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>TraceNr-1</con:entry>
+        <con:entry>TraceNr-2</con:entry>
+        <con:entry>TraceNr-3</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-GetTraceNrs-1" id="499cd401-c4f7-4573-84d8-e30f147dc610">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>67753a20-5bc2-4bc5-98a3-c1ed94bd293e</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outMSISDN-1</con:name>
+          <con:value>017639461340</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-2</con:name>
+          <con:value>017661808483</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-11Signs</con:name>
+          <con:value>01765093124</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-1</con:name>
+          <con:value>194522</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-2</con:name>
+          <con:value>141318</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-3</con:name>
+          <con:value>185604</con:value>
+        </con:property>
+        <con:property>
+          <con:name>LocalTime</con:name>
+          <con:value>160242</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outMSISDN-1</con:entry>
+        <con:entry>outMSISDN-2</con:entry>
+        <con:entry>outMSISDN-11Signs</con:entry>
+        <con:entry>TraceNr-1</con:entry>
+        <con:entry>TraceNr-2</con:entry>
+        <con:entry>TraceNr-3</con:entry>
+        <con:entry>LocalTime</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-TraceIDs" id="a27dc1da-7f8f-4447-970d-bdbfb9b9ff8b">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>TraceNr-1</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>TraceNr-2</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>TraceNr-3</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-3</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>TraceNr-1</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs-1</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-4</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>TraceNr-2</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs-1</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-5</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>6</con:name>
+        <con:sourceType>TraceNr-3</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs-1</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>TraceNr-6</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>7</con:name>
+        <con:sourceType>LocalTime</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetTraceNrs-1</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>LocalTime</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e80ab6b5-46f7-403f-b97d-1f9c5fe4c66d" name="_GUI-searchTransactions-01761234567">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="_GUI-searchTransactions-01761234567" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>01761234567</msisdn>\r
+               <paymentDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </paymentDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-ATM}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="c5366177-8694-4436-9a37-0b21f88fd56e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="76150bc6-cce3-4748-bff5-a2585cb6d36e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="04c9b6b4-cf6c-4151-8465-9065d91c1aa2" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="013dbd83-5994-4df3-8f10-93bcf70e9b2e" name="_GUI-searchTransactions-017612345678">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="_GUI-searchTransactions-017612345678" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <!--type: int-->\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>017612345678</msisdn>\r
+               <paymentDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </paymentDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-ATM}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="814efda1-e1db-4743-be5e-b507592e863c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="fb724153-7443-44c7-8744-82c9ea4a1093">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3c07057b-8299-45c4-af66-cd1010091991"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="400P_Autorisation-017612345678" id="a9634736-6bd8-44b2-9e96-91afd535134c">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="400P_Autorisation-017612345678" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-1}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>017612345678</mobilfunknummer>
+	</spezielleDialogdaten>	 
+	${#TestSuite#macTrippleDES}
+		  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="e55fb3a1-75b1-4fa8-8c65-5105c1cb6b99">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*017612345678</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="405N_Storno-017612345678" id="1f7025d9-dda5-4224-a85d-448c00e952ac">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="405N_Storno-017612345678" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-1}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>
+	<referenzNummer>${#TestCase#TraceNr-1}</referenzNummer>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>017612345678</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" name="Valid HTTP Status Codes" id="6332f204-94dc-42b9-8492-4fd4ffd41767">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="XPath Match-Typ" id="489e0a26-f1b6-4e70-9126-ae14fcab90f5">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/rawData[1]</path>
+            <content>0410*</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="XPath Match - Error code=2F" id="27688120-5c76-499c-8f6a-e7dc923493b2">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>2F</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="934a39fa-5b0d-4056-a02b-8df5e8ab5f64">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*017612345678</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="410P_Autorisation-01761234567F" id="565566d9-bfe3-4118-b909-b2263d3b611f">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="410P_Autorisation-01761234567F" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-2}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>01761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="ef36c467-7262-4562-8ed6-dd0001f7f5d8">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*01761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="415P_Storno-01761234567F" id="e6b38e30-92a2-4cda-b0dc-53949fe7537a">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="415P_Storno-01761234567F" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-2}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>
+	<referenzNummer>${#TestCase#TraceNr-2}</referenzNummer>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>01761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-2F">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>2F</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="8b8bebc0-06dc-4a18-93f3-50ed3d13cdf7">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*01761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-GetLocalTime" id="acc988ae-4755-4ffd-aefb-0fb484636002">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>67753a20-5bc2-4bc5-98a3-c1ed94bd293e</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outMSISDN-1</con:name>
+          <con:value>017672808184</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-2</con:name>
+          <con:value>017619568568</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-11Signs</con:name>
+          <con:value>01768897080</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-1</con:name>
+          <con:value>170938</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-2</con:name>
+          <con:value>141854</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-3</con:name>
+          <con:value>159653</con:value>
+        </con:property>
+        <con:property>
+          <con:name>LocalTime</con:name>
+          <con:value>160242</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>LocalTime</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-LocalTime" id="3ed828ec-a9ca-4c45-a5e4-c76e78d5930e">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>LocalTime</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetLocalTime</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>LocalTime</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="420P_Autorisation-491761234567" id="ff24b07b-837a-4b8e-926a-82f64be3f21f">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="420P_Autorisation-491761234567" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>491761234</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-3}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>491761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]1" id="5a585179-2df7-41d1-98cd-28b78fb113b4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*491761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="425P_Storno-491761234567" id="4da49ff9-922e-4299-b349-ca3374321b49">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="425P_Storno-491761234567" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>491761234</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-3}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<referenzNummer>${#TestCase#TraceNr-3}</referenzNummer>
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>491761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-2F">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>2F</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="fd456373-fd08-444d-bea3-a339243f3796">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*491761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="430P_Autorisation-4917612345678F" id="96505ead-1ece-42ca-8708-a94706d45018">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="430P_Autorisation-4917612345678F" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>491761234</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-4}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>4917612345678</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}
+		  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="738e29e3-7f6d-4a23-a773-68b078d22ae5">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*4917612345678F</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="435P_Storno-4917612345678F" id="dee2cf71-0c22-450f-b195-d5b87f0ad34f">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="435P_Storno-4917612345678F" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>491761234</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-4}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<referenzNummer>${#TestCase#TraceNr-4}</referenzNummer>
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>4917612345678</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-2F">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>2F</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="3e4fe05e-07d6-47d1-9689-101ad096a81c" name="Match content of index=60-[@value]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*4917612345678F</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-GetLocalTime-1" id="32f5089f-0ceb-450f-81ea-7f57c54b05c0">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>67753a20-5bc2-4bc5-98a3-c1ed94bd293e</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outMSISDN-1</con:name>
+          <con:value>017672808184</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-2</con:name>
+          <con:value>017619568568</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN-11Signs</con:name>
+          <con:value>01768897080</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-1</con:name>
+          <con:value>170938</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-2</con:name>
+          <con:value>141854</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TraceNr-3</con:name>
+          <con:value>159653</con:value>
+        </con:property>
+        <con:property>
+          <con:name>LocalTime</con:name>
+          <con:value>160243</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>LocalTime</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer-LocalTime-1" id="29beb6b0-c41e-4738-97cd-0495bd44465f">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>LocalTime</con:sourceType>
+        <con:sourceStep>_Run TestCase-GetLocalTime-1</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>LocalTime</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="440P_Autorisation-00491761234567" id="37a0a66a-84c6-45d8-80aa-668a497b84e2">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="440P_Autorisation-00491761234567" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>004917612</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-5}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>00491761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="86781611-d87e-456d-9a77-903157e2bfb5">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*00491761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="445P_Strono-00491761234567" id="20c332dd-611d-4f4e-9f73-ca44b7507249">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="445P_Strono-00491761234567" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>004917612</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-5}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<referenzNummer>${#TestCase#TraceNr-5}</referenzNummer>
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>00491761234567</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-2F">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>2F</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="1172149c-987c-43a3-908c-66713e00273f">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*00491761234567</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="450N_Autorisation-04917612345678" id="fad4e6e4-46dd-4262-92ea-87ae188ec3e9">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="450N_Autorisation-04917612345678" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>049176123</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-6}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+ 		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>04917612345678</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="7e3b336a-0d98-4b3f-97a9-b6b4ad5170df" name="Match content of [antwortCode]=1A">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>1A</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="1c482ecd-c282-4e4c-a681-c1f43e0673d7" name="Match content of [asId]=Unknown">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/asId[1]/text()</path>
+            <content>${#TestSuite#asID-Unknown}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="455N_Storno-04917612345678" id="05ca1d02-f764-4601-a1b5-a8aefd0f1267">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="455N_Storno-04917612345678" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Storno}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>049176123</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>${#TestCase#TraceNr-6}</tracenummer> 
+	<lokalzeit>${#TestCase#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<referenzNummer>${#TestCase#TraceNr-6}</referenzNummer>
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+ 
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>04917612345678</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="be8fbc2d-eb74-4101-9f05-0e84c22fb2b5" name="Match content of [antwortCode]=00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="60b1ddc5-4c5f-4d54-9209-f23f1a20cab4" name="Match content of [asId]=Unknown">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/asId[1]/text()</path>
+            <content>${#TestSuite#asID-Unknown}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="430P_Autorisation-Nr=6Signs=0176123456" id="5c0cd350-3713-4357-81ba-b675c65c113e">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="430P_Autorisation-Nr=6Signs=0176123456" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>1${#Project#Random5}</tracenummer> 
+	<lokalzeit>${#TestSuite#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>0176123456</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="1db4cf7d-6154-4631-a825-f5b44e5845ce">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*0176123456</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="restrequest" name="440P_Autorisation-Nr=9Signs=0176123456789" id="40ee1ca0-0b69-47fe-a5c1-fb995cd7de20">
+    <con:settings/>
+    <con:config service="http://mucsgdp08:6686" methodName="Proxy" resourcePath="/proxy/{partner}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:restRequest name="440P_Autorisation-Nr=9Signs=0176123456789" id="9dc7847d-6fc2-4a2f-ba36-d11e48ac664d" mediaType="application/xml" postQueryString="false">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATM-Proxy-URL}</con:endpoint>
+        <con:request><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:opalMessage xmlns:ns2="http://directrecharge.o2.com/iso8583/">
+	<!-- Enum: 0200, 0400, (0800) -->
+	<mti>${#TestSuite#ReqTyp-Autorisierung}</mti>
+	<pan>
+		<!-- at first shot static -->
+		<routingInformation>0000008000</routingInformation>
+		<!-- first 9 digits of the msisdn (starting with 0) -->
+		<msisdn>017612345</msisdn> 
+	</pan>
+	<!-- at first shot static -->
+	<abwicklungskennzeichen>${#TestSuite#abwZeichenTripleDES}</abwicklungskennzeichen> 
+	<!-- Topup amount -->
+	<transaktionsbetrag>${#TestSuite#Amount-10}</transaktionsbetrag> 
+	<!-- randomly generated, 6 digits -->
+	<tracenummer>1${#Project#Random5}</tracenummer> 
+	<lokalzeit>${#TestSuite#LocalTime}</lokalzeit>
+	<lokaldatum>${#TestSuite#LocalDate}</lokaldatum>		
+	<!-- at first shot static -->	
+	<asID>999999</asID>	
+	<tid>
+
+		<!-- numeric, 3 digits -->
+		<netzbetreiberId>${#TestSuite#NetzbetreiberID}</netzbetreiberId> 
+		<!-- numeric, 5 digits -->
+		<terminalId>${#TestSuite#TerminalID}</terminalId> 
+	</tid>
+	<voBlz>
+
+		<!-- Partner code and optional BLZ, divided by whitespaces -->
+		<convertedData>${#TestSuite#Partner-1-Code} ${#TestSuite#BLZ}</convertedData> 
+		<voNummer>${#TestSuite#Partner-1-Code}</voNummer>
+		<blz>${#TestSuite#BLZ}</blz>
+	</voBlz>
+	<!-- static, 0978 = EUR -->
+	<waehrungscode>0978</waehrungscode>
+	
+	${#TestSuite#encriptionTripleDES}
+	
+
+	<spezielleDialogdaten>
+		<!-- first part (45503A00132016F0F6) probably static, followed by full msisdn, if msisdn 11 disigts long followed by 'F'. Ex.: 45503A00132016F0F6017863xxxxxF-->
+		<kennung>45503A</kennung>
+		<bedienernummer>00</bedienernummer>
+		<zahlart>01</zahlart>
+		<!--Will be overwritten by proxy-->
+		<jahr>${#TestSuite#JahrCurrent}</jahr>
+		<mobilfunknummer>0176123456789</mobilfunknummer>
+	</spezielleDialogdaten>
+	${#TestSuite#macTrippleDES}	 
+	  
+</ns2:opalMessage>]]></con:request>
+        <con:originalUri>http://mucsgdp08.sg.de.pri.o2.com/proxy/</con:originalUri>
+        <con:assertion type="Valid HTTP Status Codes" id="a75bc16b-ccf3-4407-b74a-880937b15a10" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="5743dc71-5dfa-40c2-9a85-11040b7b9491" name="Match content of 39- [@value]-00">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/antwortCode[1]/text()</path>
+            <content>00</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of index=60-[@value]" id="e331123c-0081-49d8-88a7-fa26839268b4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583/';
+//ns2:opalResponse[1]/unboundField[@index='60']/@value</path>
+            <content>*0176123456789F</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>false</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:parameters>
+          <con:entry key="partner" value="${#TestSuite#TargetATM}"/>
+        </con:parameters>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:restRequest>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2d94448a-7578-4f97-8f43-e22960a22b0a" name="GUI-searchTransactions-01761234567">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="GUI-searchTransactions-01761234567" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>01761234567</msisdn>\r
+               <paymentDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </paymentDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-ATM}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="c5366177-8694-4436-9a37-0b21f88fd56e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="76150bc6-cce3-4748-bff5-a2585cb6d36e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="04c9b6b4-cf6c-4151-8465-9065d91c1aa2" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="985ccbdf-fdea-46b5-93ad-4831cf5580f2" name="Match content of [searchResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]>=
+'${_GUI-searchTransactions-01761234567#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="821afad3-a4a6-4c20-bc7d-0518178cdaee" name="GUI-searchTransactions-017612345678">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="GUI-searchTransactions-017612345678" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:searchTransactions>\r
+         <search>\r
+            <first>0</first>\r
+            <count>1</count>\r
+            <searchParam>\r
+               <msisdn>017612345678</msisdn>\r
+               <paymentDate>\r
+                  <fromDate>${#Project#Date_Current}</fromDate>\r
+               </paymentDate>\r
+               <paymentTypes>${#TestSuite#DRC-PaymentType-ATM}</paymentTypes>\r
+            </searchParam>\r
+         </search>\r
+      </v1:searchTransactions>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="814efda1-e1db-4743-be5e-b507592e863c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="fb724153-7443-44c7-8744-82c9ea4a1093">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="3c07057b-8299-45c4-af66-cd1010091991"/>
+        <con:assertion type="XPath Match" id="2c68c4d5-6c0b-4b61-a610-0ad99dde218f" name="Match content of [searchResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]>=
+'${_GUI-searchTransactions-017612345678#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]}'</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>TraceNr-1</con:name>
+      <con:value>124515</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TraceNr-2</con:name>
+      <con:value>129269</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TraceNr-3</con:name>
+      <con:value>124262</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TraceNr-4</con:name>
+      <con:value>194522</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TraceNr-5</con:name>
+      <con:value>141318</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TraceNr-6</con:name>
+      <con:value>185604</con:value>
+    </con:property>
+    <con:property>
+      <con:name>LocalTime</con:name>
+      <con:value>160243</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>e7f0ef67-d658-4d1a-ab2f-b27d809675ea</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e820b33e-bb4b-4371-b044-5a055706ba74</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a402a11-ff57-42eb-8930-355fd6bb76a5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a39479db-8030-4291-b0d7-8346a251a781</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>91200e05-b924-4af1-96f5-8fd89c3ac4d8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8edab827-346d-4ea9-b6c3-a41297fe1550</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cead6300-82c7-4cf8-8012-b147cb62d250</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a25143f8-ec75-47f3-8562-97c3a05bf5dd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a3322aaf-ea27-432b-9127-53d36aedf149</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>775651ca-521c-488f-accd-770e411550c1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c56528b1-b0f8-47cb-aa7c-09774b8120fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>65273a4f-5fa0-43da-89cd-291a04041069</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60bd5a35-7620-4d1c-80bd-6d63def8c949</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b68a0ddd-bde6-4f7c-8789-efb7aa6ae4b4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e7aa9e48-960a-4cb6-a8f2-7cb76614179a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c3f61578-5658-4a46-a5d9-b7323af7bcb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6465af47-b5cc-4094-8f8a-eb1a94b98b95</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a23038ff-9c21-4ccf-b72b-00e1ff5a59f0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63ba0245-f2c9-4ee9-9a0c-6d139abdc2a9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>acadbf4f-d3cf-4ea3-bc65-71953710f571</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cae62404-6706-46e9-b4cc-c05055a6b199</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e178a6c3-234e-4aa7-8c58-8700dbbfd77d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5649b65e-bfe9-4b50-800f-da4ea35c4df8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ea3675d9-f1dd-418c-8c26-0ad2c6300a04</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>22853259-3ef9-41bf-a6a5-4d80163079b3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>077460fc-4f42-4f63-808c-b6ea1ac819f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>85aed7d5-fb47-404b-ad03-96c349c34eff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b8631a62-f626-4377-a473-5c8175a3db4c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d30f3511-6031-43e6-be0b-cc6c074d592a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6538fc71-214e-46ab-942c-a3120bc488b7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0215348a-406e-42a7-92a2-5f37d5316141</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b44237cd-54ae-485b-9589-434128504f16</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d1b1a63c-82e2-4c5f-b884-81ff264df0d2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7de419df-8513-4f86-a068-ed5200b407f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9dd713c3-0c38-4eb2-9367-97a3d4060f27</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ac6dc2b8-8bfd-47f7-abc1-751402567185</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>571590da-bd95-4eef-a4e1-eda8f714a5dd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>62976c1a-6d64-49a7-a735-d4d404996628</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e38622ef-2b98-48ee-a323-e56c78dd0c9e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4f6077c6-2832-470d-b054-6388db22c888</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

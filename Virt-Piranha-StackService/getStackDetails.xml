@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="getStackDetails" id="ec5fd049-c94e-43bb-a0f1-fff7d364f64c" interface="StackServicePortBinding" operation="getStackDetails" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="ec5fd049-c94e-43bb-a0f1-fff7d364f64cfileName">getStackDetails</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig/>
+  <con:dispatchPath><![CDATA[/*
+ * This script select response and set values in response elements dependend on msisdn, if msisdn contains defined format
+ * For all another correct MSISDNs default resposne is returned 
+ * MSISDN define ordered values for response like described below.
+ * Date: 1.03.2016
+ * Autor: Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using piranha mock service.
+
+Mock service despatch soapFault response, if MSISDN in request:
+	- null, empty or not numeric
+	- MSISDN < 7 or MSISDN>20 signs 
+	- doesn't start with 491
+	
+Mock service despatch default response like current below 
+for all valid MSISDNs in request and not in followed format.
+
+To order custom response with expected values MSISDN in request must be in format:
+- MSISDN must be started with = ${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}
+- If MSISDN has prefix above and wrong format, mock despatch soapFault response.
+
+- Position 6 set followed value for element virtualStack in response:
+virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]
+	1 = RCS
+	2 = BCS
+	3 = PREPAID
+	4 = SPAIN
+	5 = HERMES
+	
+- Position 7 set followed value for element paymentType in response:
+paymentType - enumeration: [POSTPAID,PREPAID]
+ 	1 = POSTPAID
+ 	2 = PREPAID 
+ 	
+- Position 8 set followed value for element subscriptionStatus in response:
+subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]
+	1 = ACTIVE
+	2 = DEACTIVATION_PENDING
+	3 = DEACTIVATING
+	4 = INACTIVE
+	
+- Position 9-11 set followed value for element sasName in response:
+sasName
+	SR + Position 9-11 from MSISDN. Ex. 49150221101 returns <sasName>SR101</sasName>
+	
+- Optional position 12-13 set followed value for element brandId in response:
+Optional: brandIdType
+	return position 12-13 converted to integer if not empty. 
+	Ex. 4915922110110 returns <brandId>10</brandId>
+
+Example response for MSISDN=4915022110100: 
+   <soapenv:Header/>
+   <soapenv:Body>   
+      <stac:getStackDetailsResponse>       
+         <virtualStack>BCS</virtualStack>      
+         <paymentType>PREPAID</paymentType>        
+         <subscriptionStatus>ACTIVE</subscriptionStatus>        
+         <sasName>SR101</sasName>        
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+
+ End of documentation  
+'''
+// save documentation in virt property to include in responses
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+// Const prefix for values in response
+String MSISDN_PREFIX=context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}' )
+String MSISDN_CC_PREFIX=context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-CreditCard}' )
+String MSISDN_DELAY_PREFIX=context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-Delay-60sec}' )
+String SASPREFIX=context.expand( '${#MockService#SAS-PREFIX}' )
+// log.info('Piranha mock. Prefix for custom respons is: '+MSISDN_DELAY_PREFIX)
+
+// create XmlHolder for request content
+def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent )
+def sMSISDN = holder.getNodeValue( "//msisdn" )
+log.info('Piranha-StackService: Return response for request with MSISDN: '+ sMSISDN)
+
+// restriction for msisdn in request from xsd-schema is:  <xs:minLength value="7"/>   <xs:maxLength value="20"/> 
+if (sMSISDN==null || sMSISDN.length()<7 || sMSISDN.length()>20 || sMSISDN[0..2]!='491' || !sMSISDN.toString().isNumber()){
+	return 'Response-SoapFault-MSISDN-Unknown'
+}
+
+// if msisdn starts with prefix for credit card, return response with SAS for credit cards. 
+if(sMSISDN[0..4]==MSISDN_CC_PREFIX){
+	return 'Response-CreditCard-Default'
+}
+
+// if msisdn starts with prefix for delay, return default response after delay 60 sec.
+if(sMSISDN[0..4]==MSISDN_DELAY_PREFIX){
+	log.info('Response default will be sent after sleep time=60 sec. for all msisdns with prefix: - '+MSISDN_DELAY_PREFIX)
+	// sleep(60000)	
+	return 'Response-Default'
+}
+
+// if msisdns start with one another prefix and contains not enough signs for response with mandatory parameters --> default response 
+if(sMSISDN[0..4]!=MSISDN_PREFIX || sMSISDN.length()<11){
+	return 'Response-Default'
+}
+
+// list with references from enumeration values in response to number 
+//<!--type: virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]-->
+def mapVirtualStack=['1':'RCS','2':'BCS','3':'PREPAID','4':'SPAIN','5':'HERMES']
+//<!--type: paymentType - enumeration: [POSTPAID,PREPAID]-->
+def mapPaymentType=['1':'POSTPAID','2':'PREPAID']
+//<!--type: subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]-->
+def mapSubscripStatus=['1':'ACTIVE','2':'DEACTIVATION_PENDING','3':'DEACTIVATING','4':'INACTIVE']
+
+// split msisdn and save splitted value
+def sMSISDNPrefix=sMSISDN[0..4]
+def sVirtualStack=sMSISDN[5]
+def sPaymentType=sMSISDN[6]
+def sSubscriptionStatus=sMSISDN[7]
+def sSasName=sMSISDN[8..10]
+
+// optional param BrandID: 
+context.mockService.setPropertyValue('getStack-brandId', '')
+// find and return two signs on position 11 and 12, if exist. If no digits after postition 11, regex return null.
+def sBrandIdType=sMSISDN.substring(11).find("[0-9]{1,2}")
+
+// If msisdn not defined response parameters in msisdn format correct, return soap fault response
+if(!mapVirtualStack.containsKey(sVirtualStack) 
+	|| !mapPaymentType.containsKey(sPaymentType)
+	|| !mapSubscripStatus.containsKey(sSubscriptionStatus)	){
+	return 'Response-SoapFault-MSISDN-Unknown'
+}
+
+// set virt parameters for response
+context.mockService.setPropertyValue('getStack-virtualStack', mapVirtualStack[sVirtualStack])
+context.mockService.setPropertyValue('getStack-paymentType', mapPaymentType[sPaymentType])
+context.mockService.setPropertyValue('getStack-subscriptionStatus', mapSubscripStatus[sSubscriptionStatus])
+context.mockService.setPropertyValue('getStack-sasName', SASPREFIX+sSasName)
+
+// if brandid exist in msisdn and not 0, than set brand id and return with brandid
+if (sBrandIdType==null || sBrandIdType=='' || sBrandIdType.toInteger()<=0){		
+	return 'Response-Template-MandatoryElements'	
+}
+else {	
+	// log.info('BrandID is --- '+sBrandIdType)
+	context.mockService.setPropertyValue('getStack-brandId', sBrandIdType.toInteger().toString())
+	return 'Response-Template-AllElements'
+}]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="b0a9e9ac-536f-401b-a6d4-e5d150f4f067" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings>
+      <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockResponse@encode_attachments">false</con:setting>
+      <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockResponse@force_mtom">false</con:setting>
+    </con:settings>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stac="http://stackservice.pa.o2.de/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stac:getStackDetailsResponse>
+         <!--type: virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]-->
+         <virtualStack>${#MockService#getStack-virtualStack-Default}</virtualStack>
+         <!--type: paymentType - enumeration: [POSTPAID,PREPAID]-->
+         <paymentType>${#MockService#getStack-paymentType-Default}</paymentType>
+         <!--type: subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]-->
+         <subscriptionStatus>${#MockService#getStack-subscriptionStatus-Default}</subscriptionStatus>
+         <!--type: sasName-->
+         <sasName>${#MockService#getStack-sasName-Default}</sasName>
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="getStackDetails"/>
+  </con:response>
+  <con:response name="Response-SoapFault-MSISDN-Unknown" id="4a0ae57c-b04a-4974-8c7e-368d152e19ec" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Piranha Mock: StackService. soapFault</faultstring>
+         <detail>
+            <ns2:UnknownMsisdn xmlns:ns2="http://stackservice.pa.o2.de/">
+               <message>Piranha Mock: MSISDN is unknown</message>
+            </ns2:UnknownMsisdn>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="getStackDetails"/>
+  </con:response>
+  <con:response name="Response-Template-MandatoryElements" id="77d970a1-50b6-4064-86b5-e1b2188c6c2e" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stac="http://stackservice.pa.o2.de/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stac:getStackDetailsResponse>
+         <!--type: virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]-->
+         <virtualStack>${#MockService#getStack-virtualStack}</virtualStack>
+         <!--type: paymentType - enumeration: [POSTPAID,PREPAID]-->
+         <paymentType>${#MockService#getStack-paymentType}</paymentType>
+         <!--type: subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]-->
+         <subscriptionStatus>${#MockService#getStack-subscriptionStatus}</subscriptionStatus>
+         <!--type: sasName-->
+         <sasName>${#MockService#getStack-sasName}</sasName>
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="getStackDetails"/>
+  </con:response>
+  <con:response name="Response-Template-AllElements" id="77d970a1-50b6-4064-86b5-e1b2188c6c2e" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stac="http://stackservice.pa.o2.de/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stac:getStackDetailsResponse>
+         <!--type: virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]-->
+         <virtualStack>${#MockService#getStack-virtualStack}</virtualStack>
+         <!--type: paymentType - enumeration: [POSTPAID,PREPAID]-->
+         <paymentType>${#MockService#getStack-paymentType}</paymentType>
+         <!--type: subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]-->
+         <subscriptionStatus>${#MockService#getStack-subscriptionStatus}</subscriptionStatus>
+         <!--type: sasName-->
+         <sasName>${#MockService#getStack-sasName}</sasName>
+         <!--type: brandIdType-->
+         <brandId>${#MockService#getStack-brandId}</brandId>
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="getStackDetails"/>
+  </con:response>
+  <con:response name="Response-CreditCard-Default" id="b0a9e9ac-536f-401b-a6d4-e5d150f4f067" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings>
+      <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockResponse@encode_attachments">false</con:setting>
+      <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockResponse@force_mtom">false</con:setting>
+    </con:settings>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stac="http://stackservice.pa.o2.de/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stac:getStackDetailsResponse>
+         <!--type: virtualStack - enumeration: [RCS,BCS,PREPAID,SPAIN,HERMES]-->
+         <virtualStack>${#MockService#getStack-virtualStack-Default}</virtualStack>
+         <!--type: paymentType - enumeration: [POSTPAID,PREPAID]-->
+         <paymentType>${#MockService#getStack-paymentType-Default}</paymentType>
+         <!--type: subscriptionStatus - enumeration: [ACTIVE,DEACTIVATION_PENDING,DEACTIVATING,INACTIVE]-->
+         <subscriptionStatus>${#MockService#getStack-subscriptionStatus-Default}</subscriptionStatus>
+         <!--type: sasName-->
+         <sasName>${#Project#ChargeCustomer-2-SP}</sasName>
+      </stac:getStackDetailsResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="getStackDetails"/>
+  </con:response>
+</con:mockOperation>

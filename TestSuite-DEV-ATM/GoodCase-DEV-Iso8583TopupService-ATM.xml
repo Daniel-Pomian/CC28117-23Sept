@@ -1,0 +1,1491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="7d10e29f-703c-401b-a7f4-19b0f6b7b4b5" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-Iso8583TopupService-ATM" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Relevant user story is: https://www.sg.de.o2.com/jira/browse/DRC-2417
+
+Implement test-case for most of possible negative use-case with predefined error-message on prod with prerequisites and result validation:
+
+    Implement tests for duplicate topup
+    Implement tests for duplicate cancel
+    Implement tests for topup canceled before
+    Implement tests for cancel unknown topup
+    Additional reimplement all negative use-cases against Proxy directly against atm-core-service.</con:description>
+  <con:settings>
+    <con:setting id="32e090ee-f24c-48da-b6e6-a597e2b36a5efileName">GoodCase-DEV-ATM-TopupService</con:setting>
+    <con:setting id="fa5ac862-5b01-4a4f-abd1-925956b0ba1dfileName">GoodCase-DEV-Iso8583TopupService-ATM</con:setting>
+    <con:setting id="7d10e29f-703c-401b-a7f4-19b0f6b7b4b5fileName">GoodCase-DEV-Iso8583TopupService-ATM</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearProperties" id="40ff4996-4276-413e-8a3b-9025e42e5e6c">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="false" transferTextContent="false" failOnError="false" disabled="false" entitize="true" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Date</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_3</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-CreateTestData" id="cbec0422-2eac-4dd6-b093-1a6bc550b891">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script format generated msisdns to format 0+number
+ * Date: 26.07.2016
+ * Autor: Michael Gordon
+*/
+
+ // set in properties msisdns
+ testRunner.testCase.setPropertyValue('MSISDN',context.expand( '${#Project#MSISDN-Piranha-OK}' ))
+ testRunner.testCase.setPropertyValue('Date',context.expand( '${#Project#DateTime_Current_Offset}' ))
+ testRunner.testCase.setPropertyValue('ID_1','1'+context.expand( '${#Project#Random5}' ))
+ testRunner.testCase.setPropertyValue('ID_2','2'+context.expand( '${#Project#Random5}' ))
+ testRunner.testCase.setPropertyValue('ID_3','3'+context.expand( '${#Project#Random5}' ))</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="970cbf70-5365-43a9-a11a-089d1b9f6fa9" name="healthCheck">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>healthCheck</con:operation>
+      <con:request name="healthCheck" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c58f8c59-18b2-4c39-9422-778de3e5fdb2">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:healthCheck/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="0c7f9a64-3195-4fc5-86e7-f3d798b09d0c" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="6d22b503-1b63-4527-a4ad-45fe21a29d2d" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="ecd3d3c3-bd45-43c6-a280-2f681888d2d4" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="ebd95d01-dd11-4769-bfe2-2ed5d526c23b" name="Check for existence of [ns2:healthCheckResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+exists( //ns2:healthCheckResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="healthCheck"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="6b67cf0a-a6af-4886-ad3f-6992adba78d3" name="100N_cancel_unknownTopup">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>cancel</con:operation>
+      <con:request name="100N_cancel_unknownTopup" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="da0aa612-c76f-4fea-815f-b2796205106e">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:cancel>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:cancel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="005153d6-bad6-46eb-9090-7a2ee336a339" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f6424ba3-9eae-490f-9878-116cab7151b5" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="07e4fafc-6da3-4b3b-a9cd-3b435b21498e" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="cd25bf8c-0be8-402d-9ec2-6c3acdd69f16" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>GENERAL_ERROR</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="cancel"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0b012a6a-5962-4958-9df5-749233214811" name="110P_topup_canceledBefore">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="110P_topup_canceledBefore" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="4b497024-7f4b-45f8-a182-a99ec4bf95ab" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="66d42353-fe1b-4f2d-9757-a3bc0c106b3f" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/duplicate[1]</con:xpath>
+              <con:element>duplicate</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/failed[1]</con:xpath>
+              <con:element>failed</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:topupResponse xmlns:ns2="http://directrecharge.o2.com/iso8583topupservice/v1/">
+         <transactionResultData>
+            <duplicate>false</duplicate>
+            <failed>false</failed>
+            <correlationId>239835319</correlationId>
+            <tenantId>1</tenantId>
+         </transactionResultData>
+      </ns2:topupResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="de8d3f42-bd2a-4614-af1a-374e1bffd269" name="120N_topup_canceledBefore-duplicate">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="120N_topup_canceledBefore-duplicate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="500eae9e-acca-4d70-bdab-72530d713012" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="ec36c21b-b230-49a5-991a-036789e29a67" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>DUPLICATED_REQUEST</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a3ce65aa-7f1b-4cd1-a104-ddf321309bd8" name="125N-getTopup_canceledBefore">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>getRelatedTopup</con:operation>
+      <con:request name="125N-getTopup_canceledBefore" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c58b6405-41c3-434d-ba4f-8cc895b19c2b">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getRelatedTopup>${110P_topup_canceledBefore#RawRequest#declare namespace v1='http://directrecharge.o2.com/iso8583topupservice/v1/'; //v1:topup[1]/transactionRequestData[1]/transactionData[1]}</v1:getRelatedTopup>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="86c083cb-ab31-470c-ac15-4c7b8fc755b3"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="d9270ddf-a1d1-4a47-a20d-0ec83fec5612">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="130e7a2c-d963-4d41-8a02-76ae8c684e69"/>
+        <con:assertion type="XPath Match" id="761911a6-8f6f-4049-b4ec-a23368df23be" name="Match content of [transactionResultData]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns2:getRelatedTopupResponse[1]/transactionResultData[1]</path>
+            <content>${110P_topup_canceledBefore#Response#declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/'; //ns2:topupResponse[1]/transactionResultData[1]}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getRelatedTopup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="5e5e8a61-6c56-456a-aeda-4629cb377d6f" name="130P_topup-OK">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="130P_topup-OK" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-3-Code}  ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <serverId>252501</serverId>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_2}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="43d994ef-a347-4c5d-8f75-9c15148642a6"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="75fe068b-c553-4271-96cb-37eef9827121">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="af508552-f4e6-4d52-808d-2c305a18f26a"/>
+        <con:assertion type="MessageContentAssertion" name="Message Content Assertion" id="d591a227-a733-4dc8-8a9a-7a47a8ace5a3">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/duplicate[1]</con:xpath>
+              <con:element>duplicate</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/failed[1]</con:xpath>
+              <con:element>failed</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>&lt;</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns1:topupResponse[1]/transactionResultData[1]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:topupResponse xmlns:ns2="http://directrecharge.o2.com/iso8583topupservice/v1/">
+         <transactionResultData>
+            <duplicate>false</duplicate>
+            <failed>false</failed>
+            <correlationId>239835319</correlationId>
+            <tenantId>1</tenantId>
+         </transactionResultData>
+      </ns2:topupResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="deb6bd5a-e58c-4b66-8bfe-d2f1d7b39433" name="140N_topup-duplicate">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="140N_topup-duplicate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <!--type: string-->
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <!--type: dateTime-->
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <!--type: string-->
+               <cardType>13</cardType>
+               <!--type: string-->
+               <partnerId>${#TestSuite#Partner-3-Code}  ${#TestSuite#BLZ}</partnerId>
+               <!--type: string-->
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <!--Optional:-->
+               <!--type: string-->
+               <serverId>252501</serverId>
+               <!--type: string-->
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <!--type: string-->
+               <transactionId>${#TestCase#ID_2}</transactionId>
+            </transactionData>
+            <!--type: string-->
+            <isoGwServerId>280105</isoGwServerId>
+            <!--type: string-->
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="43d994ef-a347-4c5d-8f75-9c15148642a6"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="75fe068b-c553-4271-96cb-37eef9827121">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b1450605-5a4f-442a-b36c-feacf3fe3e5e" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="83e1e37d-a675-4138-9b86-b2f76039368f" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>DUPLICATED_REQUEST</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="3ca323ec-4988-4d4f-bfeb-d7e9ca62d05a" name="150P_getTopup">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>getRelatedTopup</con:operation>
+      <con:request name="150P_getTopup" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c58b6405-41c3-434d-ba4f-8cc895b19c2b">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:getRelatedTopup>${130P_topup-OK#RawRequest#declare namespace v1='http://directrecharge.o2.com/iso8583topupservice/v1/'; //v1:topup[1]/transactionRequestData[1]/transactionData[1]}</v1:getRelatedTopup>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="18f54304-6c9f-4887-a566-c8032da93cca" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="ed3e15f3-d80b-42d8-aef9-bee8e8ad3baa" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="b4f3e4ed-18c4-4479-87d5-abda75a0dda8" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="344defed-c15d-47bf-82ad-f27ae3bf3a46" name="Match content of [transactionResultData]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//ns2:getRelatedTopupResponse[1]/transactionResultData[1]</path>
+            <content>${130P_topup-OK#Response#declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/'; //ns2:topupResponse[1]/transactionResultData[1]}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getRelatedTopup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="f5a9c572-7f4e-469d-9ad4-dd02a3cb4b77" name="160N_getTopup_unknown-WrongTransactID">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>getRelatedTopup</con:operation>
+      <con:request name="160N_getTopup_unknown-WrongTransactID" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="c58b6405-41c3-434d-ba4f-8cc895b19c2b">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getRelatedTopup>
+         <transactionData>
+            <amount>${#TestCase#Amount}</amount>
+            <msisdn>${#TestCase#MSISDN}</msisdn>
+            <paymentDate>${#TestCase#Date}</paymentDate>
+            <cardType>13</cardType>
+            <partnerId>${#TestSuite#Partner-3-Code}  ${#TestSuite#BLZ}</partnerId>
+            <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+            <serverId>252501</serverId>
+            <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+            <transactionId>${#TestCase#ID_3}</transactionId>
+         </transactionData>
+      </v1:getRelatedTopup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="18f54304-6c9f-4887-a566-c8032da93cca" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="ed3e15f3-d80b-42d8-aef9-bee8e8ad3baa" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="d43e58f6-8367-4a9d-bfee-2e1bdbd40ecf" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="36682433-3b8b-4514-a9aa-234d4a1e7998" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>UNKNOWN_TOPUP</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getRelatedTopup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="524208fe-44c6-4943-8e36-251be6e5df57" name="180N_topup-NotAllowed">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="180N_topup-NotAllowed" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-2-Code}  ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <serverId>252501</serverId>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_2}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" name="SOAP Response" id="43d994ef-a347-4c5d-8f75-9c15148642a6"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="75fe068b-c553-4271-96cb-37eef9827121">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="ee27d7ad-c921-4776-ba97-e20396397ccd" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="e70de0ad-0dd3-4ecd-9b1b-a73f325bb617" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>GENERAL_ERROR</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="Simple Contains" id="7b3e51aa-6b0b-434b-8ae9-997c6cd80ecc" name="Contains">
+          <con:configuration>
+            <token>BrandId: 1 is not accepted for partner</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="45423502-c7c5-4a62-aad5-4aad5f25049e" name="170P_GUI-searchTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="170P_GUI-searchTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:searchTransactions>
+         <search>
+            <first>0</first>
+            <count>20</count>
+            <searchParam>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <receptionDate>
+                  <fromDate>${#Project#Date_Current}</fromDate>
+               </receptionDate>
+               <paymentTypes>${#TestSuite#DRC-PaymentType-ATM}</paymentTypes>
+            </searchParam>
+         </search>
+      </v1:searchTransactions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="c5366177-8694-4436-9a37-0b21f88fd56e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="76150bc6-cce3-4748-bff5-a2585cb6d36e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="04c9b6b4-cf6c-4151-8465-9065d91c1aa2" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="6f7796cf-f6db-4cd8-bc80-aada4e7b9b86" name="Check count of [searchResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:searchTransactionsResponse/searchResponse/searchResponse)</path>
+            <content>3</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="MessageContentAssertion" id="43ec5b82-5509-4de0-9759-d96d1667b7e1" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandId[1]</con:xpath>
+              <con:element>brandId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/tenantName[1]</con:xpath>
+              <con:element>tenantName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>TELEFONICA</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Geldautomaten</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12924518</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/partnerId[1]</con:xpath>
+              <con:element>partnerId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>01006  79969930</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#outAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]</con:xpath>
+              <con:element>ns2:searchTransactionsResponse</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>exists</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue/>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>20</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>zurückgewiesen</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/viewTimeStamp[1]</con:xpath>
+              <con:element>viewTimeStamp</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:52.094+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+declare namespace ns1='http://www.w3.org/2001/XMLSchema-instance';
+//ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/@ns1:type</con:xpath>
+              <con:element>@xsi:type</con:element>
+              <con:type/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ns2:atmResponseType</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/brandName[1]</con:xpath>
+              <con:element>brandName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>o2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/receptionDate[1]</con:xpath>
+              <con:element>receptionDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:51+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentDate[1]</con:xpath>
+              <con:element>paymentDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:51+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[1]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>20</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+declare namespace ns1='http://www.w3.org/2001/XMLSchema-instance';
+//ns2:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/@ns1:type</con:xpath>
+              <con:element>@xsi:type</con:element>
+              <con:type/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ns2:atmResponseType</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/tenantId[1]</con:xpath>
+              <con:element>tenantId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/tenantName[1]</con:xpath>
+              <con:element>tenantName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>TELEFONICA</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/brandId[1]</con:xpath>
+              <con:element>brandId</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/brandName[1]</con:xpath>
+              <con:element>brandName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>o2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>239834737</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12924516</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#outAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/receptionDate[1]</con:xpath>
+              <con:element>receptionDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:51+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/committedDate[1]</con:xpath>
+              <con:element>committedDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:51+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/paymentDate[1]</con:xpath>
+              <con:element>paymentDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-10-21T17:01:51+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>20</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/paymentTypeDescription[1]</con:xpath>
+              <con:element>paymentTypeDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Geldautomaten</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/statusDescription[1]</con:xpath>
+              <con:element>statusDescription</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ausgeführt und rückgemeldet</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/opReference[1]</con:xpath>
+              <con:element>opReference</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>357696107</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[2]/partnerId[1]</con:xpath>
+              <con:element>partnerId</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>01002  79969930</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[3]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#MSISDN}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[3]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:searchTransactionsResponse[1]/searchResponse[1]/searchResponse[3]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>${#TestCase#outAmount}</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:searchTransactionsResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <searchResponse>
+            <viewTimeStamp>2019-10-21T17:01:52.094+02:00</viewTimeStamp>
+            <searchResponse xsi:type="ns2:atmResponseType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <msisdn>4915996882065</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <id>12924518</id>
+               <amount>19900</amount>
+               <receptionDate>2019-10-21T17:01:51+02:00</receptionDate>
+               <paymentDate>2019-10-21T17:01:51+02:00</paymentDate>
+               <paymentType>20</paymentType>
+               <paymentTypeDescription>Geldautomaten</paymentTypeDescription>
+               <status>20</status>
+               <statusDescription>zurückgewiesen</statusDescription>
+               <rejectionReason>23201</rejectionReason>
+               <partnerId>01006  79969930</partnerId>
+            </searchResponse>
+            <searchResponse xsi:type="ns2:atmResponseType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <msisdn>4915996882065</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <correlationId>239834737</correlationId>
+               <id>12924516</id>
+               <amount>19900</amount>
+               <receptionDate>2019-10-21T17:01:51+02:00</receptionDate>
+               <committedDate>2019-10-21T17:01:51+02:00</committedDate>
+               <paymentDate>2019-10-21T17:01:51+02:00</paymentDate>
+               <paymentType>20</paymentType>
+               <paymentTypeDescription>Geldautomaten</paymentTypeDescription>
+               <status>31</status>
+               <statusDescription>ausgeführt und rückgemeldet</statusDescription>
+               <opReference>357696107</opReference>
+               <partnerId>01002  79969930</partnerId>
+            </searchResponse>
+            <searchResponse xsi:type="ns2:atmResponseType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <msisdn>4915996882065</msisdn>
+               <tenantId>1</tenantId>
+               <tenantName>TELEFONICA</tenantName>
+               <brandId>1</brandId>
+               <brandName>o2</brandName>
+               <correlationId>239834736</correlationId>
+               <id>12924514</id>
+               <amount>19900</amount>
+               <receptionDate>2019-10-21T17:01:51+02:00</receptionDate>
+               <committedDate>2019-10-21T17:01:51+02:00</committedDate>
+               <paymentDate>2019-10-21T17:01:51+02:00</paymentDate>
+               <paymentType>20</paymentType>
+               <paymentTypeDescription>Geldautomaten</paymentTypeDescription>
+               <status>31</status>
+               <statusDescription>ausgeführt und rückgemeldet</statusDescription>
+               <opReference>6320544453</opReference>
+               <partnerId>1006   79969930</partnerId>
+            </searchResponse>
+         </searchResponse>
+      </ns2:searchTransactionsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Amount</con:name>
+      <con:value>199</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outAmount</con:name>
+      <con:value>19900</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>4915955254370</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Date</con:name>
+      <con:value>2022-10-03T16:00:57+02:00</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_1</con:name>
+      <con:value>147036</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_2</con:name>
+      <con:value>215241</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_3</con:name>
+      <con:value>316235</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>6622bb1a-0b11-4fc8-8abd-0c1caa1a65fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e193fcf-99d7-463a-820e-2d6d7c4d14fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ec2017e2-7ae3-4915-bdbe-002bc81ef7dd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4d2b0704-1b78-4c0c-af53-85c1f52d670a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>71012a18-6c96-4f3e-853d-3daed8ab96b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>123c9009-17a3-4919-b26e-e9204eb0c3c5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03bc7f54-6945-424b-84e3-961d609deada</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0536c616-478d-4d56-b4fd-9453751b0360</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>67ba5508-1fa6-4039-bafd-8b47d7338db4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5dbcaf3c-6977-4b2a-ad94-9be9bbd40b3b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32f3abca-75eb-4749-b035-b41d0564b22a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a79fd1b-eb2e-4969-be54-3227501b844c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ed346e7f-88d4-4e43-8949-b665e24c02f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>689d2da7-ec76-46b0-aca8-de6b8002191e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>399c625c-0423-4234-8fd6-161bd9183595</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e1c20fa6-f34e-408e-9e74-0cb64a06a853</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3678fb34-7796-4f45-bc95-2bb65cf9097f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5c98d4f5-2e3e-40e0-a455-28457da675bd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>afe647c7-f983-4dad-bb12-41b54f0488b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7b1c4747-cc17-4282-a493-50ac0d578088</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d07dfcfb-fcf3-4439-a955-2dbc688965fd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

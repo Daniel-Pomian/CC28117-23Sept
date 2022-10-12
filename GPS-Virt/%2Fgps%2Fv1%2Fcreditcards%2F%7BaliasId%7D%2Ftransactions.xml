@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:restMockAction name="/gps/v1/creditcards/{aliasId}/transactions" method="POST" resourcePath="/gps/v1/creditcards/{aliasId}/transactions" id="25ce75f5-73eb-4860-9119-a9329454175f" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="25ce75f5-73eb-4860-9119-a9329454175ffileName">%2Fgps%2Fv1%2Fcreditcards%2F%7BaliasId%7D%2Ftransactions</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>QUERY_MATCH</con:dispatchStyle>
+  <con:dispatchConfig xsi:type="con:MockOperationQueryMatchDispatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:query>
+      <con:name>clientTransactionId=CC</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'CC_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-Default</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=400</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'400_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-400=HTTP-Status</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=402</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'402_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-402=HTTP-Status</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=500</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'500_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-500=HTTP-Status</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=502</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'502_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-502=HTTP-Status</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=503</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'503_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-503=HTTP-Status</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=401</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'401_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-401=HTTP-Status-EmptyBody</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=403</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'403_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-403=HTTP-Status-EmptyBody</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=406</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'406_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-406=HTTP-Status-EmptyBody</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=415</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'415_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-415=HTTP-Status-EmptyBody</con:response>
+    </con:query>
+    <con:query>
+      <con:name>clientTransactionId=CA-ErrorLater</con:name>
+      <con:query>starts-with(//payment[1]/clientTransactionId[1]/text(),'CA_')</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-ErrorLater</con:response>
+      <con:disabled>false</con:disabled>
+    </con:query>
+  </con:dispatchConfig>
+  <con:dispatchPath xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <con:dispatchXPath/>
+  <con:parameterDispatcherRuleContainer/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="f32cace3-ef98-4056-887e-1cec5caeeb9d" httpResponseStatus="200" mediaType="application/xml" dataSource="">
+    <con:settings/>
+    <con:script/>
+    <con:responseContent><![CDATA[<!--Information for using gps mock:
+  Start clientTransactionId in request with http-status-code for response with http error. Ex. 400_1234567890
+  Start clientTransactionId in request with prefix CA_[http-status-code]_* for errors in responses in capture and cancel. Ex. CA_400_1234567890
+  Set aliasId to exact 12 digits and first 4 signs of them to amount in format xxxx if you want recieve custom responses. Ex. 019912345678
+  -->
+<transaction targetNamespace="http://gps.telefonica.com/v1/types">
+   <transactionId>${#MockService#transactId}</transactionId>
+   <paymentMethod>CreditCard</paymentMethod>
+   <paymentProvider>Mastercard</paymentProvider>
+   <type>PAYMENT</type>
+   <status>AUTHORIZED</status>
+   <paymentAmount>
+      <value>${#MockService#amount}</value>
+      <currency>${#Project#Currency_Default}</currency>
+   </paymentAmount>
+   <saferpayTransactionInfo>
+      <saferpayTransactionId>${#MockService#transactId}</saferpayTransactionId>
+      <accountId>${#MockService#Default-saferpayAccountId}</accountId>
+      <terminalId>${#MockService#Default-saferpayTerminalId}</terminalId>
+   </saferpayTransactionInfo>
+   <clientTransactionId>${#MockService#transactId}clientTransactionId</clientTransactionId>
+   <authorizationDate>${#MockService#Default-regDate}</authorizationDate>
+   <creditCard>
+      <aliasId>${#MockService#aliasId}</aliasId>
+      <paymentProvider>Mastercard</paymentProvider>
+      <status>REGISTERED</status>
+      <creditCardBrandName>MasterCard</creditCardBrandName>
+      <maskedNumber>1234 5678 9012 3456</maskedNumber>
+      <expiryYear>2020</expiryYear>
+      <expiryMonth>1</expiryMonth>
+      <registrationDate>${#MockService#Default-regDate}</registrationDate>
+      <cardHolderName>cardHolderName contains max. allowed signs=50 5050</cardHolderName>
+      <countryCode>${#MockService#Default-countryCode}</countryCode>
+   </creditCard>
+</transaction>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-400=HTTP-Status" id="3ad649c7-7b09-486d-81d2-4e6fc4d26ac6" httpResponseStatus="400" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>VALIDATION_FAILED</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-402=HTTP-Status" id="b12d1c66-4a44-4a25-adff-7aa6a7049db5" httpResponseStatus="402" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>TRANSACTION_FAILED</errorCode>
+  <pspErrorCode>CARD_CHECK_FAILED</pspErrorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-500=HTTP-Status" id="3fc6888c-9f60-4637-a9f7-e4b1cbe8e519" httpResponseStatus="500" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>GPS_INTERNAL_ERROR</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-502=HTTP-Status" id="962f916c-4d27-46f8-b4b9-580a1ff03bbe" httpResponseStatus="502" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>PSP_ERROR</errorCode>
+  <pspErrorCode>INTERNAL_ERROR</pspErrorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-503=HTTP-Status" id="c06ddb83-88c2-4e88-aaf6-d6f4cc4604f6" httpResponseStatus="503" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<errorResponse>
+  <errorCode>PSP_ERROR</errorCode>
+  <errorMessage>${#MockService#Default-errorDescription}</errorMessage>
+  <path>${#MockService#currentURL}</path>
+  <timestamp>${#Project#DateTime_Current_Offset}</timestamp>
+</errorResponse>]]></con:responseContent>
+  </con:response>
+  <con:response name="Response-401=HTTP-Status-EmptyBody" id="3c921585-4e0c-4743-92e9-b2a1e8864f9b" httpResponseStatus="401" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-403=HTTP-Status-EmptyBody" id="72ab8d2e-59c9-449d-b6de-6eb2ec38cd80" httpResponseStatus="403" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-406=HTTP-Status-EmptyBody" id="51a01d73-94d3-4ade-ac4f-562b58842e91" httpResponseStatus="406" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-415=HTTP-Status-EmptyBody" id="6b283bd3-c85c-4688-9ca9-32aa3e4cc7de" httpResponseStatus="415" dataSource="">
+    <con:settings/>
+    <con:responseContent/>
+  </con:response>
+  <con:response name="Response-ErrorLater" id="dd173bc8-1135-4a0e-abbd-0982f0f6003d" httpResponseStatus="200" mediaType="application/xml" dataSource="">
+    <con:settings/>
+    <con:script/>
+    <con:responseContent><![CDATA[<transaction targetNamespace="http://gps.telefonica.com/v1/types">
+   <transactionId>${='${#MockResponse#Request#//payment[1]/clientTransactionId[1]}'.substring(3,7)}${#Project#Random8}</transactionId>
+   <paymentMethod>CreditCard</paymentMethod>
+   <paymentProvider>Mastercard</paymentProvider>
+   <type>PAYMENT</type>
+   <status>AUTHORIZED</status>
+   <paymentAmount>
+      <value>${#MockResponse#Request#//payment[1]/amount[1]/value[1]}</value>
+      <currency>${#MockResponse#Request#//payment[1]/amount[1]/currency[1]}</currency>
+   </paymentAmount>
+   <saferpayTransactionInfo>
+      <saferpayTransactionId>${#Project#GUID}</saferpayTransactionId>
+      <accountId>${#Project#Random8}</accountId>
+      <terminalId>12345678</terminalId>
+   </saferpayTransactionInfo>
+   <clientTransactionId>${#MockResponse#Request#//payment[1]/clientTransactionId[1]}</clientTransactionId>   
+   <authorizationDate>${#Project#DateTime_Current_Offset}</authorizationDate>
+   <creditCard>
+      <aliasId>${#MockService#aliasId}</aliasId>
+      <paymentProvider>Mastercard</paymentProvider>
+      <status>REGISTERED</status>
+      <creditCardBrandName>MasterCard</creditCardBrandName>
+      <maskedNumber>1234 5678 9012 3456</maskedNumber>
+      <expiryYear>2020</expiryYear>
+      <expiryMonth>1</expiryMonth>
+      <registrationDate>${#Project#DateTime_Current_Offset}</registrationDate>
+      <cardHolderName>cardHolderName contains max. allowed signs=50 5050</cardHolderName>
+      <countryCode>DE</countryCode>
+   </creditCard>
+</transaction>]]></con:responseContent>
+  </con:response>
+</con:restMockAction>

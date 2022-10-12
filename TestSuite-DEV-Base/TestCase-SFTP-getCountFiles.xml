@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="37c731dc-d790-447a-ad6d-e23f5283b105" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-SFTP-getCountFiles" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Return count of files in directory on sftp server</con:description>
+  <con:settings>
+    <con:setting id="3a36338c-603f-4112-9dd8-394f09709fa7fileName">TestCase-DEV-CopyFileToDRCviaSFTP</con:setting>
+    <con:setting id="37c731dc-d790-447a-ad6d-e23f5283b105fileName">TestCase-SFTP-getCountFiles</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="1af9dd13-6ca1-4c9b-b92d-ed2903dd37d5">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outCountFiles</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType xsi:nil="true"/>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-returnCountFiles" id="e57a698a-500b-4d61-8991-691ea0d51207">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script read and return count of files in directory on sftp server
+ * Date: 2020-11-12
+ * Autor: Michael Gordon
+*/
+
+@Grab(group='commons-net', module='commons-net', version='2.0')
+@Grab(group='com.jcraft', module='jsch', version='0.1.51')
+
+import org.apache.commons.net.ftp.FTPSClient
+import com.jcraft.jsch.*;
+
+/////////////////////////////////////////////////////////////
+// read and set project settings and input pathes
+String ftpdomain = context.expand( '${#TestCase#inHostName}' )
+String ftpusername =context.expand( '${#TestCase#inUser}' )
+String ftppassword =context.expand( '${#Project#drc-sftp-password}' )
+String sExtension = context.expand( '${#TestCase#inFileNameOrExtension}' )
+// target path on sftp server
+String remotefilelocation = context.expand( '${#TestCase#inRelSFTPPath}' ).replace('\\','/')
+log.info('Target path is '+ ftpdomain+remotefilelocation)
+/////////////////////////////////////////////////////////////
+
+// set extension. If extension in input param empty, return count of all files. Otherwise extend extension with *
+if (sExtension==null || sExtension.length()==0)
+	sExtension= '*'
+if (sExtension.startsWith("."))
+	sExtension= '*'+sExtension
+log.info('Extension is:-' + sExtension)	
+
+	  Session session = null;
+       Channel channel = null;	
+   
+    try {
+    	  log.info("Starting sftp upload process")
+	
+       JSch ssh = new JSch();        		
+        session = ssh.getSession(ftpusername, ftpdomain, 22);
+        session.setConfig("StrictHostKeyChecking", "no"); // auto accept secure host
+        session.setPassword(ftppassword);
+        session.connect();
+        log.info("Connected to session")
+        		
+        channel = session.openChannel("sftp");
+        channel.connect();
+        log.info("Connected to channel")
+        		
+         // return count of files       
+        Vector vectorResults    
+        ChannelSftp sftp = (ChannelSftp) channel; 
+        // change to target directory      
+        sftp.cd(remotefilelocation)           
+     try { // if file not found -->  sftp.ls return sftp-error. This error  will be catched below     	
+	   	vectorResults=sftp.ls(sExtension)
+	  } catch (SftpException e) {     
+	  	 testRunner.testCase.setPropertyValue('outCountFiles',  '0')	  	
+       	 log.info("SftpException: This error could be occured, because  file is not found in target directory on sftp " + e.printStackTrace())
+       	 return     // finish programm 
+      }   
+      	// if files exist, set count of found files in properties        
+        	 int fileCount=vectorResults.elementCount       
+        	 testRunner.testCase.setPropertyValue('outCountFiles',  fileCount.toString())
+    		 log.info('sftp target directory contains files: -  '+ fileCount)
+                
+     }  catch (Exception e) {
+			log.error("Exception during uploding of '"   + remotefilelocation +"' - " + e)
+        		 throw e
+        }
+        finally {
+			if (session != null) 
+				try { 
+					session.disconnect()
+					log.info("Disconnected from session") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+					}	
+			if (channel != null) 
+				try { 
+					channel.disconnect()
+					log.info("Disconnected from channel") 
+					} catch (Exception e) {
+						log.error("Exception during disconnection from sftp session, igore - " + e)
+						}
+			log.info("sftp upload process completed")
+		}</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inHostName</con:name>
+      <con:value>mucsgdp08.sg.de.pri.o2.com</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inUser</con:name>
+      <con:value>drc</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inRelSFTPPath</con:name>
+      <con:value>/opt/drc4/DRC-TEST/edr/archive</con:value>
+    </con:property>
+    <con:property>
+      <con:name>inFileNameOrExtension</con:name>
+      <con:value>*</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outCountFiles</con:name>
+      <con:value>71</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>5d3cd23d-80ff-423d-a476-d6497eb5e295</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>be31f642-592f-412e-ba3d-54e43de6b53c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dfcd5f46-58fe-4a26-8a87-fcb2563274dc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7a5d8b9f-4087-495c-bfd3-ed1151d826ee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e580772-18a3-4702-b975-881f99d53634</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dee2ae0d-cd91-4f33-a3b1-73dd76ff9893</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

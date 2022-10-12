@@ -1,0 +1,1690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="66e662c5-1eb7-438c-ae99-64c8158e3689" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-Iso8583TopupService-topup" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>This test-case tests interface and error-codes for wrong request.
+For each mandatory parameter is min. implemented:
+ - one test with empty or missed parameters.
+ - one test with wrong value in parameter
+
+For each optional parameter is min. implemented:
+ - one test with wrong value in parameter</con:description>
+  <con:settings>
+    <con:setting id="32e090ee-f24c-48da-b6e6-a597e2b36a5efileName">GoodCase-DEV-ATM-TopupService</con:setting>
+    <con:setting id="18f09b25-9d99-46eb-b01d-c563869eb011fileName">BadCase-DEV-Iso8583TopupService-topup</con:setting>
+    <con:setting id="66e662c5-1eb7-438c-ae99-64c8158e3689fileName">BadCase-DEV-Iso8583TopupService-topup</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="request" id="319b2192-38e7-40a2-917f-06f92694cd6c" name="_topup" disabled="true">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="_topup" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer_ClearProperties" id="b9ddc485-8322-4c2c-a3ce-cdf7ee17bac3">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="false" transferTextContent="false" failOnError="false" disabled="false" entitize="true" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Date</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>ID_3</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-CreateTestData" id="7982411a-1cc4-43e8-acd3-9c08ab14e931">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script format generated msisdns to format 0+number
+ * Date: 26.07.2016
+ * Autor: Michael Gordon
+*/
+
+ // set in properties msisdns
+ testRunner.testCase.setPropertyValue('MSISDN',context.expand( '${#Project#MSISDN-Piranha-OK}' ))
+ testRunner.testCase.setPropertyValue('Date',context.expand( '${#Project#DateTime_Current_Offset}' ))
+ testRunner.testCase.setPropertyValue('ID_1','1'+context.expand( '${#Project#Random5}' ))
+ testRunner.testCase.setPropertyValue('ID_2','2'+context.expand( '${#Project#Random5}' ))
+ testRunner.testCase.setPropertyValue('ID_3','3'+context.expand( '${#Project#Random5}' ))</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="3b1b79ce-a9c2-421e-bd4e-2ab178fe0237" name="800N_topup-Amount-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="800N_topup-Amount-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount/>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="df453fd7-12a3-479c-bbf8-6ec2ca8ecb9d" name="810N_topup-Amount=0">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="810N_topup-Amount=0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>0</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="a06a221e-c810-4982-be5d-71e7afddf6c5" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>GENERAL_ERROR</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="e48c3632-a0a6-4973-ba38-31fcec26126c" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>GENERAL_ERROR</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="99daf883-6b3d-477d-a0a1-9f5c3f2ba927" name="820N_topup-Amount&lt;0">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="820N_topup-Amount&lt;0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>-99</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:assertion type="XPath Match" id="e01a61cc-c9b8-4797-8960-64881cf3ab4f" name="Match content of [transactionError]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/iso8583topupservice/v1/';
+//detail[1]/ns2:transactionFault[1]/transactionError[1]/text()</path>
+            <content>GENERAL_ERROR</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e4fbd220-a82b-4a28-a0cb-0a30fb81d5c4" name="830N_topup-Amount-Wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="830N_topup-Amount-Wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>ttt</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ae470b08-d052-49e9-ad06-bae590b813c0" name="840N_topup-msisdn-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="840N_topup-msisdn-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn/>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="96f4bb28-21c6-4123-9018-20449392735e" name="850N_topup-msisdn-toShort">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="850N_topup-msisdn-toShort" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>004917012345</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2e6aa359-987d-4037-8abb-488f38954281" name="860N_topup-msisdn-toLong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="860N_topup-msisdn-toLong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>00491701234567890</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b8c9c9d7-6b9d-41cb-a442-90a89b8a700e" name="850N_topup-msisdn-Wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="850N_topup-msisdn-Wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>WrongMSISDN</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="36184ae4-cc74-472a-8dbf-6a0ef7d762a7" name="860N_topup-paymentDate-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="860N_topup-paymentDate-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate/>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8c4645ae-3c6b-4b60-a93c-1e294eb27909" name="870N_topup-paymentDate-Wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="870N_topup-paymentDate-Wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>2020-12-31</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="33eb24d2-a5f3-4a94-b053-098c5cd6f3ab" name="880N_topup-cardType-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="880N_topup-cardType-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType/>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ddedcdf7-9565-455d-a5c5-5d41f983d089" name="890N_topup-cardType-toShort&lt;2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="890N_topup-cardType-toShort&lt;2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>1</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4298b680-1a0a-4207-8559-b970245440a8" name="900N_topup-cardType-toLong>2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="900N_topup-cardType-toLong>2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>123</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="70916a5e-51fa-485d-9d16-d4af154d89a1" name="905N_topup-partnerId-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="905N_topup-partnerId-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:assertion type="Simple NotContains" id="7fe15a57-2b1f-409f-bb1b-b8c9f51b6529" name="Not Contains">
+          <con:configuration>
+            <token>GENERAL_ERROR</token>
+            <ignoreCase>true</ignoreCase>
+            <useRegEx>false</useRegEx>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="56429795-be98-4ad9-9daf-6a404741ae25" name="910N_topup-partnerId-toShort&lt;15">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="910N_topup-partnerId-toShort&lt;15" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}  ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="58fb7c01-8c41-4769-a5d3-2c19ef9d9f0c" name="920N_topup-partnerId-toLong>15">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="920N_topup-partnerId-toLong>15" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}    ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="11ecf932-2896-4bba-b8d7-4315ba46e735" name="930N_topup-serverID-toLong>6">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="930N_topup-serverID-toLong>6" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <serverId>1234567</serverId><terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="69a70a85-c5c6-4c83-b9ed-b653efaf3d1c" name="940N_topup-terminalId-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="940N_topup-terminalId-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId/>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="d1f338a3-3765-4dde-908b-c93a8766eaf0" name="950N_topup-terminalId-toShort&lt;8">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="950N_topup-terminalId-toShort&lt;8" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>1234567</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c4fcb449-2f28-490f-83ee-5d685f0252c7" name="960N_topup-terminalId-toLong>8">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="960N_topup-terminalId-toLong>8" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>123456789</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="acd0375d-381b-4898-a391-ce26e47c0aff" name="970N _topup-transactionId-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="970N _topup-transactionId-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId/>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="49edd928-50d5-4899-a308-9bae1dc0f5f8" name="980N _topup-transactionId-toLong>6">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="980N _topup-transactionId-toLong>6" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>1234567</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="4a41a6ac-24ba-49f2-a461-d4fe8428dafc" name="990N_topup-isoGwServerId-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="990N_topup-isoGwServerId-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId/>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c46c0779-90e7-4366-8662-09b7837c2734" name="1000N_topup-isoGwServerId-toLong>50">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="1000N_topup-isoGwServerId-toLong>50" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>123456789012345678901234567890123456789012345678901</isoGwServerId>
+            <iso8583Protocol>ATM</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="0b41e96f-1259-4d14-afa6-97f0ad20768d" name="1010N_topup-iso8583Protocol-Empty">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="1010N_topup-iso8583Protocol-Empty" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol/>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="035cdb50-1e53-4b1b-86c4-b3bbb030c9e4" name="1020N_topup-iso8583Protocol-Wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>Iso8583TopupServiceV1SoapBinding</con:interface>
+      <con:operation>topup</con:operation>
+      <con:request name="1020N_topup-iso8583Protocol-Wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="67dc7fd1-86bb-4512-bba8-a83d6b9f45fb">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-ATMIso8583TopupService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/iso8583topupservice/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:topup>
+         <transactionRequestData>
+            <transactionData>
+               <amount>${#TestCase#Amount}</amount>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+               <paymentDate>${#TestCase#Date}</paymentDate>
+               <cardType>13</cardType>
+               <partnerId>${#TestSuite#Partner-1-Code}   ${#TestSuite#BLZ}</partnerId>
+               <processingCode>${#TestSuite#abwZeichenTripleDES}</processingCode>
+               <terminalId>${#TestSuite#NetzbetreiberID}${#TestSuite#TerminalID}</terminalId>
+               <transactionId>${#TestCase#ID_1}</transactionId>
+            </transactionData>
+            <isoGwServerId>280105</isoGwServerId>
+            <iso8583Protocol>TEST</iso8583Protocol>
+         </transactionRequestData>
+      </v1:topup>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6e25fe6f-4dd2-4baa-a9e8-c1240ebe70c1" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="f5871368-43de-4b52-b749-df8837f7f3f0" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="b63db126-1647-4c64-8e89-b7514bae62ec" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="topup"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>Amount</con:name>
+      <con:value>199</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outAmount</con:name>
+      <con:value>19900</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>4915957668790</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Date</con:name>
+      <con:value>2022-10-03T16:01:12+02:00</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_1</con:name>
+      <con:value>168296</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_2</con:name>
+      <con:value>214730</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ID_3</con:name>
+      <con:value>379853</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>6622bb1a-0b11-4fc8-8abd-0c1caa1a65fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e193fcf-99d7-463a-820e-2d6d7c4d14fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ec2017e2-7ae3-4915-bdbe-002bc81ef7dd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4d2b0704-1b78-4c0c-af53-85c1f52d670a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>71012a18-6c96-4f3e-853d-3daed8ab96b1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>123c9009-17a3-4919-b26e-e9204eb0c3c5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03bc7f54-6945-424b-84e3-961d609deada</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0536c616-478d-4d56-b4fd-9453751b0360</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>67ba5508-1fa6-4039-bafd-8b47d7338db4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5dbcaf3c-6977-4b2a-ad94-9be9bbd40b3b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32f3abca-75eb-4749-b035-b41d0564b22a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a79fd1b-eb2e-4969-be54-3227501b844c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ed346e7f-88d4-4e43-8949-b665e24c02f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>689d2da7-ec76-46b0-aca8-de6b8002191e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>399c625c-0423-4234-8fd6-161bd9183595</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e1c20fa6-f34e-408e-9e74-0cb64a06a853</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3678fb34-7796-4f45-bc95-2bb65cf9097f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5c98d4f5-2e3e-40e0-a455-28457da675bd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>afe647c7-f983-4dad-bb12-41b54f0488b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7b1c4747-cc17-4282-a493-50ac0d578088</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d07dfcfb-fcf3-4439-a955-2dbc688965fd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a562c60c-3ee1-4a2e-a7d2-cffd3c28760b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e259bd68-198e-4cca-91c7-b20817b55eb0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

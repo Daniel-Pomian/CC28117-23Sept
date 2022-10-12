@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="ReachedMVNOLowBalanceThreshold" id="37067830-4e29-4bba-af93-7dfdab4dae3d" interface="BasicHttpBinding_IMiPayAutoTopup" operation="ReachedMVNOLowBalanceThreshold" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="37067830-4e29-4bba-af93-7dfdab4dae3dfileName">ReachedMVNOLowBalanceThreshold</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-SystemError</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig xsi:type="con:MockOperationQueryMatchDispatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:query>
+      <con:name>ErrorCode-30001</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+substring(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],1,10)</con:query>
+      <con:match>${#Project#MOCK-Prefix-MiPay-CustomException}30001</con:match>
+      <con:response>Response-Error30001</con:response>
+    </con:query>
+    <con:query>
+      <con:name>ErrorCode-30002</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+substring(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],1,10)</con:query>
+      <con:match>${#Project#MOCK-Prefix-MiPay-CustomException}30002</con:match>
+      <con:response>Response-Error30002</con:response>
+    </con:query>
+    <con:query>
+      <con:name>ErrorCode-40001</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+substring(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],1,10)</con:query>
+      <con:match>${#Project#MOCK-Prefix-MiPay-CustomException}40001</con:match>
+      <con:response>Response-Error40001</con:response>
+    </con:query>
+    <con:query>
+      <con:name>ErrorCode-40002</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+substring(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],1,10)</con:query>
+      <con:match>${#Project#MOCK-Prefix-MiPay-CustomException}40002</con:match>
+      <con:response>Response-Error40002</con:response>
+    </con:query>
+    <con:query>
+      <con:name>ErrorCode-40003</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+substring(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],1,10)</con:query>
+      <con:match>${#Project#MOCK-Prefix-MiPay-CustomException}40003</con:match>
+      <con:response>Response-Error40003</con:response>
+    </con:query>
+    <con:query>
+      <con:name>defaultResponse</con:name>
+      <con:query>declare namespace web='http://mi-pay.com/webservices';
+contains(//web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1],'${#Project#MOCK-Prefix-MiPay-CustomException}')</con:query>
+      <con:match>false</con:match>
+      <con:response>Response-Default</con:response>
+    </con:query>
+  </con:dispatchConfig>
+  <con:dispatchPath><![CDATA[/*
+ * This script read msisdn from request and send response ordered in msisdn
+ * Date: 02.11.2016
+ * Autor: Michael Gordon
+*/
+
+ String sDocumentation='''
+ Documentation for using MiPay-AutoTopup mock service.
+
+ Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+ Mock service dispatch default response if msisdn doesn't contains prefix:
+ ${#Project#MOCK-Prefix-MiPay-CustomException}
+
+ If msisdn contains prefix above and defined error code from specification (5 digiits) after prefix,
+ mock return response with error code from msisdn and reason=rejected.
+
+ Ex. MSISDN=${#Project#MOCK-Prefix-MiPay-CustomException}300019999
+
+ Mock return:
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://mi-pay.com/webservices" xmlns:mip="http://schemas.datacontract.org/2004/07/MiPay.AutoTopup">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ReachedMVNOLowBalanceThresholdResponse>
+         <web:ReachedMVNOLowBalanceThresholdResult>
+            <mip:ErrorCode>30001</mip:ErrorCode>
+            <mip:ResponseCode>Rejected</mip:ResponseCode>
+         </web:ReachedMVNOLowBalanceThresholdResult>
+      </web:ReachedMVNOLowBalanceThresholdResponse>
+   </soapenv:Body>
+ </soapenv:Envelope>
+
+ End of documentation  
+ '''
+  // Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+  context.mockService.setPropertyValue('Doc', sDocumentation)
+
+ 
+  // read default values from project properties
+  def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-MiPay-CustomException}')  
+  // read mdidfn from incommning request
+  def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+  def sMSISDN=holder.getNodeValue("declare namespace web=\'http://mi-pay.com/webservices\'; //web:ReachedMVNOLowBalanceThreshold[1]/web:MSISDN[1]")
+ 
+  // log msisdn and service to script log from mock
+  log.info('MiPay.ReachedMVNOLowBalanceThreshold: Return response for request with msisdn ' + sMSISDN)
+
+  // check msissdn
+  if(sMSISDN==null || sMSISDN.length()<11 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	return 'Response-SystemError'
+  }
+  
+  // if msisdn doesn't contains prefix for custom request, return default response
+  if (sMSISDN[0..4]!=sMSISDNPrefixException){
+	  return 'Response-Default'
+  }
+
+ 	// create ordered soap fault exception with code from msisdn and interface specification
+ 	//log.info(sMSISDN[5..9])
+	switch ( sMSISDN[5..9] ) {
+    		case '30001':
+    			context.mockService.setPropertyValue('ErrorCode','30001')	    		
+         		return 'Response-Rejected'
+         	case '30002':
+    			context.mockService.setPropertyValue('ErrorCode','30002')	    		
+         		return 'Response-Rejected'
+         	case '40001':
+    			context.mockService.setPropertyValue('ErrorCode','40001')	    		
+         		return 'Response-Rejected'
+         	case '40002':
+    			context.mockService.setPropertyValue('ErrorCode','40002')	    		
+         		return 'Response-Rejected'
+         	case '40003':
+    			context.mockService.setPropertyValue('ErrorCode','40003')	    		
+         		return 'Response-Rejected'         			  
+    		default:    			
+        		return 'Response-SystemError' 
+ 	}]]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="47602a56-7a19-484d-b03c-3733eaf21727" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://mi-pay.com/webservices" xmlns:mip="http://schemas.datacontract.org/2004/07/MiPay.AutoTopup">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ReachedMVNOLowBalanceThresholdResponse>
+         <web:ReachedMVNOLowBalanceThresholdResult>
+            <mip:ErrorCode/>
+            <mip:ResponseCode>Success</mip:ResponseCode>
+         </web:ReachedMVNOLowBalanceThresholdResult>
+      </web:ReachedMVNOLowBalanceThresholdResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://mi-pay.com/webservices/ReachedMVNOLowBalanceThreshold"/>
+  </con:response>
+  <con:response name="Response-SystemError" id="47602a56-7a19-484d-b03c-3733eaf21727" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://mi-pay.com/webservices" xmlns:mip="http://schemas.datacontract.org/2004/07/MiPay.AutoTopup">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ReachedMVNOLowBalanceThresholdResponse>
+         <web:ReachedMVNOLowBalanceThresholdResult>
+            <mip:ErrorCode>99999</mip:ErrorCode>
+            <mip:ResponseCode>Error</mip:ResponseCode>
+         </web:ReachedMVNOLowBalanceThresholdResult>
+      </web:ReachedMVNOLowBalanceThresholdResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://mi-pay.com/webservices/ReachedMVNOLowBalanceThreshold"/>
+  </con:response>
+  <con:response name="Response-Rejected" id="47602a56-7a19-484d-b03c-3733eaf21727" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://mi-pay.com/webservices" xmlns:mip="http://schemas.datacontract.org/2004/07/MiPay.AutoTopup">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:ReachedMVNOLowBalanceThresholdResponse>
+         <web:ReachedMVNOLowBalanceThresholdResult>
+            <mip:ErrorCode>${#MockService#ErrorCode}</mip:ErrorCode>
+            <mip:ResponseCode>Rejected</mip:ResponseCode>
+         </web:ReachedMVNOLowBalanceThresholdResult>
+      </web:ReachedMVNOLowBalanceThresholdResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://mi-pay.com/webservices/ReachedMVNOLowBalanceThreshold"/>
+  </con:response>
+</con:mockOperation>

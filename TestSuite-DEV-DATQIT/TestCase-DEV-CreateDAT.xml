@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="aa1634b1-9921-4c7e-9c2e-0a74292503aa" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-CreateDAT" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Create new local DAT file with content from template</con:description>
+  <con:settings>
+    <con:setting id="aa1634b1-9921-4c7e-9c2e-0a74292503aafileName">TestCase-DEV-CreateDAT</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="Property Transfer-ClearValues" id="85a6aef9-a9f2-40ce-a8da-6aacb9afb000">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFile</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getTemplate" id="0d1149b3-47b2-4cc9-a393-9aaf0d82a29f">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Directory">
+        <con:configuration><directory>TestData/DAT</directory><filter>*.DAT</filter><encoding>UTF-8</encoding></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>fileContent</con:property>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-setTargetPath" id="5ea42e3a-84db-416a-bfd8-80088396f7b2">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script create target path for dat-file
+ * https://www.sg.de.o2.com/jira/browse/DRC-2843
+ * Athor: Michael Gordon
+ * Date: 2020-03-03
+ */
+
+/*
+ DAT-File Format:
+ Examples for parsing first line of DAT-Files:
+
+ORTELPROD00520190216065011.DAT
+
+HORTELPROD00520190216065011ORTELPROD00520190216065011.DAT20190215_00000020190215_235959001
+Bezeichnung Feld 	Länge 	Startposition 	Endposition 	Beispiel
+Record Identifier /
+Satzkennzeichen 	1 	1 	1 	H
+Source System /
+Quellsystem 	5 	2 	6 	ORTEL
+Environment /
+Datenart 	4 	7 	10 	PROD
+Cash-Partner-ID 	3 	11 	13 	005
+Creation Date /
+Erstellungsdatum 	8 	14 	21 	20190216
+Creation Time
+Erstellungsuhrzeit 	6 	22 	27 	065011
+Filename /
+Dateiname 	30 	28 	57 	ORTELPROD00520190216065011.DAT
+Billing Period Start /
+Abrechnungszeitraum „ANFANG“ 	15 	58 	72 	20190215_000000
+Billing Period End /
+Abrechnungszeitraum „ENDE“ 	15 	73 	87 	20190215_235959
+Version 	3 	88 	90 	001
+ */
+
+// build local target path for local 
+// get target directory from local directory for dat files.
+String sTargetDir = context.expand( '${#TestSuite#TargetDir}' )
+String sDateTime =java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+String sFileContent= context.expand( '${DataSource-getTemplate#fileContent}' ).toString()
+String  sPrefix =  sFileContent[1..5]
+String  sPartner =  sFileContent[10..12]
+//log.info(sFilePrefix)
+
+// Build file name. Constant length is 26 signs with  extension .DAT
+String sFileName=(sPrefix+'PROD'+sPartner+sDateTime+'.DAT')
+String sPath= (sTargetDir +sFileName).replace('\\','/')
+
+// set to test-case properties
+ testRunner.testCase.setPropertyValue( "outFile",  sFileName )
+ testRunner.testCase.setPropertyValue( "outPath",  sPath )
+ 
+ // log final path
+ log.info('File path from DAT is: -'+  sPath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-saveFile" id="befa74c3-f725-4591-8142-67c911ff105d">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>false</append><encoding>utf-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>fileContent</con:name>
+          <con:value>${DataSource-getTemplate#fileContent}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>/DATQIT/EPS11PROD00420221003160620.DAT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFile</con:name>
+      <con:value>EPS11PROD00420221003160620.DAT</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>5ea42e3a-84db-416a-bfd8-80088396f7b2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0d1149b3-47b2-4cc9-a393-9aaf0d82a29f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockOperation name="queryBalances" id="391721ef-15a0-47d4-be94-f1d11e32714c" interface="BalanceManagement-SOAPBinding" operation="queryBalances" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="225a5741-c731-447c-9014-8d091a5c4c9cfileName">queryBalances</con:setting>
+    <con:setting id="391721ef-15a0-47d4-be94-f1d11e32714cfileName">queryBalances</con:setting>
+  </con:settings>
+  <con:defaultResponse>Response-Default</con:defaultResponse>
+  <con:dispatchStyle>SCRIPT</con:dispatchStyle>
+  <con:dispatchConfig xsi:type="con:MockOperationQueryMatchDispatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:query>
+      <con:name>response-ServiceException</con:name>
+      <con:query>declare namespace v1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1';
+string-length(//v1:queryBalancesRequest[1]/v1:subscriberId[1]/v1:e164Number[1])&lt;1
+or
+string-length(//v1:queryBalancesRequest[1]/v1:subscriberId[1]/v1:e164Number[1])>15</con:query>
+      <con:match>true</con:match>
+      <con:response>Response-soapFault-ServiceException</con:response>
+    </con:query>
+  </con:dispatchConfig>
+  <con:dispatchPath><![CDATA[/*
+ * This script read values from request and set in virt properties for response 
+ * Date: 23.06.2020
+ * Autor: Michael Gordon
+*/
+
+String sDocumentation='''
+Documentation for using OCS 10 mock service.
+
+Mock service despatch soapFault service excepction response, if MSISDN in request is:
+	- null, empty or not numeric
+	- MSISDN < 1 or MSISDN > 15 signs 
+	
+Mock service despatch default response with values from request and default values from mock service like current response below.
+Default balance configured by mock is - ${#MockService#DEFAULT-balance}
+
+To order custom response with amount from MSISDN in request:
+
+- MSISDN prefix must be:
+	- in queryBalance-request start with:  ${#Project#MOCK-Prefix-OCS10-queryBalance-CustomBalance}
+	
+- Position 6:
+	1 - for positiv amount on balance
+	2 - for negativ amount on balance
+
+- Positions from 7 is amount in cent
+	Ex. MSISDN = 4911910000001 returns   <v1:balance exponent="-2" currencyCode="EUR">1</v1:balance>
+	Ex. MSISDN = 4911920001001 returns   <v1:balance exponent="-2" currencyCode="EUR">1001</v1:balance>
+
+
+Example soap fault response for first MSISDN above: 
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:v1="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1">
+   <soapenv:Header>
+      <add:MessageID>http://www.sample.org/turbine/circum</add:MessageID>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:queryBalancesResponse>
+         <!--Zero or more repetitions:-->
+         <v1:walletInfoList>
+            <!--type: WalletIdType-->
+            <v1:walletId>2</v1:walletId>
+            <v1:balance exponent="-2" currencyCode="EUR">1</v1:balance>
+            <!--type: dateTime-->
+            <v1:expirationDate>2020-07-24T09:07:18+02:00</v1:expirationDate>
+            <!--type: WalletStatusType - enumeration: [AC,CA,SU,S0,PA,ca]-->
+            <v1:status>AC</v1:status>
+         </v1:walletInfoList>
+      </v1:queryBalancesResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+ End of documentation  
+'''
+// Set documentation in virt propertie. This documentation will be returned in default responses from all virt services and must describe behavior of all services.
+context.mockService.setPropertyValue('Doc', sDocumentation)
+
+ // read default values from project properties
+ def sMSISDNPrefixException = context.expand( '${#Project#MOCK-Prefix-OCS10-queryBalance-CustomBalance}') 
+ def sDEFAULTBalance = context.expand('${#MockService#DEFAULT-balance}') 
+  // set virt properties for default responses
+ context.mockService.setPropertyValue('queryBalance-balance',sDEFAULTBalance)
+   
+ // read values from header in incommning request
+ def holder = new com.eviware.soapui.support.XmlHolder( mockRequest.requestContent ) 
+ def sMSISDN = holder.getNodeValue("declare namespace v1='http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1'; //v1:queryBalancesRequest[1]/v1:subscriberId[1]/v1:e164Number[1]")
+ 
+  // Log out must be supressed! log out all values from request for check and validations in tests from mock gui via http-request 
+ //log.info('OCS10-BalanceManagement.queryBalance: Return response for request with msisdn ' + sMSISDN)
+ 
+ // check MSISDN
+ if(sMSISDN==null || sMSISDN.length()<7 || sMSISDN.length()>15 || !sMSISDN.toString().isNumber() ){
+	return 'Response-soapFault-ServiceException'
+ }
+ 
+  // for special prefix with amount in msisdn as described below, set balance in property
+ if (sMSISDN[0..4]==sMSISDNPrefixException){
+ 	String sBalance=sMSISDN.substring(6).toInteger().toString()
+ 	//log.info('Amount from MSISDN is: - ' + sBalance)
+ 	// set amount in msisdn to balance in response. 1 - positiv, 2 - negativ
+ 	if (sMSISDN[5]=='1')
+ 		 context.mockService.setPropertyValue('queryBalance-balance',sBalance)
+ 	if (sMSISDN[5]=='2') 
+ 		context.mockService.setPropertyValue('queryBalance-balance','-'+sBalance)
+ } 
+ 
+ return 'Response-Default']]></con:dispatchPath>
+  <con:dispatchXPath/>
+  <con:routeScript/>
+  <con:response name="Response-Default" id="5d31a295-1b66-4098-b9a9-5d2ae3aada8a" httpResponseStatus="200" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:v1="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1">
+   <soapenv:Header>
+      <add:MessageID>http://www.sample.org/turbine/circum</add:MessageID>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:queryBalancesResponse>
+         <!--Zero or more repetitions:-->
+         <v1:walletInfoList>
+            <!--type: WalletIdType-->
+            <v1:walletId>${#MockService#DEFAULT-walletId}</v1:walletId>
+            <v1:balance exponent="${#MockService#DEFAULT-exponent}" currencyCode="${#MockService#DEFAULT-currencyCode}">${#MockService#queryBalance-balance}</v1:balance>
+            <!--type: dateTime-->
+            <v1:expirationDate>${#Project#Date_Future_Offset}</v1:expirationDate>
+            <!--type: WalletStatusType - enumeration: [AC,CA,SU,S0,PA,ca]-->
+            <v1:status>AC</v1:status>
+         </v1:walletInfoList>
+      </v1:queryBalancesResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="queryBalances"/>
+  </con:response>
+  <con:response name="Response-soapFault-ServiceException" id="f6a51381-530f-470e-aafe-25bfc7265f6e" httpResponseStatus="500" encoding="UTF-8" dataSource="">
+    <con:settings/>
+    <con:responseContent><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>${#MockService#faultString}</faultstring>
+         <!-- Return only service exception with default values -->
+         <detail>
+            <ns3:serviceException xmlns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.telefonica.com/OCS/To2DE/OCS_types/v1_1" xmlns:ns4="http://schemas.xmlsoap.org/ws/2002/04/secext">
+               <ns3:errorCode>${#MockService#DEFAULT-ErrorCode}</ns3:errorCode>
+               <ns3:errorType>${#MockService#DEFAULT-ErrorType}</ns3:errorType>
+               <ns3:text>${#MockService#DEFAULT-ErrorText}</ns3:text>
+            </ns3:serviceException>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:responseContent>
+    <con:wsaConfig mustUnderstand="NONE" version="200508" action="queryBalances"/>
+  </con:response>
+</con:mockOperation>

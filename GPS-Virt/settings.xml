@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:restMockService id="a5f28f32-379c-420b-bbe9-a22060cb6439" port="8080" path="/GPS" host="localhost" name="GPS Virt" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="a5f28f32-379c-420b-bbe9-a22060cb6439fileName">GPS-Virt</con:setting>
+  </con:settings>
+  <con:properties>
+    <con:property>
+      <con:name>Default-errorDescription</con:name>
+      <con:value>Response from GPS-Mock. Error codes can be found in interface specification</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-amount</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-regDate</con:name>
+      <con:value>${=new Date().format( "yyyy-MM-dd'T'00:00:00XXX" )}</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-caDate</con:name>
+      <con:value>${=new Date().format( "yyyy-MM-dd'T'12:00:00XXX" )}</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-saferpayAccountId</con:name>
+      <con:value>12345678</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-saferpayTerminalId</con:name>
+      <con:value>12345678</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Default-countryCode</con:name>
+      <con:value>DE</con:value>
+    </con:property>
+    <con:property>
+      <con:name>currentURL</con:name>
+      <con:value>/GPS/gps/v1/transactions/CC_3386625672</con:value>
+    </con:property>
+    <con:property>
+      <con:name>aliasId</con:name>
+      <con:value>CC_3386625672</con:value>
+    </con:property>
+    <con:property>
+      <con:name>amount</con:name>
+      <con:value>1000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>transactId</con:name>
+      <con:value>000083129435</con:value>
+    </con:property>
+  </con:properties>
+  <con:onRequestScript>/*
+  * This script read http methode, id in url and completly url from request
+  * prepare values for custom response and save in virt properties.
+  * Date: 24.05.2017
+  * Autor: Michael Gordon
+ */
+ 
+ // get second last value from url path in request like: /gps/v1/creditcards/{aliasId}/transactions
+ String sID=mockRequest.getPath().split("/")[-2]
+ // if request for get transaction, get last value from /gps/v1/transactions/{transactionId}
+ if(sID=='transactions') 
+ 	sID=mockRequest.getPath().split("/")[-1]
+ String sURL=mockRequest.getPath()
+ String sMethod=mockRequest.getMethod() 
+   
+ // set id, aliasID and url to virt-properties
+ context.mockService.setPropertyValue('aliasId',sID)
+ context.mockService.setPropertyValue('currentURL',sURL)
+ // set first to default values: amount=default amount and currentID =aliasID 
+ context.mockService.setPropertyValue('amount',context.expand( '${#MockService#Default-amount}' ))  
+  // if POST-Method, than it is first transcaction --> generate and set transactionid in format: string [12..12]
+ if (sMethod=='POST')
+ 	context.mockService.setPropertyValue('transactId','0'+ new Date().format( "ddHHmmssSSS" ).toString())
+ // log values from request
+ log.info('GPS - Return response for request with Method='+sMethod + ' ID='+sID+' and URL='+sURL)
+ 
+ // if aliasId contains exactly 12 digits, like transactionid, create custom response 
+ if (sID.length()==12 &amp;&amp; sID.isNumber()) { 	
+ 	context.mockService.setPropertyValue('transactId',sID)
+ 	context.mockService.setPropertyValue('amount',sID.substring(0,4).toInteger().toString()) 			
+ }
+  // log amount and transaction id from properties
+ log.info(' Amount='+context.expand( '${#MockService#amount}' ) +
+	 ' TransactionID='+ context.expand( '${#MockService#transactId}' ))</con:onRequestScript>
+  <con:constraints>
+    <con:congestion>0</con:congestion>
+    <con:inputBandwidth>-1</con:inputBandwidth>
+    <con:outputBandwidth>-1</con:outputBandwidth>
+    <con:maxThreadPoolCapacity>20</con:maxThreadPoolCapacity>
+    <con:coreThreadPoolCapacity>5</con:coreThreadPoolCapacity>
+    <con:virtError>
+      <con:start>0</con:start>
+      <con:endless>true</con:endless>
+    </con:virtError>
+  </con:constraints>
+  <con:headerValidator type="NONE"/>
+</con:restMockService>

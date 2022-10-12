@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockService id="33b9c359-30a1-4419-8dd1-13ba8400d73e" port="8080" path="/ngOCS/BalanceManagementService" host="localhost" name="Virt-ngOCS-BalanceManagement" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Implement VIRT from ngOCS interface, operation: queryBalance base on Wsdl in SVN: http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-1/SR-74310_NT-Enabler_Integration_of_NGOCS_with_legacy_prepaid_IT_systems_Drop_1/ngOCS_CVO.5_XSD_Update/CBSInterface_AR_QueryBalance.xsd</con:description>
+  <con:settings>
+    <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting>
+    <con:setting id="33b9c359-30a1-4419-8dd1-13ba8400d73efileName">Virt-ngOCS-BalanceManagement</con:setting>
+    <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-version">false</con:setting>
+  </con:settings>
+  <con:properties>
+    <con:property>
+      <con:name>Doc</con:name>
+      <con:value><![CDATA[
+Documentation for using ngOCS mock service.
+
+## Mock service returns default response for all requests.
+## For wrong requests and msisdn<1 or msisdn>15 signs in request --> soupFault-Exception is returned
+## For MSISDN in request with präfix:
+${#Project#MOCK-Prefix-NgOCS-ajustment-CustomException}
+--> custom response will be send back.
+Custom response is special response with parameters,
+ordered in MSISDN on Position 6:		
+	1 - default response with Invalid-CurrencyId
+	2 - default response with wrong Main-Balances	
+	3 - default response with wrong Version
+	4 - response with error-code, behind position 7 in msisdn (for error codes between 40000 and 50000 in specification)
+		Ex. MSISDN = 49117404115 --> return error-code=4115	
+	x - for any error code in response, where:	
+- last 8 digit as ResultCode (number '1' will be added before those 8 digit in resultCode)
+	02050176 -->102050176
+	Ex. MSISDN = 49117X02050176(X= any number from 1 to 9) returns 
+	<cbs:ResultCode>102050176</cbs:ResultCode>
+     <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>        
+## Example Response-Custom-Exception for MSISDN above: 
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ars="http://www.huawei.com/bme/cbsinterface/arservices" xmlns:cbs="http://www.huawei.com/bme/cbsinterface/cbscommon" xmlns:arc="http://cbs.huawei.com/ar/wsservice/arcommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ars:AdjustmentResultMsg>
+         <ResultHeader>
+            <cbs:Version>1</cbs:Version>
+            <cbs:ResultCode>102050176</cbs:ResultCode>
+            <cbs:ResultDesc>ngOcs Error</cbs:ResultDesc>
+         </ResultHeader>
+      </ars:AdjustmentResultMsg>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+ End of documentation 
+]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-Version</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-ResultCode</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-ResultDesc</con:name>
+      <con:value>Operation successfully</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-BalanceType</con:name>
+      <con:value>C_MAIN_ACCOUNT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-BalanceTypeName</con:name>
+      <con:value>MainAccount</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-recharge-BalanceID</con:name>
+      <con:value>701000000000000000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-Currency</con:name>
+      <con:value>1049</con:value>
+    </con:property>
+    <con:property>
+      <con:name>DEFAULT-Balance</con:name>
+      <con:value>100000</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Currency-USDollar</con:name>
+      <con:value>1153</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Version</con:name>
+      <con:value>1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>BalanceType-Wrong</con:name>
+      <con:value>C_MAIN_BILLING_ACCOUNT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Resultcode</con:name>
+      <con:value>118013028</con:value>
+    </con:property>
+    <con:property>
+      <con:name>ResultDesc</con:name>
+      <con:value>ngOcs Error</con:value>
+    </con:property>
+    <con:property>
+      <con:name>BalanceType</con:name>
+      <con:value>C_MAIN_ACCOUNT</con:value>
+    </con:property>
+    <con:property>
+      <con:name>BalanceTypeName</con:name>
+      <con:value>MainAccount</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Currency</con:name>
+      <con:value>1049</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Balance</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>recharge.SerialNo</con:name>
+      <con:value>15eb9a80-f31e-4d69-80e2-a9128ea2dc80</con:value>
+    </con:property>
+  </con:properties>
+  <con:constraints>
+    <con:congestion>0</con:congestion>
+    <con:inputBandwidth>-1</con:inputBandwidth>
+    <con:outputBandwidth>-1</con:outputBandwidth>
+    <con:maxThreadPoolCapacity>20</con:maxThreadPoolCapacity>
+    <con:coreThreadPoolCapacity>5</con:coreThreadPoolCapacity>
+    <con:virtError>
+      <con:start>0</con:start>
+      <con:endless>true</con:endless>
+    </con:virtError>
+  </con:constraints>
+  <con:dataSources/>
+  <con:headerValidator type="NONE"/>
+</con:mockService>

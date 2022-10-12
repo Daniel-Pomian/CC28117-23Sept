@@ -1,0 +1,3541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="2ad04f89-1d33-4a15-9102-0a5506ce600f" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCase-DEV-BankTransfer-Pain001" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests implementation from us:
+https://www.sg.de.o2.com/jira/browse/DRC-2432
+https://www.sg.de.o2.com/jira/browse/DRC-2498
+https://www.sg.de.o2.com/jira/browse/DRC-2499
+https://www.sg.de.o2.com/jira/browse/DRC-2607
+
+NOTE!
+
+    This logik is implemented only for old bank-transfer via GUI: Bankdaten prozessieren
+    File format for CAMT054 file is: 2019-09-11_C54_DE73700202700005716977_EUR_000510.xml
+    mft-directory on sftp-server are: bt_camt054 and bt_pain001
+    Only jobs for bt must be executed
+    List with allowed ibans for tenant is in settings: com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.BT_IBAN_LIST
+    Downloaded files must be unvisible on GUI
+
+Prerequisites:
+
+    Create camt054 file and move to new mft-directory.
+    Camt054 files with ibans. Expected: One pain001 file for each iban in camt054 file.
+
+Test-Scenarios:
+
+    Camt054 file with first iban.
+    Camt054 file with second iban.
+    Camt054 file with unknown iban.
+    Camt054 file with technical or functional file inside. --> Expected: Error state.
+
+Implementation requirements:
+
+Banktransfer classic, CAMT054 Files are retrieved from MFT, new Dir in existig DD MFT available
+
+    only 2 IBAN are supported, if other IBAN is used, the file can not be processed
+    2 IBANS should be configured as settings
+    retrieves files are parsed and TX stored in CAMT054 table, it must be possible to separate DD credits from banktransfer credits
+    new Job for processing the Banktransfer credits is required, similiar logoc as existing (reuse of controller, manager, DB-Banktransfer Topups)
+    if a banktrasfer could not be processed: mark in CAMT table, so that a PAIN001 File could be created
+    there is one PAIN001 File per IBAN and per day, processed in the evening
+    PIAN001 files are transfered to the same MFT dir as existing PAIN008/001 files for DD
+    Report (Begleitzettel for PAIN001 required (for each IBAN) additionally to existing DD Reports, send to TEF Finance Department
+    Processing Report for CAMT054 files (klassicher Banktransfer) additionally to existing DD Reports, send to TEF Finance Department</con:description>
+  <con:settings>
+    <con:setting id="0de794d2-7529-4910-915d-50502b7a4524fileName">GoodCase-DEV-BankTransfer</con:setting>
+    <con:setting id="2ad04f89-1d33-4a15-9102-0a5506ce600ffileName">GoodCase-DEV-BankTransfer-Pain001</con:setting>
+    <con:setting id="GeneratableJUnitReport@Folder">D:\SmartBear\ReadyAPI\CC Projects\DirectReCharge-soapui-project (1)-Telefonica-10Oct\Report-GoodCase-Dev-BankTransfer-Pain001</con:setting>
+  <con:setting id="GeneratableJUnitReport@Style">Multiple Pages</con:setting></con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="da0fdbc5-70c6-4427-9248-2c00e240db5d">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringZero</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>maxID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>IBAN-1</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>4</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-OK</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>3</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>IBAN-2</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>5</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN-Unknown</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>6</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>FilePath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>7</con:name>
+        <con:sourceType>StringZero</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>FileUploaded_Count</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>8</con:name>
+        <con:sourceType>StringZero</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>maxID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-Delay-BeforeProcessFiles" id="56d21ca2-62f8-4eef-bd2a-2d69bede6cc6">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8b27e688-ac25-413a-9779-27cc526addfd" name="_manualMftBtResultUpload">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftBtResultUpload</con:operation>
+      <con:request name="_manualMftBtResultUpload" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39e8fbfc-8b81-49e4-8d75-8f093bd26513">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:manualMftBtResultUpload>
+         <!--type: date-->
+         <bankDate>${#Project#Date_Current_yyyy-MM-dd}</bankDate>
+      </v1:manualMftBtResultUpload>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2b4e6405-32ba-4771-88d1-db32819f620f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="32f6011f-a33f-464a-971a-3482686402ed" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c754cd2e-8c92-4db5-9550-c18dda565799" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftBtResultUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="c1cf8f0a-a7e6-4dc1-9909-89a73301fe40" name="_GUI_countUploadedFiles">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countUploadedFiles</con:operation>
+      <con:request name="_GUI_countUploadedFiles" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9250bb3d-0421-41c7-8a0f-cb7de2a8b331">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:countUploadedFiles/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="77f45aed-2dab-4aa2-8a77-d941aa92e182" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="0b62c297-494a-4cdd-a180-1fd362e838ce" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="56df4587-aecc-4da1-ab7d-69ed4889da24" name="Not SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countUploadedFiles"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaxID" id="ca534ec4-b6c0-41a6-848b-4bcd514bd3fe">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(FILE_ID) as iCount, MAX(FILE_ID) as maxID 
+FROM FILEUPLOAD_INFO</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-maxID" id="10a3ee07-6b1d-4c80-833a-aaf13b3767ea">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="true" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>db-count</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getMaxID</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/ICOUNT[1]</con:sourcePath>
+        <con:targetType>FileUploaded_Count</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="true" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>db-maxID</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getMaxID</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/MAXID[1]</con:sourcePath>
+        <con:targetType>maxID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath xsi:nil="true"/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="getSettingChildNodes" id="8654b735-ae07-4658-8b79-1902dbb01952">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getSettingChildNodes</con:operation>
+      <con:request name="getSettingChildNodes" id="5359bfc1-fba6-4614-9779-ab8f5f744270">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/settings/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getSettingChildNodes>
+         <settingPath>
+            <settingName>com.o2.directrecharge.core.settings.SettingsRootCategoryEnum.FINANCE_DEPARTMENT_ROOT</settingName>
+            <settingName>com.o2.directrecharge.core.settings.FinanceDepartmentName.TEF</settingName>
+            <settingName>com.o2.directrecharge.core.settings.FinanceDepartmentSettingKey.BT_IBAN_LIST</settingName>
+         </settingPath>
+      </v1:getSettingChildNodes>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="e99e3749-7e9e-42b9-be97-9cf2d20cb52e"/>
+        <con:assertion type="Schema Compliance" id="737c6b5c-21eb-44ef-8cd1-a332cfd34285">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="93467184-3e38-480b-9560-14cb6804afbb"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="_Groovy Script-SetProperties" id="67446816-a4cb-48c6-a964-dcee59d775f1">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script generate test-data and set in test-cases property
+ * Date: 16.09.2019
+ * Autor: Michael Gordon
+*/
+
+ // Generate msisdn in format for expected behavior from mock services
+ String sMSISDN_OK = context.expand( '${#Project#MSISDN-chargeCustomer-OK}' ) 
+ String PrefixPiranha = context.expand( '${#Project#MOCK-Prefix-Piranha-StackService-CustomResponse}' )
+ String sMSISDN_Unknown=PrefixPiranha+'99'+context.expand( '${#Project#Random5}' ) 
+ 
+ // get known ibans
+String[] sIBANS  = context.expand( '${getSettingChildNodes#Response#declare namespace ns2=\'http://directrecharge.o2.com/ws/common/settings/v1/\'; //ns2:getSettingChildNodesResponse[1]/parentEntry[1]/value[1]}' ).split(';')
+
+ // write msisdns in properties
+ testRunner.testCase.setPropertyValue('MSISDN-OK', sMSISDN_OK )
+ testRunner.testCase.setPropertyValue('MSISDN-Unknown',sMSISDN_Unknown)
+ // write ibans in properties
+ testRunner.testCase.setPropertyValue('IBAN-1',sIBANS[0] )
+  testRunner.testCase.setPropertyValue('IBAN-2', sIBANS[1] )</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getIBANs" id="f7a17a4e-8335-4936-a1cb-011bc7272136">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-1}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-2}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-Unknown}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-2}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-1}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-Unknown}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-Unknown}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-1}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">${#TestCase#IBAN-2}</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>IBAN-1</con:property>
+      <con:property>IBAN-2</con:property>
+      <con:property>IBAN-Unknown</con:property>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateCamt054-Header" id="f6e919d9-6214-4633-af9d-9d79d5cdb62f">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>425bb68d-b5be-4711-95b5-7ac75072cbab</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>outTargetFile</con:name>
+          <con:value>/CAMT54-Files/20221010095909951-CAMT54-Credit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TotalAmount</con:name>
+          <con:value>15.00</con:value>
+        </con:property>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#[TestSuite-DEV-CAMT54]#TargetDir}/${#[TestSuite-DEV-CAMT54]#TargetFileCredit}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Count</con:name>
+          <con:value>3</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Type</con:name>
+          <con:value>${#[TestSuite-DEV-CAMT54]#Type-CdtDbtInd-Credit}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outTargetFile</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-Path" id="f571a424-30e0-4306-8cab-90045e1468ad">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>path1</con:name>
+        <con:sourceType>outTargetFile</con:sourceType>
+        <con:sourceStep>Run TestCase-CreateCamt054-Header</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>FilePath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateCamt054-Middle-MSISDN-OK" id="3b23c7b3-3504-4c5b-a0a3-df4b239b5edf">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>5e0af3b3-2823-49e3-a085-e253d57726b9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+          <con:value>${#TestCase#Amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>MSISDN</con:name>
+          <con:value>${#TestCase#MSISDN-OK}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CheckCode</con:name>
+          <con:value>4007</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>CheckCode</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateCamt054-Middle-MSISDN-Unknown" id="91cffbdd-bb48-4d98-8b95-cff59cd69288">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>5e0af3b3-2823-49e3-a085-e253d57726b9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+          <con:value>${#TestCase#Amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>MSISDN</con:name>
+          <con:value>${#TestCase#MSISDN-Unknown}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CheckCode</con:name>
+          <con:value>5518</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>CheckCode</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateCamt054-Middle-MSISDN-Wrong" id="b0d4f091-dacb-4674-ac0f-44227d3d8a78">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>5e0af3b3-2823-49e3-a085-e253d57726b9</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>Amount</con:name>
+          <con:value>${#TestCase#Amount}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>MSISDN</con:name>
+          <con:value>${#TestCase#MSISDN-Wrong}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>CheckCode</con:name>
+          <con:value>7739</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>CheckCode</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CreateCamt054-Footer" id="77faf98d-0383-4951-97b5-64ced0eaf24e">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>28075ddf-477b-42c7-9359-dc04583a35ef</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TargetFile</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ReplaceValueInFile-IBAN" id="aa766afa-c6f3-4f69-b5b9-b4ed59d15bc1">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>f2b82dbc-d62b-49bc-9538-15f7072cb59b</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inFilePath</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inOldValue</con:name>
+          <con:value>${#Project#ChargeCustomer-1-1-IBAN}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inNewValue</con:name>
+          <con:value>${DataSource-getIBANs#IBAN-1}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-splitPath" id="f9c0b352-93e9-4eca-b977-e5a32b0eb26c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>c623beb1-57b8-4fcf-a49d-a1b9f0e788ac</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inFullPath</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outFileName</con:name>
+          <con:value>20221010095909951-CAMT54-Credit.xml</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outPath</con:name>
+          <con:value>/CAMT54-Files</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outFileName</con:entry>
+        <con:entry>outPath</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-setNewPath" id="c6d076e1-fa0b-4443-aa1d-31adf1a6c440">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * Set file name in format for bank transfer: Ex.: 2019-09-11_C54_DE73700202700005716977_EUR_000510.xml
+ * Date: 16.09.2019
+ * Autor: Michael Gordon
+*/
+
+// set required data for new file name
+String sPath = context.expand( '${Run TestCase-splitPath#outPath}' ) 
+String  sCurrentDate = context.expand( '${#Project#Date_Current_yyyy-MM-dd}' )
+String sRrandom6 = context.expand( '${#Project#Random6}' )
+String sCurrentIBAN = context.expand( '${DataSource-getIBANs#IBAN-1}' )
+
+// create new file name
+String sFileName=sCurrentDate+'_C54_'+sCurrentIBAN+'_EUR_'+ sRrandom6+'.xml'
+String sFilePath=(sPath +'/'+sFileName)
+log.info( 'New file name is: -  '+ sFileName)
+log.info( 'New path  is: - ' +  sFilePath)
+// set value in property
+testRunner.testCase.setPropertyValue('FilePathNew', sFilePath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-renameFile" id="d1cee397-0ac9-45d8-bb77-56433c2809f6">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>5b5b5771-397e-4363-8f8c-859e1eda803f</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>oldPath</con:name>
+          <con:value>${#TestCase#FilePath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>newPath</con:name>
+          <con:value>${#TestCase#FilePathNew}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CopyFileToSFTP-BT" id="f412ea69-9953-4382-8916-fb8fa3b6742c">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>83e57bed-9b56-44fd-8050-ace0e5d30c24</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#FilePathNew}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>targetPath</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>targetUser</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>targetPath</con:entry>
+        <con:entry>targetUser</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay" id="3954e2b8-012c-4687-9e85-c1d9b072f065">
+    <con:settings/>
+    <con:config>
+      <delay>${#TestSuite#mft-fileProcess-delay-ms}</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="DRCGUI_DOWNLOAD_BANKTRANSFER_CAM054_FILE" id="4b062ccf-2fd6-415b-95d1-335a436ac9db">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>triggerJobManager</con:operation>
+      <con:request name="DRCGUI_DOWNLOAD_BANKTRANSFER_CAM054_FILE" id="7e3d55e2-60ca-4b78-8ac4-2ff501eb12f8" defaultOutgoingWss="" defaultIncomingWss="">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/common/job/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:triggerJobManager>
+         <jobName>com.o2.directrecharge.core.job.JobAction.DOWNLOAD_BANKTRANSFER_CAM054_FILE</jobName>
+         <repeat>true</repeat>
+      </v1:triggerJobManager>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a92ffbf7-5b12-4e8d-b9eb-9f1f7e4b22b5"/>
+        <con:assertion type="SOAP Fault Assertion" id="a7c67a4c-c54f-47e8-9b74-2cbb069e4a34" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="08b88d2c-7dba-44c7-9d52-1b4b1737b0b3" name="Check for existence of [taskId]">
+          <con:configuration>
+            <path>declare namespace ns8='http://directrecharge.o2.com/ws/common/job/v1/';
+exists( //ns8:triggerJobManagerResponse/taskId)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="8bb64a40-b6a3-45c2-a26b-7f6c797dbea5">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecJobs-CAMT054-BT-1" id="aad49e37-fdeb-47f9-80da-5120fd9258ec">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>10b05f4d-bfa7-47b0-b02f-1e963ef942bc</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Download</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Recharge</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Download</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+        <con:entry>taskCount-Recharge</con:entry>
+        <con:entry>taskCount-Report</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecJobs-PAIN001-BT-1" id="590282e0-8603-4698-90d5-7f5b827931b0">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>81510bcc-a91a-4475-9de4-fca06fc4073a</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-CreatePayback</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-BankTransfer_Pain</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-BankTransfer_Csv</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-CreateReport</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-CreatePayback</con:entry>
+        <con:entry>taskCount-BankTransfer_Pain</con:entry>
+        <con:entry>taskCount-BankTransfer_Csv</con:entry>
+        <con:entry>taskCount-CreateReport</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getIBANs" id="cbb194ca-58d3-4b43-b83a-612464641913">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getIBANs</dataSourceStep>
+      <targetStep>Run TestCase-CreateCamt054-Header</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getFiles-Pain001" id="c6b83659-371e-4907-a177-9036faeb2a26">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT FILEUPLOAD_INFO.FILE_NAME, FILEUPLOAD_DATA.FILE_CONTENT
+FROM FILEUPLOAD_INFO
+LEFT JOIN FILEUPLOAD_DATA
+ON FILEUPLOAD_INFO.FILE_ID = FILEUPLOAD_DATA.FILE_ID
+WHERE FILEUPLOAD_INFO.FILE_ID > '${#TestCase#maxID}'
+ AND FILEUPLOAD_INFO.FILE_TYPE = 'pain.001.001.03'
+ORDER BY FILEUPLOAD_DATA.FILE_ID DESC</con:query>
+      <con:assertion type="JDBC Status" id="5c0ede4a-3b31-44d2-a7e0-efc895f4da26" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="9f4be4c0-6144-48e7-98d8-448f28a64546" name="Check count of files [FILE_CONTENT]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row/FILE_CONTENT)</path>
+          <content>2</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="5bd7f3ec-a38c-4d2b-9adf-6b844d6d5360" name="Match content of [FILE_NAME]-2">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/FILE_NAME[1]</path>
+          <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-2}_*.xml</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" name="Match content of [FILE_NAME]-1" id="cbbed855-704d-4394-b658-eb2ce2b492c5">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[2]/FILE_NAME[1]</path>
+          <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-1}_*.xml</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="2dc28a3c-ad53-45ca-be4b-f38909f8f451" name="Match content of [FILE_CONTENT]-2">
+        <con:configuration>
+          <path>contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), 'IBAN>${#TestCase#IBAN-2}')
+and
+contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), '${#TestCase#Amount}&lt;/InstdAmt>')
+and
+contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), '&lt;CtrlSum>10.00')
+and
+contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), '&lt;Ustrd>${#TestCase#MSISDN-Unknown}')
+and
+contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), '&lt;Ustrd>${#TestCase#MSISDN-Wrong}')</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" name="Match content of [FILE_CONTENT]-1" id="e8e382ef-5649-4fd7-b535-21520f5c8dcb">
+        <con:configuration>
+          <path>contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), 'IBAN>${#TestCase#IBAN-1}')
+and
+contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), '${#TestCase#Amount}&lt;/InstdAmt>')
+and
+contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), '&lt;CtrlSum>10.00')
+and
+contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), '&lt;Ustrd>${#TestCase#MSISDN-Unknown}')
+and
+contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), '&lt;Ustrd>${#TestCase#MSISDN-Wrong}')</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple NotContains" id="66031918-d2ad-4892-88a0-1097dc653bdd" name="Not Contains">
+        <con:configuration>
+          <token>null</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getFiles-CSV" id="f56a774b-1fce-4438-bdfd-4cec0e228776">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT FILEUPLOAD_INFO.FILE_NAME, FILEUPLOAD_DATA.FILE_CONTENT
+FROM FILEUPLOAD_INFO
+LEFT JOIN FILEUPLOAD_DATA
+ON FILEUPLOAD_INFO.FILE_ID = FILEUPLOAD_DATA.FILE_ID
+WHERE FILEUPLOAD_INFO.FILE_ID > '${#TestCase#maxID}'
+ AND FILEUPLOAD_INFO.FILE_TYPE = 'CSV'
+ORDER BY FILEUPLOAD_DATA.FILE_ID DESC</con:query>
+      <con:assertion type="JDBC Status" id="5c0ede4a-3b31-44d2-a7e0-efc895f4da26" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="9f4be4c0-6144-48e7-98d8-448f28a64546" name="Check count of files [FILE_CONTENT]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row/FILE_CONTENT)</path>
+          <content>2</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="5bd7f3ec-a38c-4d2b-9adf-6b844d6d5360" name="Match content of [FILE_NAME]-2">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/FILE_NAME[1]</path>
+          <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-2}*.txt</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" name="Match content of [FILE_NAME]-1" id="cbbed855-704d-4394-b658-eb2ce2b492c5">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[2]/FILE_NAME[1]</path>
+          <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-1}*.txt</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="2dc28a3c-ad53-45ca-be4b-f38909f8f451" name="Match content of [FILE_CONTENT]-2">
+        <con:configuration>
+          <path>contains (//Results[1]/ResultSet[1]/Row[1]/FILE_CONTENT[1]/text(), 'Amount:Correlation ID:Sender name:Sender iban:Sender bic:SPC')</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" name="Match content of [FILE_CONTENT]-1" id="e8e382ef-5649-4fd7-b535-21520f5c8dcb">
+        <con:configuration>
+          <path>contains (//Results[1]/ResultSet[1]/Row[2]/FILE_CONTENT[1]/text(), 'Amount:Correlation ID:Sender name:Sender iban:Sender bic:SPC')</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="Simple NotContains" id="66031918-d2ad-4892-88a0-1097dc653bdd" name="Not Contains">
+        <con:configuration>
+          <token>null</token>
+          <ignoreCase>true</ignoreCase>
+          <useRegEx>false</useRegEx>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="8111c5a9-3f97-4c9c-8984-716dd27b0757" name="GUI_manualMftBtResultUpload">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftBtResultUpload</con:operation>
+      <con:request name="GUI_manualMftBtResultUpload" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39e8fbfc-8b81-49e4-8d75-8f093bd26513">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:manualMftBtResultUpload>
+         <!--type: date-->
+         <bankDate>${#Project#Date_Current_yyyy-MM-dd}</bankDate>
+      </v1:manualMftBtResultUpload>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2b4e6405-32ba-4771-88d1-db32819f620f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="32f6011f-a33f-464a-971a-3482686402ed" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c754cd2e-8c92-4db5-9550-c18dda565799" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="ead14c97-b790-4f0b-95f6-200672e0660f" name="Check count of [filename]>=4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:manualMftBtResultUploadResponse/uploadResults/filename)>=4</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="MessageContentAssertion" id="53628ee9-d6c2-4ba5-a276-4e13be2687fe" name="Message Content Assertion-States">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[1]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000257.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[1]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>SUCCESSFUL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[2]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000256.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[2]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>SUCCESSFUL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[3]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000255.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[3]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>SUCCESSFUL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[4]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000254.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[4]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>SUCCESSFUL</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[5]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000253.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[5]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[6]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000252.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[6]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[7]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000251.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[7]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[8]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000250.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[8]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[9]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000249.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[9]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[10]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000248.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[10]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[11]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000247.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[11]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[12]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000246.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[12]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[13]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000245.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[13]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[14]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000244.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[14]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualMftBtResultUploadResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000257.txt</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000256.xml</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000255.txt</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000254.xml</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000253.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000252.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000251.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000250.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000249.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000248.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000247.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000246.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000245.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000244.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+      </ns2:manualMftBtResultUploadResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fbc7e664-9d05-4815-ba44-542b048af986" name="Match content of [filename]-CSV-2">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[1]/filename[1]/text()</path>
+            <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-2}*.txt</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-CSV-1" id="c4bb33c0-5f91-4e38-a9cf-d14d03efec84">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[3]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-1}*.txt</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-Pain001-2" id="6d4766e8-7e62-4184-9882-78a2921b1ee4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[2]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-2}*.xml</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-Pain001-1" id="3da90650-f3ef-4c6d-bfbe-43b079978510">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[4]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-1}*.xml</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftBtResultUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="def328bc-62cf-48ae-b890-b8f4337f92bf" name="GUI_countUploadedFiles+2">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countUploadedFiles</con:operation>
+      <con:request name="GUI_countUploadedFiles+2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9250bb3d-0421-41c7-8a0f-cb7de2a8b331">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:countUploadedFiles/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="77f45aed-2dab-4aa2-8a77-d941aa92e182" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="0b62c297-494a-4cdd-a180-1fd362e838ce" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="56df4587-aecc-4da1-ab7d-69ed4889da24" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="22fe6f0b-39c6-495c-9736-af5cc6df8f28" name="Match content of [count]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countUploadedFilesResponse[1]/countData[1]/count[1]-2</path>
+            <content>${_GUI_countUploadedFiles#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countUploadedFilesResponse[1]/countData[1]/count[1]}.0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countUploadedFiles"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e0271581-99f8-4062-b1ee-669e99a5a874" name="retrieveUploadedFileItems">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>retrieveUploadedFileItems</con:operation>
+      <con:request name="retrieveUploadedFileItems" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="ad070e46-945c-411b-9ffd-1c39c9c09bb6">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:retrieveUploadedFileItems>
+         <fileItemsConstraint>
+            <!--type: long-->
+            <first>0</first>
+            <!--type: long-->
+            <count>2</count>
+         </fileItemsConstraint>
+      </v1:retrieveUploadedFileItems>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="3b40a027-0b69-45c9-a52c-90ba618a994c" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7a63f902-302a-43d8-a97c-bf2138690a7e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="5f79b9c5-a242-408b-9901-ac20d97b6695" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="9df7e0af-2247-451e-b577-6a380930ac2b" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/fileId[1]</con:xpath>
+              <con:element>fileId</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1590</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/fileName[1]</con:xpath>
+              <con:element>fileName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23_C54_DE99999999999999999999_EUR_999740.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/uploadDate[1]</con:xpath>
+              <con:element>uploadDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:51:39+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/processStatus[1]</con:xpath>
+              <con:element>processStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PROCESSED</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/isDownloadAvailble[1]</con:xpath>
+              <con:element>isDownloadAvailble</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/numberOfAllTopups[1]</con:xpath>
+              <con:element>numberOfAllTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/numberOfUnprocessedTopups[1]</con:xpath>
+              <con:element>numberOfUnprocessedTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/numberOfSuccessfulTopups[1]</con:xpath>
+              <con:element>numberOfSuccessfulTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/numberOfRejectedTopups[1]</con:xpath>
+              <con:element>numberOfRejectedTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/exchangeDirection[1]</con:xpath>
+              <con:element>exchangeDirection</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>FINANCE_TO_DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/fileType[1]</con:xpath>
+              <con:element>fileType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>CAMT_054_001_02</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/fileId[1]</con:xpath>
+              <con:element>fileId</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1587</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/fileName[1]</con:xpath>
+              <con:element>fileName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23_C54_DE99999999999999999990_EUR_649756.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/uploadDate[1]</con:xpath>
+              <con:element>uploadDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:50:41+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/processStatus[1]</con:xpath>
+              <con:element>processStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>PROCESSED</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/isDownloadAvailble[1]</con:xpath>
+              <con:element>isDownloadAvailble</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/numberOfAllTopups[1]</con:xpath>
+              <con:element>numberOfAllTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>3</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/numberOfUnprocessedTopups[1]</con:xpath>
+              <con:element>numberOfUnprocessedTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/numberOfSuccessfulTopups[1]</con:xpath>
+              <con:element>numberOfSuccessfulTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/numberOfRejectedTopups[1]</con:xpath>
+              <con:element>numberOfRejectedTopups</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/exchangeDirection[1]</con:xpath>
+              <con:element>exchangeDirection</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>FINANCE_TO_DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[2]/fileType[1]</con:xpath>
+              <con:element>fileType</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>CAMT_054_001_02</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns4:retrieveUploadedFileItemsResponse xmlns:ns8="http://directrecharge.o2.com/ws/common/job/v1/" xmlns:ns7="http://directrecharge.o2.com/ws/commonservice/v1/" xmlns:ns6="http://directrecharge.o2.com/ws/generic/v1/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns4="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:ns3="http://directrecharge.o2.com/ws/common/invalidation/v1/" xmlns:ns2="http://directrecharge.o2.com/ws/common/settings/v1/">
+         <fileItemsReponse>
+            <fileItemData>
+               <fileId>1590</fileId>
+               <fileName>2021-04-23_C54_DE99999999999999999999_EUR_999740.xml</fileName>
+               <uploadDate>2021-04-23T14:51:39+02:00</uploadDate>
+               <processStatus>PROCESSED</processStatus>
+               <isDownloadAvailble>false</isDownloadAvailble>
+               <numberOfAllTopups>3</numberOfAllTopups>
+               <numberOfUnprocessedTopups>0</numberOfUnprocessedTopups>
+               <numberOfSuccessfulTopups>1</numberOfSuccessfulTopups>
+               <numberOfRejectedTopups>2</numberOfRejectedTopups>
+               <exchangeDirection>FINANCE_TO_DRC</exchangeDirection>
+               <fileType>CAMT_054_001_02</fileType>
+            </fileItemData>
+            <fileItemData>
+               <fileId>1587</fileId>
+               <fileName>2021-04-23_C54_DE99999999999999999990_EUR_649756.xml</fileName>
+               <uploadDate>2021-04-23T14:50:41+02:00</uploadDate>
+               <processStatus>PROCESSED</processStatus>
+               <isDownloadAvailble>false</isDownloadAvailble>
+               <numberOfAllTopups>3</numberOfAllTopups>
+               <numberOfUnprocessedTopups>0</numberOfUnprocessedTopups>
+               <numberOfSuccessfulTopups>1</numberOfSuccessfulTopups>
+               <numberOfRejectedTopups>2</numberOfRejectedTopups>
+               <exchangeDirection>FINANCE_TO_DRC</exchangeDirection>
+               <fileType>CAMT_054_001_02</fileType>
+            </fileItemData>
+         </fileItemsReponse>
+      </ns4:retrieveUploadedFileItemsResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/retrieveUploadedFileItems"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="a22c5169-b9c1-4de4-ae70-a8b6e768cb64" name="countBanktransferTopupsByFileId">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countBanktransferTopupsByFileId</con:operation>
+      <con:request name="countBanktransferTopupsByFileId" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="06177318-a3e2-4324-ae86-f66eb24ccadf">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value=" ${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:countBanktransferTopupsByFileId>
+         <fileId>${retrieveUploadedFileItems#Response#declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns4:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/fileId[1]}</fileId>
+      </v1:countBanktransferTopupsByFileId>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="1d7dc542-c134-4f57-9b86-5e5d72242621" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="b73ee2e5-c076-4d1d-9428-29206506e625" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="3e8734f9-6c33-48b9-b42e-24aefe98e9d0" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="c37112d1-c4c3-45cd-81b6-24a54321af2b" name="Match content of [numberOfBanktransferTopups]=1">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countBanktransferTopupsByFileIdResponse[1]/numberOfBanktransferTopups[1]/text()</path>
+            <content>${retrieveUploadedFileItems#Response#declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns4:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/numberOfAllTopups[1]}</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countBanktransferTopupsByFileId"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="6277cad8-e4e2-4d6b-a83c-a1cf7cd44825" name="getBanktransferTopupsByFileId">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getBanktransferTopupsByFileId</con:operation>
+      <con:request name="getBanktransferTopupsByFileId" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="12c9b02b-60d2-4c06-a152-eb91236500e3">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value=" ${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getBanktransferTopupsByFileId>
+         <first>0</first>
+         <count>20</count>
+         <fileId>${retrieveUploadedFileItems#Response#declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/'; //ns4:retrieveUploadedFileItemsResponse[1]/fileItemsReponse[1]/fileItemData[1]/fileId[1]}</fileId>
+         <!--type: DBSortingOrder - enumeration: [ASC,DESC]-->
+         <sortingOrder>DESC</sortingOrder>
+      </v1:getBanktransferTopupsByFileId>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="beee714f-c24c-47c8-a762-65b2aedec464" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="46ce7c18-9af9-48f6-85e4-4827b14f434f" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="464d402a-d4f0-43b6-b0b4-39b18c7a479f" name="Not SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="3a83371b-e166-4a4f-ac94-8d073af6bccf" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12944872</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>50000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/paymentDate[1]</con:xpath>
+              <con:element>paymentDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:50:52+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/receptionDate[1]</con:xpath>
+              <con:element>receptionDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:51:39+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>10</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>21</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/rejectionReason[1]</con:xpath>
+              <con:element>rejectionReason</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2000001111</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/senderIban[1]</con:xpath>
+              <con:element>senderIban</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>DE02ZZZ01234567890</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/senderBic[1]</con:xpath>
+              <con:element>senderBic</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BELADEBEXXX</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/senderName[1]</con:xpath>
+              <con:element>senderName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Victoria Norris - Testüberweisung CAMT54 Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/reference[1]</con:xpath>
+              <con:element>reference</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>+491761234-7739 DRC Testaufladung. Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[1]/fileId[1]</con:xpath>
+              <con:element>fileId</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1590</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12944871</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>50000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/paymentDate[1]</con:xpath>
+              <con:element>paymentDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:50:52+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/receptionDate[1]</con:xpath>
+              <con:element>receptionDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:51:39+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>491509954129</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>10</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>21</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/rejectionReason[1]</con:xpath>
+              <con:element>rejectionReason</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>20070</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/senderIban[1]</con:xpath>
+              <con:element>senderIban</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>DE02ZZZ01234567890</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/senderBic[1]</con:xpath>
+              <con:element>senderBic</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BELADEBEXXX</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/senderName[1]</con:xpath>
+              <con:element>senderName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Steven Wood - Test¿berweisung CAMT54 Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/reference[1]</con:xpath>
+              <con:element>reference</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>491509954129-9852 DRC Testaufladung. Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[2]/fileId[1]</con:xpath>
+              <con:element>fileId</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1590</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/id[1]</con:xpath>
+              <con:element>id</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>12944870</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/correlationId[1]</con:xpath>
+              <con:element>correlationId</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>250606505</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/amount[1]</con:xpath>
+              <con:element>amount</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>50000</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/paymentDate[1]</con:xpath>
+              <con:element>paymentDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:50:52+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/committedDate[1]</con:xpath>
+              <con:element>committedDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:51:40+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/receptionDate[1]</con:xpath>
+              <con:element>receptionDate</con:element>
+              <con:type>XmlDateTime</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2021-04-23T14:51:39+02:00</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/msisdn[1]</con:xpath>
+              <con:element>msisdn</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>4917681962400</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/paymentType[1]</con:xpath>
+              <con:element>paymentType</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>10</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/status[1]</con:xpath>
+              <con:element>status</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>31</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/rejectionReason[1]</con:xpath>
+              <con:element>rejectionReason</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>0</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/senderIban[1]</con:xpath>
+              <con:element>senderIban</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>DE02ZZZ01234567890</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/senderBic[1]</con:xpath>
+              <con:element>senderBic</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>BELADEBEXXX</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/senderName[1]</con:xpath>
+              <con:element>senderName</con:element>
+              <con:type>XmlString</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>Tanek Brock - Test¿berweisung CAMT54 Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/reference[1]</con:xpath>
+              <con:element>reference</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>4917681962400-0346 DRC Testaufladung. Credit</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:getBanktransferTopupsByFileIdResponse[1]/banktransferTopups[3]/fileId[1]</con:xpath>
+              <con:element>fileId</con:element>
+              <con:type>XmlLong</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>1590</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns4:getBanktransferTopupsByFileIdResponse xmlns:ns8="http://directrecharge.o2.com/ws/common/job/v1/" xmlns:ns7="http://directrecharge.o2.com/ws/commonservice/v1/" xmlns:ns6="http://directrecharge.o2.com/ws/generic/v1/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns4="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:ns3="http://directrecharge.o2.com/ws/common/invalidation/v1/" xmlns:ns2="http://directrecharge.o2.com/ws/common/settings/v1/">
+         <banktransferTopups>
+            <id>12944872</id>
+            <amount>50000</amount>
+            <paymentDate>2021-04-23T14:50:52+02:00</paymentDate>
+            <receptionDate>2021-04-23T14:51:39+02:00</receptionDate>
+            <paymentType>10</paymentType>
+            <status>21</status>
+            <rejectionReason>2000001111</rejectionReason>
+            <senderIban>DE02ZZZ01234567890</senderIban>
+            <senderBic>BELADEBEXXX</senderBic>
+            <senderName>Victoria Norris - Testüberweisung CAMT54 Credit</senderName>
+            <reference>+491761234-7739 DRC Testaufladung. Credit</reference>
+            <fileId>1590</fileId>
+         </banktransferTopups>
+         <banktransferTopups>
+            <id>12944871</id>
+            <amount>50000</amount>
+            <paymentDate>2021-04-23T14:50:52+02:00</paymentDate>
+            <receptionDate>2021-04-23T14:51:39+02:00</receptionDate>
+            <msisdn>491509954129</msisdn>
+            <paymentType>10</paymentType>
+            <status>21</status>
+            <rejectionReason>20070</rejectionReason>
+            <senderIban>DE02ZZZ01234567890</senderIban>
+            <senderBic>BELADEBEXXX</senderBic>
+            <senderName>Steven Wood - Test¿berweisung CAMT54 Credit</senderName>
+            <reference>491509954129-9852 DRC Testaufladung. Credit</reference>
+            <fileId>1590</fileId>
+         </banktransferTopups>
+         <banktransferTopups>
+            <id>12944870</id>
+            <correlationId>250606505</correlationId>
+            <amount>50000</amount>
+            <paymentDate>2021-04-23T14:50:52+02:00</paymentDate>
+            <committedDate>2021-04-23T14:51:40+02:00</committedDate>
+            <receptionDate>2021-04-23T14:51:39+02:00</receptionDate>
+            <msisdn>4917681962400</msisdn>
+            <paymentType>10</paymentType>
+            <status>31</status>
+            <rejectionReason>0</rejectionReason>
+            <senderIban>DE02ZZZ01234567890</senderIban>
+            <senderBic>BELADEBEXXX</senderBic>
+            <senderName>Tanek Brock - Test¿berweisung CAMT54 Credit</senderName>
+            <reference>4917681962400-0346 DRC Testaufladung. Credit</reference>
+            <fileId>1590</fileId>
+         </banktransferTopups>
+      </ns4:getBanktransferTopupsByFileIdResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/getBanktransferTopupsByFileId"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaxID-FILEUPLOAD_INFO" id="a4f2efcb-2117-4865-8456-d95183a35211">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(FILE_ID) as iCount, MAX(FILE_ID) as maxID 
+FROM FILEUPLOAD_INFO</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="d3625d55-06f1-47d1-a02a-5aa890bb06c0" name="Match content of [MAXFILE_ID]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/ICOUNT[1]-6</path>
+          <content>${#TestCase#FileUploaded_Count}.*</content>
+          <allowWildcards>true</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer-maxID-again" id="eceab819-7a4d-4498-97dd-903c53bc5d48">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" entitize="false" ignoreEmpty="false" transferToAll="false" transferChildNodes="false">
+        <con:name>maxID</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>JDBC Request-getMaxID-FILEUPLOAD_INFO</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/MAXID[1]</con:sourcePath>
+        <con:targetType>maxID</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-CopyFileToSFTP-BT-lastCAMTFile-again" id="f4a34785-5573-4f72-81b1-2aa4b2c672f2">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>83e57bed-9b56-44fd-8050-ace0e5d30c24</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inSourcePath</con:name>
+          <con:value>${#TestCase#FilePathNew}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>targetPath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>targetUser</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-1" id="706af20b-d144-4a64-bbbc-eec3ef0a9974">
+    <con:settings/>
+    <con:config>
+      <delay>${#TestSuite#mft-fileProcess-delay-ms}</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase-ExecJobs-CAMT054-BT-again" id="959cc6aa-d68f-4c3b-a04b-d80ebd0957b9">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>10b05f4d-bfa7-47b0-b02f-1e963ef942bc</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Download</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Recharge</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Report</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Download</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+        <con:entry>taskCount-Recharge</con:entry>
+        <con:entry>taskCount-Report</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="92197e6d-5776-433a-bcbb-934726c7ad3c" name="GUI_manualMftBtResultUpload-again">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualMftBtResultUpload</con:operation>
+      <con:request name="GUI_manualMftBtResultUpload-again" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39e8fbfc-8b81-49e4-8d75-8f093bd26513">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:manualMftBtResultUpload>
+         <!--type: date-->
+         <bankDate>${#Project#Date_Current_yyyy-MM-dd}</bankDate>
+      </v1:manualMftBtResultUpload>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="2b4e6405-32ba-4771-88d1-db32819f620f" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="32f6011f-a33f-464a-971a-3482686402ed" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="c754cd2e-8c92-4db5-9550-c18dda565799" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="ead14c97-b790-4f0b-95f6-200672e0660f" name="Check count of [filename]>=4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:manualMftBtResultUploadResponse/uploadResults/filename)>=4</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="MessageContentAssertion" id="53628ee9-d6c2-4ba5-a276-4e13be2687fe" name="Message Content Assertion-States">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[1]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000257.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[1]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[2]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000256.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[2]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[3]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000255.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[3]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[4]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000254.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[4]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[5]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000253.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[5]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[6]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000252.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[6]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[7]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000251.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[7]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[8]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000250.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[8]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[9]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000249.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[9]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[10]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000248.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[10]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[11]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999999_EUR_000247.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[11]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[12]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999999_EUR_000246.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[12]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[13]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_CSV_DE99999999999999999990_EUR_000245.txt</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[13]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[14]/filename[1]</con:xpath>
+              <con:element>filename</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>2019-11-20_P01_DE99999999999999999990_EUR_000244.xml</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns1:manualMftBtResultUploadResponse[1]/uploadResults[14]/transferStatus[1]</con:xpath>
+              <con:element>transferStatus</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>false</con:enabled>
+              <con:expectedValue>ALREADY_EXIST</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:manualMftBtResultUploadResponse xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://directrecharge.o2.com/ws/drcgui/v1/">
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000257.txt</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000256.xml</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000255.txt</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000254.xml</filename>
+            <transferStatus>SUCCESSFUL</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000253.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000252.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000251.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000250.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000249.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000248.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999999_EUR_000247.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999999_EUR_000246.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_CSV_DE99999999999999999990_EUR_000245.txt</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+         <uploadResults>
+            <filename>2019-11-20_P01_DE99999999999999999990_EUR_000244.xml</filename>
+            <transferStatus>ALREADY_EXIST</transferStatus>
+         </uploadResults>
+      </ns2:manualMftBtResultUploadResponse>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="fbc7e664-9d05-4815-ba44-542b048af986" name="Match content of [filename]-CSV-2">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[1]/filename[1]/text()</path>
+            <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-2}*.txt</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-CSV-1" id="c4bb33c0-5f91-4e38-a9cf-d14d03efec84">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[3]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyy-MM-dd}_OK_${#TestCase#IBAN-1}*.txt</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-Pain001-2" id="6d4766e8-7e62-4184-9882-78a2921b1ee4">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[2]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-2}*.xml</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" name="Match content of [filename]-Pain001-1" id="3da90650-f3ef-4c6d-bfbe-43b079978510">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualMftBtResultUploadResponse[1]/uploadResults[4]/filename[1]</path>
+            <content>${#Project#Date_Current_yyyyMMdd}*_p001-CCT_${#TestCase#IBAN-1}*.xml</content>
+            <allowWildcards>true</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="manualMftBtResultUpload"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaxID-again" id="cca2ef98-adc8-491f-a9b0-ed831a635ed5">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT MAX(FILE_ID)FROM FILEUPLOAD_INFO</con:query>
+      <con:assertion type="JDBC Status" id="90d09895-3c50-4e38-8d20-bd589a1c4afb" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="44e3bf20-3c47-4870-8417-7fbc419a567a" name="Match content of [MAXFILE_ID]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/MAXFILE_ID[1]/text()</path>
+          <content>${#TestCase#maxID}</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="5a742bd1-c4ab-4568-9a09-67b8f502917c" name="GUI_countUploadedFiles+2-again">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>countUploadedFiles</con:operation>
+      <con:request name="GUI_countUploadedFiles+2-again" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9250bb3d-0421-41c7-8a0f-cb7de2a8b331">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:countUploadedFiles/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="77f45aed-2dab-4aa2-8a77-d941aa92e182" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="0b62c297-494a-4cdd-a180-1fd362e838ce" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="56df4587-aecc-4da1-ab7d-69ed4889da24" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="22fe6f0b-39c6-495c-9736-af5cc6df8f28" name="Match content of [count]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countUploadedFilesResponse[1]/countData[1]/count[1]-2</path>
+            <content>${_GUI_countUploadedFiles#Response#declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:countUploadedFilesResponse[1]/countData[1]/count[1]}.0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/countUploadedFiles"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getJobs" id="f04a95c1-8b0c-40c9-94e9-a7408186dc1f">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_BANKTRANSFER_CAMT054_FILE_REPORT&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_BANKTRANSFER_PAIN001_FILE_REPORT&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_BANKTRANSFER_PAYBACK_PAIN001_AND_CSV_FILE&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PARSE_BANKTRANSFER_CAM054_FILE&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">UPLOAD_BANKTRANSFER_CSV_FILE&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">UPLOAD_BANKTRANSFER_PAIN001_FILE&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>job_name</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_Validate-JobMonitor-OK" id="1f96751b-eaba-4d14-8ab3-91eb48ad6b39">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>aef0f6ae-5942-4c5b-9ff4-00f4644fddfd</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inJobName</con:name>
+          <con:value>${DataSource-getJobs#job_name}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getJobs" id="86933bdd-1d6f-43aa-ac9e-41719527ac0a">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getJobs</dataSourceStep>
+      <targetStep>Run TestCase_Validate-JobMonitor-OK</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>FileUploaded_Count</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>maxID</con:name>
+      <con:value>0</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Amount</con:name>
+      <con:value>5.00</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-Wrong</con:name>
+      <con:value>+491761234</con:value>
+    </con:property>
+    <con:property>
+      <con:name>IBAN-Unknown</con:name>
+      <con:value>DE41500105170123456789</con:value>
+    </con:property>
+    <con:property>
+      <con:name>IBAN-1</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>IBAN-2</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-OK</con:name>
+      <con:value>4917676461282</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN-Unknown</con:name>
+      <con:value>491509929510</con:value>
+    </con:property>
+    <con:property>
+      <con:name>FilePath</con:name>
+      <con:value>/CAMT54-Files/20221010095909951-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>FilePathNew</con:name>
+      <con:value>/CAMT54-Files/2022-10-10_C54_DE41500105170123456789_EUR_329023.xml</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>59b9ef05-1892-445d-809a-725aa8e1dce8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>12d242f8-fb62-4336-8086-f5fe0be7a904</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>16e9c07d-7dd8-47dc-a570-c7045533271c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9c51f7c3-d0b1-48a5-927c-2d2917c02182</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cf462895-6caa-4971-adfb-d16651eb1ece</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0226ecda-00f4-45c0-9926-e84cccb5ddfa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>19db1f38-eeac-47cd-b29e-05ca395c791f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7ce36c07-f9a5-462f-9097-ba57ed231024</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3d3cc4f5-d2a0-42dd-b1d9-44c621c6aa46</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>55d39203-c90d-49e5-a164-eda801e9cdc1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8c48fb23-633f-4238-a33f-0c5b1cf5d077</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>857e9f73-221e-42a2-8fdc-bfc38228774b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5c61f5e5-7e5a-41bb-b173-cffe746f2298</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8384694f-bf90-43cd-ae01-95d72354ad0e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d90d220c-3fb1-4f46-bf47-69a1d1148271</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d81ce90a-00b5-418c-a3d5-c0f5bca945ba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c8f7b88-2a86-4ee6-aea2-ea4c5d7877c3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f8af8cb8-f0a4-47f8-818c-f1d7291e2e55</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f5670ad7-11ae-4967-a59c-373ba40ae88b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3d7e102e-01f6-45cc-8509-f000eb86501f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c05c89f3-cb19-42da-90a1-c4a9502fd011</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9bcd766e-d641-4460-affb-e7767ac4c57b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2b92e034-6431-4f89-b9a7-18dd267ce676</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>49dc6dd7-437e-4246-9ea3-00f7e991efad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>16a5ed46-d926-4844-bab9-91bf8edabfe3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b6114ec-f040-4988-ae0a-fe405050c0f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b9e3bca9-05f3-4cb1-8ace-1d9acb6eb9ce</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c00a376-e122-4d37-838e-85e33983d8ef</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d7eadf5b-b0ab-415e-9115-53c64bbb5550</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>94bd1e61-a515-482f-af18-01fa02e68608</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39a2b2b9-e544-484f-a846-43f22d5cd587</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f8fe377a-24fa-4cac-82b6-7cb206320d52</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca01a09a-0eba-4de9-9ed1-21bdf654a5d0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cd4a6351-9dba-48f2-9b64-ae05277696f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2276179f-af50-43dd-9718-3e2c4947a65d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a6cbf18b-5e80-4170-9ccd-69d4da67aa3d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0702a2e-ed1e-48e4-b3d3-bf67e1f92bf4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6a0b1b83-4f77-4e55-8814-fe9471f795bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5f27b358-31f0-4b20-8673-4cdc05dcec72</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5434736e-77fd-40c6-8a17-50974d5c3787</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b47a9ee1-79ed-4d87-9364-031d8663b53e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>724a5e6f-4793-4ea2-b3a2-9f1706ef73a7</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4d319c49-c255-41b4-9d90-a9ba446d6134</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c744784c-a786-4ced-8f42-57d6e2ebaa54</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8654b735-ae07-4658-8b79-1902dbb01952</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f7a17a4e-8335-4936-a1cb-011bc7272136</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cbb194ca-58d3-4b43-b83a-612464641913</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>91cffbdd-bb48-4d98-8b95-cff59cd69288</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b0d4f091-dacb-4674-ac0f-44227d3d8a78</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>aa766afa-c6f3-4f69-b5b9-b4ed59d15bc1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f9c0b352-93e9-4eca-b977-e5a32b0eb26c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d1cee397-0ac9-45d8-bb77-56433c2809f6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f412ea69-9953-4382-8916-fb8fa3b6742c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da0fdbc5-70c6-4427-9248-2c00e240db5d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>67446816-a4cb-48c6-a964-dcee59d775f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f6e919d9-6214-4633-af9d-9d79d5cdb62f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f571a424-30e0-4306-8cab-90045e1468ad</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3b23c7b3-3504-4c5b-a0a3-df4b239b5edf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>77faf98d-0383-4951-97b5-64ced0eaf24e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c6d076e1-fa0b-4443-aa1d-31adf1a6c440</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ca534ec4-b6c0-41a6-848b-4bcd514bd3fe</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c6b83659-371e-4907-a177-9036faeb2a26</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8b27e688-ac25-413a-9779-27cc526addfd</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f56a774b-1fce-4438-bdfd-4cec0e228776</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c1cf8f0a-a7e6-4dc1-9909-89a73301fe40</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8111c5a9-3f97-4c9c-8984-716dd27b0757</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>def328bc-62cf-48ae-b890-b8f4337f92bf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3954e2b8-012c-4687-9e85-c1d9b072f065</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cca2ef98-adc8-491f-a9b0-ed831a635ed5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f4a34785-5573-4f72-81b1-2aa4b2c672f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>959cc6aa-d68f-4c3b-a04b-d80ebd0957b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5a742bd1-c4ab-4568-9a09-67b8f502917c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>92197e6d-5776-433a-bcbb-934726c7ad3c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a4f2efcb-2117-4865-8456-d95183a35211</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>10a3ee07-6b1d-4c80-833a-aaf13b3767ea</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eceab819-7a4d-4498-97dd-903c53bc5d48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>aad49e37-fdeb-47f9-80da-5120fd9258ec</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>56d21ca2-62f8-4eef-bd2a-2d69bede6cc6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>590282e0-8603-4698-90d5-7f5b827931b0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f04a95c1-8b0c-40c9-94e9-a7408186dc1f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1f96751b-eaba-4d14-8ab3-91eb48ad6b39</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>86933bdd-1d6f-43aa-ac9e-41719527ac0a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>706af20b-d144-4a64-bbbc-eec3ef0a9974</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4b062ccf-2fd6-415b-95d1-335a436ac9db</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e0271581-99f8-4062-b1ee-669e99a5a874</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6277cad8-e4e2-4d6b-a83c-a1cf7cd44825</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a22c5169-b9c1-4de4-ae70-a8b6e768cb64</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

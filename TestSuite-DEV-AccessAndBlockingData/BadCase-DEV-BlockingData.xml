@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="07d1fc22-291f-4eed-824e-672885869bf7" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-DEV-BlockingData" searchProperties="true" timeout="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests wrong  manual and daily blocking and view data for different user roles ordered with requirements in SVN:
+/SRs/R18-11/SR-68972_NOVA_Data_Deletion_DRC/SR68972_U-036_DRC_ASRI.docx</con:description>
+  <con:settings>
+    <con:setting id="07d1fc22-291f-4eed-824e-672885869bf7fileName">BadCase-DEV-BlockingData</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearProperties" id="a5d2af71-85d0-43e0-99f7-055c6edc926d">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType xsi:nil="true"/>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-CreateAllUserRoles" id="2ea413d0-4617-4397-842f-981376d8da0b">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>0fd3455d-60a0-400b-8ba1-dd549ace3685</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>TimeStep</con:name>
+        </con:property>
+        <con:property>
+          <con:name>CS_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>CS_NOVA_SUPERVISOR</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>CS_NOVA_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>FINANCE_AGENT</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>FINANCE_SUPERVISOR</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>MATCHING_SUPERVISOR</con:name>
+        </con:property>
+        <con:property>
+          <con:name>REPORTING_SUPERVISOR</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>CS_AGENT</con:entry>
+        <con:entry>CS_NOVA_SUPERVISOR</con:entry>
+        <con:entry>CS_NOVA_AGENT</con:entry>
+        <con:entry>FINANCE_AGENT</con:entry>
+        <con:entry>FINANCE_SUPERVISOR</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="_JDBC Request-getMaxID" id="1cfc5edd-28ff-4d29-b842-f480ee677bf2">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT MAX(ID) as MaxID FROM MAINTAIN_REQUEST</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer_Data" id="478704f4-a070-4fdb-9b64-15bba174acb2">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="false" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>maxID</con:name>
+        <con:sourceType>ResponseAsXml</con:sourceType>
+        <con:sourceStep>_JDBC Request-getMaxID</con:sourceStep>
+        <con:sourcePath>//Results[1]/ResultSet[1]/Row[1]/MAXID[1]</con:sourcePath>
+        <con:targetType>maxIDinDB</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="12000N-manualBlocking-MSISDN-NotExist" id="5b667051-e47b-4067-b83d-f91646048057">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>manualBlocking</con:operation>
+      <con:request name="12000N-manualBlocking-MSISDN-NotExist" id="94112350-49dd-48dc-a1e8-633a66b15759">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${_Run TestCase-CreateAllUserRoles#CS_NOVA_SUPERVISOR}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <v1:manualBlocking>\r
+         <!--type: msisdn-->\r
+         <msisdn>${#Project#MSISDN-chargeCustomer-OK}</msisdn>\r
+         <!--type: string256-->\r
+         <comment>TEST: Blocking data for not exist msisdn</comment>\r
+      </v1:manualBlocking>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="8d1d106e-6a82-4fe7-ba8a-98a871f8c327"/>
+        <con:assertion type="Schema Compliance" id="cc837daa-64b6-4566-ba07-c7cf15a11e88">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="5edd7f3a-004c-47f1-ba6d-d8b5826448f8"/>
+        <con:assertion type="XPath Match" id="f9b59705-ee07-4118-b42e-a17682313ba2" name="Check for existence of [ns2:manualBlockingResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+exists( //ns2:manualBlockingResponse)</path>
+            <content>true</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="19924db3-d311-468c-ab6f-382b805bf9dc" name="Match content of [affectedEntries]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns2:manualBlockingResponse[1]/affectedEntries[1]/text()</path>
+            <content>0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Inherit From Parent</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="12010N_JDBC Request-getMaintain-Request" id="0b2da76f-5541-41b8-b549-d79366f1156a">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT * 
+FROM MAINTAIN_REQUEST
+WHERE ID>${#TestCase#maxIDinDB}</con:query>
+      <con:assertion type="JDBC Status" id="04f39fcc-2f1c-443d-b23d-1ef800e912e7" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="52ebd86e-c7a7-48a8-8601-0d6c1137ba9d" name="Check for existence of [ENTRIES_EXPECTED]>0">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/ENTRIES_EXPECTED=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="10f94269-55ca-4adb-89c6-4a499cc3abf1" name="Check for existence of [STATUS]=30">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/STATUS!=30</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" name="Match content of [ERROR_CODE]" id="6210b917-b98b-411d-8ded-d212d3e9c190">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/ERROR_CODE!=''</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>maxIDinDB</con:name>
+      <con:value>1051</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>df3aa282-f855-4781-a622-db264ff77d7c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>299c2378-afa8-4c1c-ad4a-f89d8768c7d8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a1f3de7b-2347-421e-a390-cce3bb0bfddb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e3cdb803-c60a-4c15-bfa0-0b09511aedef</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>58ffea41-99e8-4827-b58c-7d7633d929fa</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e4608a5f-88f0-4825-acc9-52b3087c9d32</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ae6d76d2-40c7-44b9-af40-3f5e9ee6754a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3be56568-2ebf-4f77-8025-492b5974c60a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c497b40b-fd4e-457d-9998-7dddbf75f875</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5626e83a-6935-4909-aefc-1648f6d56e2d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a256d98f-8ec7-4b91-97e3-015fa79b3887</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>97e28227-f2fd-406b-a3bc-cbf12dc371e2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63a6ee22-9acf-463b-9472-42f07b7f5612</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8c0b1941-3349-40f0-acf7-edec0ff29cc3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b94b95b5-4046-47fe-a685-8f66b7b59e0f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0fa74d77-b887-47f8-a523-05854e9a84f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>696927b3-341f-4cbc-ac7c-fb39fd847b8e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a688076-4357-4c04-b1dc-761102fca0f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7147ec2b-db12-4fd1-9657-ab813c03caa0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c52c5869-4d13-43e3-975c-0c2e701aae12</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1eed6376-74df-49e3-8bfa-850d2db9b4b9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a654839f-0157-49e5-92bc-7989d04891e4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>39eff4f0-ff86-402e-849f-df7aab12cb64</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>052dea36-56ee-4fe6-817c-18c628f79181</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f17f8e22-15c3-414e-af21-fe0478e6c722</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e8e929ba-b40d-4f37-8281-1609ef420ba0</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2c56bc2a-a352-4646-8f67-86c801874877</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f38065f9-4246-49d7-a819-bc9cefe5635c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e4131024-fdae-400f-9e42-806fa9a7345c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7580c116-b667-40c4-9d4f-9f010492f550</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

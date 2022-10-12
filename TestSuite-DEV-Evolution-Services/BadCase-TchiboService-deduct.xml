@@ -1,0 +1,1458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="ec6bccb9-d7ab-4205-bf5b-c33395729b75" discardOkResults="false" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="BadCase-TchiboService-deduct" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests different msisdn format based on § 5.20 , S. 15 in opal spec: 
+ ...\src\trunk\SRs\Interfaces\ISO-GW-Server\DR-OPAL_Interface_Specification_v1.1.doc
+
+RR RR RR RR RR RR	Format der Nummer ohne Verwendung CC.
+	Mobilfunkrufnummer mit führender 0 im Format 0&lt;NDC>&lt;SN>.  
+
+Die Rufnummer kann elf- oder zwölfstellig sein. Bei einer elfstelligen Nummer wird das letzte Zeichen mit einem `F`aufgefüllt. Die NDC muß mit einer 1 beginnen.
+
+Beispiel: 01 79 12 34 56 78
+
+Folgende Regeln müssen bei Verwendung des CC eingehalten werden:  Format der Mobilfunkrufnummer &lt;CC>&lt;NDC>&lt;SN>
+- Der CC kann aus zwei (beginnend mit 49) oder vier (beginnend mit   
+  zwei führenden Nullen plus 49) Stellen bestehen
+- Der NDC muss mit einer 1 beginnen und kann 3- oder 4-stellig sein.
+- Der SN kann aus 7 oder 8 Stellen bestehen.
+
+Die Längenangabe des Feldes muss entsprechend ihrer Nutzdaten angepasst werden. Bei einer ungeraden Zeichenanzahl der Rufnummer wird das letzte Zeichen (Halbbyte) mit einem ‚F‘ aufgefüllt.
+
+Beispiel:
+49 17 13 20 93 41
+49 17 13 20 93 41 1F
+00 49 17 13 20 93 41
+00 49 17 13 20 93 41 1F
+
+
+Beispiel Aufladung:
+F0 F1 F5 58 54 3A 01 01 20 01 F0 F6 01 71 32 09 34 1F
+
+F0 F1 F5		15 Byte
+4C 4F 3A		Kennung Mobilnetzbetreiber
+01			Bedienernummer 01
+01			Barzahlung
+20 01			Jahr 2001
+F0 F6 			6 Byte Nutzdaten
+01 79 32 09 34 1F	Handy-Rufnummer  01793209341 plus Auffüll-F
+
+Anmerkung: Bedienernummer und Zahlart können auch mit 00 belegt werden.</con:description>
+  <con:settings>
+    <con:setting id="IncludeOverview">true</con:setting>
+    <con:setting id="IncludeResults">true</con:setting>
+    <con:setting id="FlowLayout">false</con:setting>
+    <con:setting id="ErrorDetails">true</con:setting>
+    <con:setting id="IncludeCoverage">true</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@disable_log">false</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@errors_only">false</con:setting>
+    <con:setting id="com.smartbear.ready.history.view.ClientTransactionLogView$OptionsForm@follow">true</con:setting>
+    <con:setting id="GeneratableJUnitReport@Style">Single Page (Print)</con:setting>
+    <con:setting id="GeneratableJUnitReport@Folder">D:\Temp</con:setting>
+    <con:setting id="ec6bccb9-d7ab-4205-bf5b-c33395729b75fileName">BadCase-TchiboService-deduct</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer_ClearValues" id="cefd77b6-f1c7-49ab-a0c4-af106fd7b5e1">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-getMSISDN-Tchibo" id="e1201186-bb68-465a-aeba-b04ac7a98db8">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>c0e14ab8-a1ce-447e-9b84-92cce1d52d04</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inBrandID</con:name>
+          <con:value>${#TestSuite#Tchibo-Brand}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inTenantID</con:name>
+          <con:value>${#TestSuite#Tchibo-Tenant}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>inBoolNoBrand</con:name>
+          <con:value>false</con:value>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDN</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>outProviderName</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outSASCode</con:name>
+        </con:property>
+        <con:property>
+          <con:name>outMSISDNLength</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>outMSISDN</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="_Property Transfer_TransferMSISDN" id="263eec6c-1cbc-4470-a7d7-abb238e0b562">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>MSISDN</con:name>
+        <con:sourceType>outMSISDN</con:sourceType>
+        <con:sourceStep>_Run TestCase-getMSISDN-Tchibo</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" name="_topup-OK" id="b5f4cb60-4fd4-4dc0-8d3a-ef9a3f953cad">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>topupSynchronous</con:operation>
+      <con:request name="_topup-OK" id="d248544b-2dd5-422b-b38f-6e3d9c3ea626">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:topupSynchronous>
+         <DirectRechargeServiceTopupDto>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${#Project#DateTime_Current}</terminalTimestamp>
+               <terminalTraceNum>1${#Project#Random8}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceTopupDto>
+      </tch:topupSynchronous>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="6010a79b-a2b4-40f4-8e4e-ad6ad58ea885"/>
+        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault" id="4231076e-5551-456d-955c-ea0245ec435c"/>
+        <con:assertion type="Schema Compliance" name="Schema Compliance" id="87b1fcd3-9003-4233-9c05-4e7ad8df5df5">
+          <con:configuration>
+            <definition/>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="005a61cc-8b5e-4329-9981-dd5833bac4ce" name="900N_deductBalance-TimeStamp-Wrong-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="900N_deductBalance-TimeStamp-Wrong-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>29.02.2015</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="7f841b04-2a6a-48ce-9347-da0e54c9714e" name="910N_deductBalance-TraceNum-Wrong-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="910N_deductBalance-TraceNum-Wrong-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>1${#Project#Random8}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="afd72614-1491-480f-8cf0-beb02e50cb32" name="915N_deductBalance-MSISDN-Wrong">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="915N_deductBalance-MSISDN-Wrong" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>0176${#Project#Random5}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="549ef528-fa0f-4efe-b990-e53607cba796" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>Top up already cancelled</originatorMessage>
+                  <errorCode>28</errorCode>
+                  <message>cancellation is not allowed</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>01761234567</msisdn>
+                  <referenceId>0267d384a59245dabeb6da3b6f136c44</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T18:08:40+02:00</terminalTimestamp>
+                     <terminalTraceNum>121634609</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="1b8513c9-4477-4b88-a71d-4ef83dc0aef1" name="930N_deductBalance-Flag=true-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="930N_deductBalance-Flag=true-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>true</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="a3217d94-e9de-499c-8399-c599c3367703" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Wrong input, Msisdn is not valid</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>100</amount>
+                  <currency>EUR</currency>
+                  <msisdn/>
+                  <referenceId>ea37583621734c9d9f1f682635c2edf4</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T16:52:34+02:00</terminalTimestamp>
+                     <terminalTraceNum>170640084</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="b9e5c1c1-4965-4f5b-88e8-661c55238bd3" name="940N_deductBalance-Amount&lt;0-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="940N_deductBalance-Amount&lt;0-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>-${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="c4a83cb3-bb58-4ed9-a644-548f9fb446b1" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Topup amount smaller 1 not allowed</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>-100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>4915032190303</msisdn>
+                  <referenceId>b1ba8872dc24478fa9f6a682e8d7c684</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T17:43:52+02:00</terminalTimestamp>
+                     <terminalTraceNum>123222347</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="042b6fdf-8633-4593-848d-e17754a7ba53" name="945N_deductBalance-Amount=0-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="945N_deductBalance-Amount=0-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>00</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="c4a83cb3-bb58-4ed9-a644-548f9fb446b1" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Topup amount smaller 1 not allowed</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>-100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>4915032190303</msisdn>
+                  <referenceId>b1ba8872dc24478fa9f6a682e8d7c684</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T17:43:52+02:00</terminalTimestamp>
+                     <terminalTraceNum>123222347</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="2a8557d8-1f7d-4f0f-897b-5df2285eb459" name="950N_deductBalance-Amount&lt;>topUp-Err-Drc-29">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="950N_deductBalance-Amount&lt;>topUp-Err-Drc-29" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>1000</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="c4a83cb3-bb58-4ed9-a644-548f9fb446b1" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>29</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Topup amount smaller 1 not allowed</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>-100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>4915032190303</msisdn>
+                  <referenceId>b1ba8872dc24478fa9f6a682e8d7c684</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T17:43:52+02:00</terminalTimestamp>
+                     <terminalTraceNum>123222347</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="49713abf-fdff-4c65-b3ae-c477ed559d88" name="955N_deductBalance-Amount-toLong>6">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="955N_deductBalance-Amount-toLong>6" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>1000000</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId>${#Project#GUID_Moved-}</referenceId>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="c4a83cb3-bb58-4ed9-a644-548f9fb446b1" name="Message Content Assertion" disabled="true">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Topup amount smaller 1 not allowed</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>-100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>4915032190303</msisdn>
+                  <referenceId>b1ba8872dc24478fa9f6a682e8d7c684</referenceId>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T17:43:52+02:00</terminalTimestamp>
+                     <terminalTraceNum>123222347</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="9927002b-6cae-46a2-be1d-3f4ccbb32005" name="960N_deductBalance-referenceID-Empty-Err-Drc-102">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DirectRechargeEvolutionServiceForTchiboSoapBinding</con:interface>
+      <con:operation>deductBalance</con:operation>
+      <con:request name="960N_deductBalance-referenceID-Empty-Err-Drc-102" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="694b829d-0672-4bf4-8edb-86cfd4715bf9">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-DirectRechargeEvolutionServiceForTchibo-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tch="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tch:deductBalance>
+         <DirectRechargeServiceDeductDto>
+            <allOrNothingFlag>${#TestSuite#Tchibo-allOrNothingFlag}</allOrNothingFlag>
+            <balanceType>${#TestSuite#balanceType}</balanceType>
+            <amount>${#TestSuite#Amount-Default}</amount>
+            <currency>${#Project#Currency_Default}</currency><msisdn>${#TestCase#MSISDN}</msisdn>
+            <referenceId/>
+            <iso8583>
+               <terminalId>${#TestSuite#Tchibo-ISO-terminalId}</terminalId>
+               <terminalTimestamp>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTimestamp[1]}</terminalTimestamp>
+               <terminalTraceNum>${_topup-OK#RawRequest#declare namespace tch='http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/'; //tch:topupSynchronous[1]/DirectRechargeServiceTopupDto[1]/iso8583[1]/terminalTraceNum[1]}</terminalTraceNum>
+               <serverId>${#TestSuite#Tchibo-ISO-serverId}</serverId>
+               <processingId>${#TestSuite#Tchibo-ISO-processingId}</processingId>
+               <partnerId>${#TestSuite#Tchibo-ISO-partnerId}</partnerId>
+            </iso8583>
+         </DirectRechargeServiceDeductDto>
+      </tch:deductBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="ad7fbb14-763b-4fd1-bb2a-918614f35582" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="7e0dc046-4bb7-47a1-8f25-7e7c84e75852" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="Not SOAP Fault Assertion" id="79d7af83-b82a-4b98-a832-eaa2cdd034fb" name="SOAP Fault"/>
+        <con:assertion type="MessageContentAssertion" id="89347697-21ac-43ce-b47c-dd57429d7305" name="Message Content Assertion">
+          <con:configuration xsi:type="con:MessageContentAssertion">
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/retryPossible[1]</con:xpath>
+              <con:element>retryPossible</con:element>
+              <con:type>XmlBoolean</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>false</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/originator[1]</con:xpath>
+              <con:element>originator</con:element>
+              <con:type xsi:nil="true"/>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>DRC</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>false</con:numberType>
+            </con:elements>
+            <con:elements>
+              <con:xpath>declare namespace ns1='http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/';
+//detail[1]/ns1:deductBalanceFault[1]/fault[1]/errorCode[1]</con:xpath>
+              <con:element>errorCode</con:element>
+              <con:type>XmlInt</con:type>
+              <con:operator>=</con:operator>
+              <con:enabled>true</con:enabled>
+              <con:expectedValue>102</con:expectedValue>
+              <con:hasValue>false</con:hasValue>
+              <con:numberType>true</con:numberType>
+            </con:elements>
+            <con:originalMessage><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occurred while processing.</faultstring>
+         <detail>
+            <ns2:deductBalanceFault xmlns:ns2="http://directrecharge.o2.com/ws/directrechargeevolutionservice/deductbalance/tchibo/" xmlns:ns3="http://directrecharge.o2.com/ws/directrechargeevolutionservice/getavailablepaymentusecases/" xmlns:ns4="http://directrecharge.o2.com/ws/directrechargeevolutionservice/querybalance/externalpsp/" xmlns:ns5="http://directrecharge.o2.com/ws/directrechargeevolutionservice/topupsynchronous/tchibo/">
+               <fault>
+                  <retryPossible>false</retryPossible>
+                  <originator>DRC</originator>
+                  <originatorMessage>No valid data for request</originatorMessage>
+                  <errorCode>102</errorCode>
+                  <message>Missing referenceId</message>
+               </fault>
+               <request>
+                  <allOrNothingFlag>false</allOrNothingFlag>
+                  <balanceType>2</balanceType>
+                  <amount>100</amount>
+                  <currency>EUR</currency>
+                  <msisdn>4915032190303</msisdn>
+                  <referenceId/>
+                  <iso8583>
+                     <terminalId>58261435</terminalId>
+                     <terminalTimestamp>2016-08-09T18:08:40+02:00</terminalTimestamp>
+                     <terminalTraceNum>121634609</terminalTraceNum>
+                     <serverId>299992</serverId>
+                     <processingId>280110</processingId>
+                     <partnerId>PBX TCHIBO</partnerId>
+                  </iso8583>
+               </request>
+            </ns2:deductBalanceFault>
+         </detail>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>]]></con:originalMessage>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+          <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+          <con:authType>Global HTTP Settings</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/directrechargeevolutionservice/DirectRechargeEvolutionServiceForTchiboPortType/deductBalance"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>Basic</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>6652868c-e17f-4214-a134-11657c946e50</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6c43e39b-3211-4f4b-a779-b148a6634d57</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>28ee0679-8152-43a0-a3ca-39f2a475be8b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3a66e0ba-9958-4d8c-ae7a-790e191a964a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0c8bfa88-2086-430b-b219-565f01854c85</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2ab5eff3-7a87-4120-8a09-499295feed34</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9b86e316-89a8-4b75-bf50-1c48cf42dbf9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34b6cf9a-c5f3-4d00-a60e-d69e4309e76f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0a5b24b4-91a5-4d20-8eef-cc4f54f3089f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c79d9c00-0bec-4f46-b580-3f90a6d808e1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eff4299e-8c87-43c1-8573-7db4eff8fcdb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ff050529-3e86-4193-a803-129416b96a38</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>acc0260c-b776-42b5-89f3-8d52ef37f28d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a3f380eb-6802-4351-b318-c7c3ef191de3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>212c8a71-e21c-49b6-bb0c-34d20943be4e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>01bb9e46-13a1-4463-b24f-5cb8cd3f6631</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b669b002-0f67-4d01-973a-0e927c0a7836</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c9120878-d510-44e5-b1e7-5fcdf593d8fc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>00d4d600-1add-4235-9133-16f8bab10ac1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>44b18ae9-e250-4179-8522-649df1b9947f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f78e6b9b-3c0b-4d8c-8341-5186deb93258</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a21053a8-489c-472d-b598-24a75f8f41fb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>463a2e31-63be-4ebd-8f5d-0256c28693f8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6cb239ce-b7b1-4d82-b847-accb8475c705</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>49b8b582-8daa-4bb5-afac-f426eeb59a14</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>48d9eff6-394d-427f-bd3f-704a1003323c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>626bef28-49aa-4023-aa43-6cd66a78dd48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63257b72-0d84-4923-9028-dcae33067d88</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>854a1b68-f28b-4c8b-a7ed-82e5b6d293bc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>60ada287-ef8c-4961-9fd8-8a4154e033c8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>72bce0ee-3c22-4d20-a9df-452f3ad462d3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>34eafc86-b9e0-4d5f-853a-f519c06dfb54</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5b739e1f-9e67-4456-afab-8251c1b42ceb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>100e6006-e8e0-4415-991e-463dbd30f206</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7e1aaf01-4954-4c6e-a96b-71ad7463792f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5c2767a3-6559-41cf-a7e9-d0affe00e674</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

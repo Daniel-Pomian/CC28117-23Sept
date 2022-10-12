@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="c623beb1-57b8-4fcf-a49d-a1b9f0e788ac" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-SplitPath" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings>
+    <con:setting id="c623beb1-57b8-4fcf-a49d-a1b9f0e788acfileName">TestCase-SplitPath</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-CleareValues" id="41d1fb63-ff00-412f-a226-d5b208549872">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outFileName</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>outPath</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-splitFilePath" id="301140ab-5cba-4e2f-84a8-245b4cb7960b">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script split path in filename and path without file name
+ * Date: 2020-11-12
+ * Autor: Michael Gordon
+*/
+
+String inFullPath = context.expand( '${#TestCase#inFullPath}' ).replace('\\','/')
+// set output values to error sting first.
+String outFileName='Wrong input paramter. Path is empty or wrong'
+String outPath='Wrong input paramter. Path is empty or wrong'
+
+if (inFullPath!=null &amp;&amp; inFullPath.length()>0){
+	File f=new File(inFullPath)
+	outFileName=f.getName()	
+	outPath=f.getParent().replace('\\','/')
+}
+
+// set value to properties
+testRunner.testCase.setPropertyValue('outFileName',outFileName)
+testRunner.testCase.setPropertyValue('outPath',outPath)</script>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>inFullPath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files/20221004102821732-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outFileName</con:name>
+      <con:value>20221004102821732-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>D:/Projects/Telefonica/DirectReCharge/TestOutput/soapUI/CAMT54-Files</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

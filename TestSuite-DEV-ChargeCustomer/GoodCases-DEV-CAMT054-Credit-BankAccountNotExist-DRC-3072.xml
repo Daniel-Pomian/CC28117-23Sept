@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="9bd7ddc2-3dd8-490d-8de1-7c4583c248a6" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="GoodCases-DEV-CAMT054-Credit-BankAccountNotExist-DRC-3072" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>2020-01-03 - MG:
+Special handling for camt054-credit files with optional code: &lt;Prtry->Cd=159.
+Use case:  If money transfer will be returned from telefonica with pain01 file to the bank account, but this account is not exist any more, bank returns the amount from transaction with camt054-credit file and code=159:
+159 / SEPA Rueckgabe/ SEPA-Rückgabe (Retoure) einer Überweisung / PMNT ICDT RRTN
+
+Die neue Service Methode writeOffCamt054CreditTransaction() muss in diesem Abstnitt am Core-Server implementiert weden:
+
+Wichtig das Writte-Off-Credit darf nur auf Camt054 transactions im Status NOT_ASSIGNABLE und CreditDebitIndicator: CR_RET durchgeführt werden! Des Weiteren wird es keinen Topup für diese Transactione geben.
+
+ Followed behavior is implemented:
+ Mit der Story DRC-2507 (https://www.sg.de.o2.com/jira/browse/DRC-2507) wurde bei DD-Camt054-Parsing von Return-Credits (159) der Status direkt zu WRITE_OFF gesetzt.
+
+TODO:
+    Beim Parsen von DD Return-Credits muss der Status von WRITE_OFF zu NOT_ASSIGNABLE gesetzt werden
+        
+    DrcGuiServiceImpl implementierung der writeOffCamt054CreditTransaction() analog zu paybackCamt054Transaction()
+    Camt054ManagerImpl.writeOffCamt054Credit() erstellen analog zu paybackCamt054Transaction()
+
+        Camt05400102ManualActionVO.ActionTypeEnum.WRITE_OFF_CREDIT WRITTEN_OFF_CREDIT erstellen
+        Camt05400102InputEntryVO.Status.WRITE_OFF_CREDIT WRITTEN_OFF_CREDIT erstellen
+        Camt05400102InputEntryVO.Status muss für die Transaction von NOT_ASSIGNABLE auf den neuen Status WRITTEN_OFF_CREDIT gesetzt werden
+        Manuelle Eingriff muss in CAMT054_MANUAL_ACTION geschrieben wirden (analog wie bei paybackCamt054Transaction() )</con:description>
+  <con:settings>
+    <con:setting id="9bd7ddc2-3dd8-490d-8de1-7c4583c248a6fileName">GoodCases-DEV-CAMT054-Credit-BankAccountNotExist-DRC-3072</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="transfer" name="_Property Transfer-ClearValues" id="11cc5fe2-b563-4db4-a32f-0f8973062c9d">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>1</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>Random8</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+        <con:name>2</con:name>
+        <con:sourceType>StringEmpty</con:sourceType>
+        <con:sourceStep>#Project#</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>MSISDN</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:type>XPATH</con:type>
+        <con:targetTransferType>XPATH</con:targetTransferType>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-createData" id="370154db-ced7-4315-b15e-15a443a31507">
+    <con:settings/>
+    <con:config>
+      <script>// Create test-data in property
+ testRunner.testCase.setPropertyValue('MSISDN', context.expand( '${#Project#MSISDN-chargeCustomer-OK}' ))
+ testRunner.testCase.setPropertyValue('Random8',  context.expand( '${#Project#Random8}' ))
+ String  sOutPath = context.expand( '${drc_target_dir}' )+'/CAMT54-Files/'+context.expand( '${#Project#DateTime_Current_String_yyyyMMddHHmmssSSS}')+'-CAMT54-Credit.xml'
+ testRunner.testCase.setPropertyValue('outPath', sOutPath)
+// log.info(sOutPath)</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecAction-CAMT054" id="cf836c09-9a60-45eb-bf67-67b742d9ef20">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ef956cd7-c928-4686-9e7e-deba57d56c3f</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Assign</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Prepare-ClawBack</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Return</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Fee</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Credit</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Notify</con:name>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process_CAMT054_Report</con:name>
+          <con:value xsi:nil="true"/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Email</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasink" name="DataSink-CAMT54-Credit-Create" id="32070874-f661-4e5e-b7c5-84eaa27ff6f1">
+    <con:settings/>
+    <con:config xsi:type="con:DataSinkStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSink type="File">
+        <con:configuration><fileName>${#TestCase#outPath}</fileName><separator/><escape/><quote>false</quote><trim>true</trim><append>false</append><encoding>UTF-8</encoding></con:configuration>
+      </con:dataSink>
+      <con:properties>
+        <con:property>
+          <con:name>content</con:name>
+          <con:value>${#TestCase#fileContent}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-LoadFile" id="83d38db3-d1e4-4391-aa5a-28ecf982f510">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>3a36338c-603f-4112-9dd8-394f09709fa7</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>sourcePath</con:name>
+          <con:value>${#TestCase#outPath}</con:value>
+        </con:property>
+        <con:property>
+          <con:name>targetPath</con:name>
+        </con:property>
+        <con:property>
+          <con:name>targetUser</con:name>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="_Run TestCase-ExecJobs-CAMT054" id="f88d8518-a8a3-4163-a502-6395d24ea781">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>ef956cd7-c928-4686-9e7e-deba57d56c3f</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Retrieve</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Parse</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Assign</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-PPIT-Prepare-ClawBack</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Return</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Fee</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Credit</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Notify</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process_CAMT054_Report</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Email</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Retrieve</con:entry>
+        <con:entry>taskCount-Parse</con:entry>
+        <con:entry>taskCount-Assign</con:entry>
+        <con:entry>taskCount-PPIT-Prepare-ClawBack</con:entry>
+        <con:entry>taskCount-Process-Return</con:entry>
+        <con:entry>taskCount-Process-Fee</con:entry>
+        <con:entry>taskCount-Process-Credit</con:entry>
+        <con:entry>taskCount-Process-Notify</con:entry>
+        <con:entry>taskCount-Process_CAMT054_Report</con:entry>
+        <con:entry>taskCount-Process-Email</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getID-CheckStatus" id="a36a46a4-cef6-4eea-9b63-aea7ecd5cebb">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT ID, REMITTANCE_INFORMATION, DRC_STATUS
+FROM CAMT05400102_INPUT_ENTRY
+WHERE REMITTANCE_INFORMATION='${#TestCase#MSISDN}'</con:query>
+      <con:assertion type="JDBC Status" id="97dcfc83-c4bb-4ad5-8275-d0e984d4a276" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="29f09564-73fd-4885-8efe-4678691f2997" name="Match content of [DRC_STATUS]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/DRC_STATUS[1]/text()</path>
+          <content>NOT_ASSIGNABLE</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="7895dc07-0557-469d-b3cf-63f6186b4c20" name="GUI-writeOffCamt054ReturnCreditTransaction">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>writeOffCamt054ReturnCreditTransaction</con:operation>
+      <con:request name="GUI-writeOffCamt054ReturnCreditTransaction" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="ddab2312-553a-4038-9639-3b70b94e0def">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:writeOffCamt054ReturnCreditTransaction>
+         <!--type: long-->
+         <camt05400102InputEntyId>${JDBC Request-getID-CheckStatus#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/ID[1]}</camt05400102InputEntyId>
+         <!--type: string1024-->
+         <comment>Error &lt;Prtry->Cd=159 in camt054-credit file</comment>
+      </v1:writeOffCamt054ReturnCreditTransaction>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="c185ce6c-f279-4c5f-b6d4-7fca8346d6f6" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="26cf6724-dba2-406a-bfae-b788efae0477" name="Not SOAP Fault"/>
+        <con:assertion type="Schema Compliance" id="8507d612-1312-4626-ae81-8dd0166c67ae" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="writeOffCamt054ReturnCreditTransaction"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-checkStatus" id="56fbb047-57c3-4fad-b9e1-4eee88e04b9b">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT ID, REMITTANCE_INFORMATION, DRC_STATUS, CREDIT_DEBIT_INDICATOR
+FROM CAMT05400102_INPUT_ENTRY
+WHERE REMITTANCE_INFORMATION='${#TestCase#MSISDN}'</con:query>
+      <con:assertion type="JDBC Status" id="97dcfc83-c4bb-4ad5-8275-d0e984d4a276" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="29f09564-73fd-4885-8efe-4678691f2997" name="Match content of [DRC_STATUS]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/DRC_STATUS[1]/text()</path>
+          <content>WRITTEN_OFF_CREDIT</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="f8566f7d-396d-440e-8d57-1c49d9a49c2b" name="Match content of [CREDIT_DEBIT_INDICATOR]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/CREDIT_DEBIT_INDICATOR[1]/text()</path>
+          <content>CR_RET</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="51ad7390-696f-415f-8239-97086b343c3c" name="GUI_searchTransactions">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>searchTransactions</con:operation>
+      <con:request name="GUI_searchTransactions" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="fa7918dc-29bf-4c11-8e6e-79d8d7ae6d8d">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:type="http://directrecharge.o2.com/ws/drcgui/v1/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:searchTransactions>
+         <search>
+            <!--type: int-->
+            <first>0</first>
+            <!--type: int-->
+            <count>1</count>
+            <searchParam>
+               <msisdn>${#TestCase#MSISDN}</msisdn>
+            </searchParam>
+         </search>
+      </v1:searchTransactions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="c5366177-8694-4436-9a37-0b21f88fd56e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="76150bc6-cce3-4748-bff5-a2585cb6d36e" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="04c9b6b4-cf6c-4151-8465-9065d91c1aa2" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="6f7796cf-f6db-4cd8-bc80-aada4e7b9b86" name="Check count of [searchResponse]">
+          <con:configuration>
+            <path>declare namespace ns2='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns2:searchTransactionsResponse/searchResponse/searchResponse)</path>
+            <content>0</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:jmsPropertyConfig/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://directrecharge.o2.com/ws/drcgui/DrcGuiPortType/searchTransactions"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="ff1a32e2-ce69-4c5a-923a-710f216e83c9">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="96753c0f-e806-4b6f-b398-e4e8dbc7bce1">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="d4fb7d9b-be04-4609-bf0a-ed3a22d5075f">
+            <con:authProfile>No Authorization</con:authProfile>
+          </con:entry>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="e18e52d2-ac2b-4a40-b965-eb708f1108a2" name="GUI_getWrittenOffCreditsTableMetaData">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getWrittenOffCreditsTableMetaData</con:operation>
+      <con:request name="GUI_getWrittenOffCreditsTableMetaData" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="4f0faa0e-aff0-42b7-b805-6a1be0f1d2d0">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getWrittenOffCreditsTableMetaData/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="ba49b5d0-67c9-4281-86b4-3b8fd6380dd5" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="a2644813-897b-41ce-bc2a-56d23d768a67" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="46adffa4-2eae-4b6a-b095-3b71153ab194" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="fa3c92a8-b415-443a-a090-ad34ce0f10c7" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="1b58cb86-00cf-4e8c-90a3-2375979915a9" name="Check count of [valueMetaData]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+count( //ns4:getWrittenOffCreditsTableMetaDataResponse/tableMetaData/rowMetaData/valueMetaData)</path>
+            <content>11</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getShowWrittenOffCreditsTableMetaData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="request" id="ff2aea44-04a4-4314-ac05-0cc2bde47daf" name="GUI_getWrittenOffCreditsTableData">
+    <con:settings/>
+    <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:interface>DrcGuiSoapBinding</con:interface>
+      <con:operation>getWrittenOffCreditsTableData</con:operation>
+      <con:request name="GUI_getWrittenOffCreditsTableData" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="b57cb7ad-9274-41b2-87c6-fefe151d1802">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="drc-gui-user" value="${#Project#drc-GUIService-User}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#drc-GUIService-URL}</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://directrecharge.o2.com/ws/drcgui/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:getWrittenOffCreditsTableData>
+         <!--type: unsignedInt-->
+         <first>0</first>
+         <!--type: unsignedInt-->
+         <count>1</count>
+      </v1:getWrittenOffCreditsTableData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+        <con:assertion type="Valid HTTP Status Codes" id="c7803f7b-261e-49df-9b35-93b122fb93df" name="Valid HTTP Status Codes">
+          <con:settings/>
+          <con:configuration>
+            <codes>200</codes>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="SOAP Response" id="50aa241d-f172-4a55-a7a3-233b787fb16e" name="SOAP Response"/>
+        <con:assertion type="Schema Compliance" id="c5f70471-4c41-4091-b72e-06a47597f274" name="Schema Compliance">
+          <con:configuration/>
+        </con:assertion>
+        <con:assertion type="SOAP Fault Assertion" id="51c50f72-fa73-46cc-bb0a-93283e34cc2a" name="Not SOAP Fault"/>
+        <con:assertion type="XPath Match" id="95873a40-043e-427c-99eb-9140ed60e82c" name="Match content of [stringValue]">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getWrittenOffCreditsTableDataResponse[1]/tableData[1]/rows[1]/row[1]/value[7]/stringValue[1]/text()</path>
+            <content>WRITTEN_OFF_CREDIT</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:assertion type="XPath Match" id="1a8f2efa-8da0-4144-8a4c-797654b6bd53" name="Match content of [stringValue]-Status=WRITTEN_OFF_CREDIT">
+          <con:configuration>
+            <path>declare namespace ns4='http://directrecharge.o2.com/ws/drcgui/v1/';
+//ns4:getWrittenOffCreditsTableDataResponse[1]/tableData[1]/rows[1]/row[1]/value[7]/stringValue[1]/text()</path>
+            <content>WRITTEN_OFF_CREDIT</content>
+            <allowWildcards>false</allowWildcards>
+            <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+            <ignoreComments>true</ignoreComments>
+          </con:configuration>
+        </con:assertion>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="getShowWrittenOffCreditsTableData"/>
+        <con:wsrmConfig version="1.2"/>
+        <con:environmentSpec>
+          <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+            <con:authProfile>Inherit From Parent</con:authProfile>
+          </con:entry>
+        </con:environmentSpec>
+      </con:request>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>fileContent</con:name>
+      <con:value><![CDATA[<?xml version="1.0" encoding="UTF-8" ?> <Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.054.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 	<BkToCstmrDbtCdtNtfctn> 		<GrpHdr> 			<MsgId>CRN190520AC${#TestCase#Random8}</MsgId> 			<CreDtTm>${#Project#Date_Current_yyyy-MM-dd}T19:00:00.000+02:00</CreDtTm> 			<MsgRcpt> 				<Nm>Telefonica Germany GmbH und Co. OHG Postpoint 24 OG rechts</Nm> 				<PstlAdr> 					<AdrLine>Georg-Brauchle-Ring 50</AdrLine> 					<AdrLine>80992 Muenchen</AdrLine> 				</PstlAdr> 			</MsgRcpt> 			<MsgPgntn> 				<PgNb>1</PgNb> 				<LastPgInd>true</LastPgInd> 			</MsgPgntn> 			<AddtlInf>Überweisung oder Rücklastschrift</AddtlInf> 		</GrpHdr> 		<Ntfctn> 			<Id>000000005714893201905201904${#TestCase#Random8}</Id> 			<ElctrncSeqNb>353</ElctrncSeqNb> 			<CreDtTm>${#Project#Date_Current_yyyy-MM-dd}T19:00:00.000+02:00</CreDtTm> 			<Acct> 				<Id> 					<IBAN>DE99999999999999999990</IBAN> 				</Id> 				<Ccy>EUR</Ccy> 				<Ownr> 					<Nm>Telefonica Germany GmbH und Co. OHG Postpoint 24 OG rechts</Nm> 					<PstlAdr> 						<AdrLine>Georg-Brauchle-Ring 50</AdrLine> 						<AdrLine>80992 Muenchen</AdrLine> 					</PstlAdr> 				</Ownr> 				<Svcr> 					<FinInstnId> 						<BIC>HYVEDEMMXXX</BIC> 						<Nm>UNICREDIT BANK AG</Nm> 						<Othr> 							<Id>DE 129279999</Id> 							<Issr>UmsStId</Issr> 						</Othr> 					</FinInstnId> 				</Svcr> 			</Acct> 			<Ntry> 				<Amt Ccy="EUR">12.78</Amt> 				<CdtDbtInd>CRDT</CdtDbtInd> 				<Sts>BOOK</Sts> 				<BookgDt> 					<Dt>${#Project#Date_Current_yyyy-MM-dd}</Dt> 				</BookgDt> 				<ValDt> 					<Dt>${#Project#Date_Current_yyyy-MM-dd}</Dt> 				</ValDt> 				<BkTxCd> 					<Domn> 						<Cd>PMNT</Cd> 						<Fmly> 							<Cd>ICDT</Cd> 							<SubFmlyCd>RRTN</SubFmlyCd> 						</Fmly> 					</Domn> 					<Prtry> 						<Cd>159</Cd> 						<Issr>DK</Issr> 					</Prtry> 				</BkTxCd> 				<NtryDtls> 					<Btch> 						<MsgId>CRN190520AC${#TestCase#Random8}</MsgId> 						<NbOfTxs>1</NbOfTxs> 						<TtlAmt Ccy="EUR">12.78</TtlAmt> 						<CdtDbtInd>CRDT</CdtDbtInd> 					</Btch> 					<TxDtls> 						<Refs> 							<EndToEndId>NOTPROVIDED</EndToEndId> 							<TxId>CRH190520BSWI029411${#TestCase#Random8}</TxId> 						</Refs> 						<AmtDtls> 							<TxAmt> 								<Amt Ccy="EUR">12.78</Amt> 							</TxAmt> 						</AmtDtls> 						<BkTxCd> 							<Domn> 								<Cd>PMNT</Cd> 								<Fmly> 									<Cd>ICDT</Cd> 									<SubFmlyCd>RRTN</SubFmlyCd> 								</Fmly> 							</Domn> 							<Prtry> 								<Cd>NRTI+159+100</Cd> 								<Issr>DK</Issr> 							</Prtry> 						</BkTxCd> 						<RltdPties> 							<Dbtr> 								<Nm>Telefonica Germany G</Nm> 							</Dbtr> 							<DbtrAcct> 								<Id> 									<IBAN>DE99999999999999999990</IBAN> 								</Id> 							</DbtrAcct> 							<Cdtr> 								<Nm>Anne Musterfrau</Nm> 							</Cdtr> 							<CdtrAcct> 								<Id> 									<IBAN>DE99999999999999999991</IBAN> 								</Id> 							</CdtrAcct> 						</RltdPties> 						<RltdAgts> 							<DbtrAgt> 								<FinInstnId> 									<BIC>HYVEDEMMXXX</BIC> 								</FinInstnId> 							</DbtrAgt> 							<CdtrAgt> 								<FinInstnId> 									<BIC>CMCIDEDDXXX</BIC> 								</FinInstnId> 							</CdtrAgt> 						</RltdAgts> 						<RmtInf> 							<Ustrd>${#TestCase#MSISDN}</Ustrd> 						</RmtInf> 						<RtrInf> 							<Rsn> 								<Cd>AC01</Cd> 							</Rsn> 							<AddtlInf>Kontonummer fehlerhaft (ungültige IBAN)</AddtlInf> 						</RtrInf> 						<AddtlTxInf>SEPA Rueckgabe</AddtlTxInf> 					</TxDtls> 				</NtryDtls> 				<AddtlNtryInf>SEPA Rueckgabe</AddtlNtryInf> 			</Ntry> 		</Ntfctn> 	</BkToCstmrDbtCdtNtfctn> </Document>]]></con:value>
+    </con:property>
+    <con:property>
+      <con:name>outPath</con:name>
+      <con:value>/CAMT54-Files/20221003155822435-CAMT54-Credit.xml</con:value>
+    </con:property>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>4917687763892</con:value>
+    </con:property>
+    <con:property>
+      <con:name>Random8</con:name>
+      <con:value>94418950</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>e1310c36-7418-4c3f-abd5-93bca1b355e9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>deb871da-bd55-430b-aa73-48e6849c075b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>76a78f2f-75f5-4f76-aa13-2e14eeda4d2f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>393e3d81-075e-44dc-a9aa-8b0ce318db94</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>84aa5571-0389-4a68-8364-01e6365ed113</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>489241c7-7070-44a1-83d0-64f3483c6baf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>2501c721-75e9-4f5d-954c-54e77660fcdc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>1352d1ee-0bcc-4501-bdc2-57f822b20127</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d8ada49e-aa02-4ed0-87a1-ad38664ac003</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>47827d3c-f324-43b4-b2ee-73b1602a3ed3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c8a2984d-26a9-4770-a1fd-f0380ce482de</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7a8357b3-b32b-4c9f-a5e1-cc0754123ceb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cd583889-8b30-4ea5-a6e4-f02f2b3d2ad5</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cddb0346-9e1e-40dc-9cb7-ba20ddd4835c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5b19a112-ea48-47d3-a725-54c66c64b566</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b4d6ed5f-5e51-44ad-9cea-30552b19347e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ab17ccd1-79be-429c-b954-21c57630d96e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0410cb7-707b-4226-b6d9-8e75ecd12b65</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fe538317-4834-4952-94a6-ac1c02f62df4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>014b50f9-185c-4362-9d7f-5fcb6dfe3da3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9d101127-da1c-4899-986c-bf9dcc713f53</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>ff0dad1e-c066-4e1e-aba6-25867d9fe236</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3c5910f9-b7a5-43c1-8584-d2859c9bec7e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>32070874-f661-4e5e-b7c5-84eaa27ff6f1</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>11cc5fe2-b563-4db4-a32f-0f8973062c9d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>370154db-ced7-4315-b15e-15a443a31507</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>cf836c09-9a60-45eb-bf67-67b742d9ef20</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>83d38db3-d1e4-4391-aa5a-28ecf982f510</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f88d8518-a8a3-4163-a502-6395d24ea781</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>51ad7390-696f-415f-8239-97086b343c3c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a36a46a4-cef6-4eea-9b63-aea7ecd5cebb</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7895dc07-0557-469d-b3cf-63f6186b4c20</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>56fbb047-57c3-4fad-b9e1-4eee88e04b9b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

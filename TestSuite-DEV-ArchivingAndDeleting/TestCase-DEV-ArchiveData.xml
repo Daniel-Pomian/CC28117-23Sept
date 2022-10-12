@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="70b21127-e78f-4f80-916b-0028a157e41b" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-ArchiveData" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Tests data archivation based on:
+https://www.sg.de.o2.com/jira/browse/DRC-1922 , https://www.sg.de.o2.com/jira/browse/DRC-2002
+and Requirements in SVN:
+http://mucsgsvn03.sg.de.pri.o2.com/svn/drcrepo/trunk/SRs/R19-1/SR-82726_NOVA_Data_Deletion_2.0/SR82726_U-036_DRC_ASRI.docx
+§ 2.1.3 
+
+All data from table must be moved to  the table with same names + suffix arch.
+Followed data must be updated separatly in table:
+•	Start and end timestamp 
+•	number of data to be archived
+•	number of archived data
+•	number of data could not be archived</con:description>
+  <con:settings>
+    <con:setting id="com.smartbear.ready.history.view.ClientResultsView$OptionsForm@errors_only">false</con:setting>
+    <con:setting id="70b21127-e78f-4f80-916b-0028a157e41bfileName">TestCase-DEV-ArchiveData</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="groovy" name="Groovy Script_deleteProperties" id="63092701-3cf3-423a-b450-093e1e540994">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script save counts from tables in test-case properties
+ * Date: 15.01.2019
+ * Autor: Michael Gordon
+*/
+
+// delete all test-case properties except currentSuffix
+propertyNames = context.getTestCase().getPropertyNames()
+
+for(propertyName in propertyNames){
+	if(propertyName=='currentSuffix')	 // clear
+		testRunner.testCase.setPropertyValue('currentSuffix','')
+	else // delete
+		context.getTestCase().removeProperty(propertyName)
+}</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaxID" id="7fba6439-c1a8-41b8-93c8-6c6120e21ecf">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT MAX(ID) as MaxID FROM MAINTAIN_REQUEST</con:query>
+      <con:assertion type="JDBC Status" id="66aaa001-e8ed-4f23-930f-9d10e6e0615d" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource_setSuffix" id="357a22e9-bbbf-4fa6-b5c6-248e7e8db385">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">_before&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">_after&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>suffix</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:failOnEmpty>true</con:failOnEmpty>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>true</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="transfer" name="Property Transfer_suffix" id="8860dda4-fd5d-4527-a25a-ddbfa4e83a5a">
+    <con:settings/>
+    <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="false" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+        <con:name>suffix</con:name>
+        <con:sourceType>suffix</con:sourceType>
+        <con:sourceStep>DataSource_setSuffix</con:sourceStep>
+        <con:sourcePath/>
+        <con:targetType>currentSuffix</con:targetType>
+        <con:targetStep>#TestCase#</con:targetStep>
+        <con:targetPath/>
+        <con:upgraded>true</con:upgraded>
+      </con:transfers>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource_getTableNames" id="63ea9f03-efc6-46fe-a559-8ed866c2f31c">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">ATM_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">ATM_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">BANKTRANSFER_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">BANKTRANSFER_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">DIRECTDEBIT_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">DIRECTDEBIT_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">DRSERVICE_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">DRSERVICE_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">MANUAL_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">MANUAL_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORDS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORDS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TOPUPS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHERS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHERS_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">OCS_BALANCE_REQUEST</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">OCS_BALANCE_REQUEST_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">TRANSACTION_REQUEST</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">TRANSACTION_REQUEST_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORD</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">VOMS_RECORD_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TRANSACTION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">VOUCHER_TRANSACTION_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE_CONTENT</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">SEPA_FILE_CONTENT_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">GPS_RECORD</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">GPS_RECORD_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">GPS_TRANSACTION</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">GPS_TRANSACTION_ARCH</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>tableName</con:property>
+      <con:property>archiveName</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:failOnEmpty>true</con:failOnEmpty>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>true</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request_getCountfromTable" id="f38cc6a4-8649-4b0d-997d-cb15adbe0464">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*)
+FROM ${DataSource_getTableNames#tableName}</con:query>
+      <con:assertion type="JDBC Status" id="087e6bd8-8ccf-46d3-9000-bcb0928d9872" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="c9bc0dfc-5de1-44ab-9e33-b93a3cd8d57e" name="Check count of [COUNT]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row/COUNT)>=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request_getCountfromArchive" id="5e497fed-72bb-4174-8760-c0d1f5ee7ccf">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*)
+FROM ${DataSource_getTableNames#archiveName}</con:query>
+      <con:assertion type="JDBC Status" id="087e6bd8-8ccf-46d3-9000-bcb0928d9872" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="6b3e593a-acf4-41ff-8925-b32000983f83" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]>=0</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script_setCounts" id="fff90cf8-5720-4feb-a146-dc69f31024ed">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script save counts from tables in test-case properties
+ * Date: 15.01.2019
+ * Autor: Michael Gordon
+*/
+
+// set  table names and counts to vars 
+def currentSuffix = context.expand( '${#TestCase#currentSuffix}' )
+def table = context.expand( '${DataSource_getTableNames#tableName}' )
+def archive = context.expand( '${DataSource_getTableNames#archiveName}' )
+def countTable = context.expand( '${JDBC Request_getCountfromTable#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/COUNT[1]}' )
+def countArchive = context.expand( '${JDBC Request_getCountfromArchive#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/COUNT[1]}' )
+
+// set values to test-case properties
+testRunner.testCase.setPropertyValue( table + currentSuffix,  countTable )
+testRunner.testCase.setPropertyValue( archive + currentSuffix, countArchive )</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script_validateDifferences" id="9e1fab0b-afff-41e7-83bf-6f0c6f80c329">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script validate counts  from topups tables. Data to be archived must be moved from table to archive tabel
+ *  Formel: Count_before - Count_After=Archive_Count_after-Archive_Count_before
+ * Date: 15.01.2019
+ * Autor: Michael Gordon
+*/
+
+// set constants
+String before='_before'
+String after	='_after'
+
+// set current values
+def currentSuffix = context.expand( '${#TestCase#currentSuffix}' )
+
+// validate count of table intrances only after archiving is processed
+if ( currentSuffix==after){
+	// read values for compare
+	def tableName = context.expand( '${DataSource_getTableNames#tableName}' )
+	def archiveName = context.expand( '${DataSource_getTableNames#archiveName}' )	
+	def tableName_before =context.expand( '${#TestCase#'+tableName+before+'}' )
+	def tableName_after =context.expand( '${#TestCase#'+tableName+after+'}' )
+	def archiveName_before =context.expand( '${#TestCase#'+archiveName+before+'}' )
+	def archiveName_after =context.expand( '${#TestCase#'+archiveName+after+'}' )
+	
+	// log data
+	log.info('Compare counts in  tables:  ' + tableName + '  AND   '+ archiveName)
+	log.info (tableName+  ':- contains before rows: ' + tableName_before  + ' - and after - '+ tableName_after )
+	log.info (archiveName+  ':- contains before rows: ' + archiveName_before  + ' - and after - '+ archiveName_after )
+	
+	// compare
+	assert  tableName_before.toInteger()-tableName_after.toInteger()==archiveName_after.toInteger()-archiveName_before.toInteger()
+	log.info(tableName_before.toInteger()-tableName_after.toInteger()==archiveName_after.toInteger()-archiveName_before.toInteger()) 
+	}</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop_getTableNames" id="47223b87-6d12-4a33-b22e-d296d6178190">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource_getTableNames</dataSourceStep>
+      <targetStep>JDBC Request_getCountfromTable</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-1sec" id="4c1cab71-6e38-4bb7-a773-a6563cef9ed3">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-Archiving" id="0a1e2d52-a983-402e-9353-c7d2960e691e">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>f38044ff-88ad-431e-be7a-2a3db8cf728d</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Create-Transaction</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Transaction</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-SepaFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-SepaFile</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-FileUpload</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-FileUpload</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Create-Transaction</con:entry>
+        <con:entry>taskCount-Process-Transaction</con:entry>
+        <con:entry>taskCount-Create-SepaFile</con:entry>
+        <con:entry>taskCount-Process-SepaFile</con:entry>
+        <con:entry>taskCount-Create-FileUpload</con:entry>
+        <con:entry>taskCount-Process-FileUpload</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop_setSuffix" id="0b8198d0-f1fd-4e16-9fd5-f06c61483f52">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource_setSuffix</dataSourceStep>
+      <targetStep>Property Transfer_suffix</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getMaintain-Request" id="9720fa99-0a30-4644-aeec-a3e4a75502b4">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT mt.*, mr.AFFECTED_ENTRIES
+FROM MAINTAIN_REQUEST mt join MAINTAIN_RESULT mr
+on mt.ID=mr.REQUEST_ID
+-- ready max ID from step before
+WHERE mt.ID>'${JDBC Request-getMaxID#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/MAXID[1]}'</con:query>
+      <con:assertion type="JDBC Status" id="04f39fcc-2f1c-443d-b23d-1ef800e912e7" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="e3b83538-1be6-4458-9457-405a585b89e4" name="Check for existence of [STATUS]&lt;>30">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/STATUS!=30</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="462e2b88-ab36-46bd-8230-b2d9adf60a47" name="Match content of [ERROR_CODE]">
+        <con:configuration>
+          <path>//Results/ResultSet/Row/ERROR_CODE!=''</path>
+          <content>false</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="8464caaa-8f8b-43d2-ae8c-e95c3727a7d2" name="Check for existence of [REQUESTED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/REQUESTED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="a966fd6b-7823-4fd3-88e7-aafcc5f5b7b9" name="Check for existence of [CREATED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/CREATED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="0a5ff80b-0ff5-41b6-8873-fb816fed5c1f" name="Check for existence of [LAST_CHANGED_DATE]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/LAST_CHANGED_DATE)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="900d35fd-4fb6-45c6-869d-1025f67e8621" name="Check for existence of [ENTRIES_EXPECTED]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/ENTRIES_EXPECTED)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:assertion type="XPath Match" id="d610ab8c-4665-4d3b-a1b2-a1610933a4e5" name="Check for existence of [AFFECTED_ENTRIES]">
+        <con:configuration>
+          <path>exists( //Results/ResultSet/Row/AFFECTED_ENTRIES)</path>
+          <content>true</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="delay" name="Delay-FromHere-CheckDeletedTables" id="e0571c68-6d74-4a5f-b89a-713a20c44d48">
+    <con:settings/>
+    <con:config>
+      <delay>1000</delay>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource_getDeletedTables" id="b2ce3d27-b9c2-4340-8230-b5b30589df90">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">ACCOUNT_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">ACCOUNT_HISTORY_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">ACCOUNT_PARTNER_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">REGISTRATION_OPTION_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">BALANCES_ARCH &lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">OPERATION_INFO_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">OPERATION_INFO_PROPAGATE_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PAYERS_ARCH&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:preload>true</con:preload>
+      <con:property>tableName</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:failOnEmpty>false</con:failOnEmpty>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>true</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request_checkDeletedTables" id="dc094ec2-5e3d-4c83-b29b-0cae9945e7d3">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>select table_name 
+from user_tables 
+where table_name='${DataSource_getDeletedTables#tableName}'</con:query>
+      <con:assertion type="JDBC Status" id="087e6bd8-8ccf-46d3-9000-bcb0928d9872" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="32de1446-f530-4755-ae31-64ff7db27fe2" name="Check count of [ResultSet]">
+        <con:configuration>
+          <path>count( //Results/ResultSet/Row)</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop_getDeletedTables" id="93215eb7-97cc-498f-a4aa-43c37f881edf">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource_getDeletedTables</dataSourceStep>
+      <targetStep>JDBC Request_checkDeletedTables</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getJobs" id="b33cd602-7a5f-4d6d-af23-06a4f494287f">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">true</con:entry></xml-fragment>]]></check><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_ARCHIVE_TRANSACTION_REQUESTS&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_ARCHIVE_TRANSACTION_REQUESTS&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_ARCHIVE_SEPA_FILE_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_ARCHIVE_SEPA_FILE_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">CREATE_ARCHIVE_FILEUPLOAD_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><row>&lt;xml-fragment>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">PROCESS_ARCHIVE_FILEUPLOAD_REQUEST&lt;/con:entry>&lt;con:entry xmlns:con="http://eviware.com/soapui/config"/>&lt;/xml-fragment></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>job_name</con:property>
+      <con:restartOnRun>true</con:restartOnRun>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_Validate-JobMonitor-OK" id="6073abda-e90e-4fcc-920c-3fe855cc9b3b">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>aef0f6ae-5942-4c5b-9ff4-00f4644fddfd</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>inJobName</con:name>
+          <con:value>${DataSource-getJobs#job_name}</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getJobs" id="3f6a1ef7-5bdc-404f-8097-5aa5d4668550">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getJobs</dataSourceStep>
+      <targetStep>Run TestCase_Validate-JobMonitor-OK</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>currentSuffix</con:name>
+      <con:value>_after</con:value>
+    </con:property>
+    <con:property>
+      <con:name>TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>ATM_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>ATM_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>BANKTRANSFER_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>BANKTRANSFER_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DIRECTDEBIT_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DIRECTDEBIT_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DRSERVICE_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DRSERVICE_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MANUAL_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MANUAL_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORDS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORDS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TOPUPS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TOPUPS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHERS_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHERS_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>OCS_BALANCE_REQUEST_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>OCS_BALANCE_REQUEST_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TRANSACTION_REQUEST_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TRANSACTION_REQUEST_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORD_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORD_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TRANSACTION_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TRANSACTION_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_CONTENT_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_CONTENT_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_RECORD_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_RECORD_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_TRANSACTION_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_TRANSACTION_ARCH_before</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>ATM_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>ATM_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>BANKTRANSFER_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>BANKTRANSFER_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DIRECTDEBIT_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DIRECTDEBIT_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DRSERVICE_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>DRSERVICE_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MANUAL_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>MANUAL_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORDS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORDS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TOPUPS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TOPUPS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHERS_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHERS_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>OCS_BALANCE_REQUEST_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>OCS_BALANCE_REQUEST_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TRANSACTION_REQUEST_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>TRANSACTION_REQUEST_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORD_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOMS_RECORD_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TRANSACTION_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>VOUCHER_TRANSACTION_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_CONTENT_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>SEPA_FILE_CONTENT_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_RECORD_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_RECORD_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_TRANSACTION_after</con:name>
+      <con:value/>
+    </con:property>
+    <con:property>
+      <con:name>GPS_TRANSACTION_ARCH_after</con:name>
+      <con:value/>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>f7e45e8c-44f2-462d-85fe-f1c0fcb94cda</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9cee18ce-9d9e-4436-bcde-ffd932a453f9</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>35a9d72f-544f-4b67-a97d-1bf364762705</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b024b2c-4fe4-49a1-913e-2012c2c60bee</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f0b4a5e3-04e4-4785-a45a-aecda0a05c6b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6b25fc34-1382-43d7-9499-f968cce87b81</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>813943e4-2518-479f-ac44-702771bedc99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3227c406-73f2-4869-9b94-50cf7f550703</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9b44d08d-52cd-426a-ae55-1e1f85104822</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0e724211-cb10-40d3-8e72-22aad1d71a4f</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>4e5c9913-0ee3-45c8-9604-c56615588a9d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a0d5ba62-3002-4898-9fb3-0876f8c2de99</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>d97cd464-c68b-49bd-a829-12940266f2ba</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6160a813-f2ac-4df7-adcc-2be512e898ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>74298e3d-8eff-40ff-9dc9-05a13ff3d5ff</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>03879d16-868d-4720-a664-1b4789bfceab</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63092701-3cf3-423a-b450-093e1e540994</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7fba6439-c1a8-41b8-93c8-6c6120e21ecf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>357a22e9-bbbf-4fa6-b5c6-248e7e8db385</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>8860dda4-fd5d-4527-a25a-ddbfa4e83a5a</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63ea9f03-efc6-46fe-a559-8ed866c2f31c</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>f38cc6a4-8649-4b0d-997d-cb15adbe0464</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5e497fed-72bb-4174-8760-c0d1f5ee7ccf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>fff90cf8-5720-4feb-a146-dc69f31024ed</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9e1fab0b-afff-41e7-83bf-6f0c6f80c329</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>47223b87-6d12-4a33-b22e-d296d6178190</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0a1e2d52-a983-402e-9353-c7d2960e691e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0b8198d0-f1fd-4e16-9fd5-f06c61483f52</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>9720fa99-0a30-4644-aeec-a3e4a75502b4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>e0571c68-6d74-4a5f-b89a-713a20c44d48</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b2ce3d27-b9c2-4340-8230-b5b30589df90</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>dc094ec2-5e3d-4c83-b29b-0cae9945e7d3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>93215eb7-97cc-498f-a4aa-43c37f881edf</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>b33cd602-7a5f-4d6d-af23-06a4f494287f</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6073abda-e90e-4fcc-920c-3fe855cc9b3b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3f6a1ef7-5bdc-404f-8097-5aa5d4668550</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="2ea352f1-9ffd-40fd-8d6f-b735f378d13d" discardOkResults="true" failOnError="false" failTestCaseOnErrors="true" keepSession="false" name="TestCase-DEV-Views" searchProperties="true" timeout="0" maxResults="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="" zephyrTestName="" zephyrTestId="" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Test schema and count of new rows after test-execution in followed views:
+Unallocated_PAYMENTS
+DD_PAYMENTS
+LS_RLS_PAYMENTS
+ORAFIN
+ORAFIN_TERMINAL_REVERSALS
+RO_TOPUPS</con:description>
+  <con:settings>
+    <con:setting id="34f389c7-b9c1-469e-bb65-5fb81802adbcfileName">TestCase-DEV-Views</con:setting>
+    <con:setting id="2ea352f1-9ffd-40fd-8d6f-b735f378d13dfileName">TestCase-DEV-Views</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-Archiving" id="d045bede-d4b3-421d-9f00-965d240cbcac">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>f38044ff-88ad-431e-be7a-2a3db8cf728d</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Create-Transaction</con:name>
+          <con:value>12</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-Transaction</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-SepaFile</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-SepaFile</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Create-FileUpload</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Process-FileUpload</con:name>
+          <con:value>0</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Create-Transaction</con:entry>
+        <con:entry>taskCount-Process-Transaction</con:entry>
+        <con:entry>taskCount-Create-SepaFile</con:entry>
+        <con:entry>taskCount-Process-SepaFile</con:entry>
+        <con:entry>taskCount-Create-FileUpload</con:entry>
+        <con:entry>taskCount-Process-FileUpload</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_EXECJobs-Deleting" id="9f371c39-dbd7-4bb3-916e-d157a30472d5">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>61e1c22d-e947-46b3-b459-4b6f5e3debe6</con:targetTestCase>
+      <con:properties>
+        <con:property>
+          <con:name>taskCount-Transactions</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-SepaFile</con:name>
+          <con:value>0</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-HousKeeping</con:name>
+          <con:value>1</con:value>
+        </con:property>
+        <con:property>
+          <con:name>taskCount-Fileupload</con:name>
+          <con:value>0</con:value>
+        </con:property>
+      </con:properties>
+      <con:returnProperties>
+        <con:entry>taskCount-Transactions</con:entry>
+        <con:entry>taskCount-SepaFile</con:entry>
+        <con:entry>taskCount-HousKeeping</con:entry>
+        <con:entry>taskCount-Fileupload</con:entry>
+      </con:returnProperties>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount_TOPUP" id="b424fb8b-9cfd-4606-b7c4-211bcc72afec">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*)
+FROM TOPUPS</con:query>
+      <con:assertion type="JDBC Status" id="bdbf0b35-4b11-4230-81c0-a3b31d54fedf" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="8f01d1d3-f1b9-475c-b288-66c02792ff55" name="Match content of [COUNT]">
+        <con:configuration>
+          <path>//Results[1]/ResultSet[1]/Row[1]/COUNT[1]/text()</path>
+          <content>0</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="calltestcase" name="Run TestCase_ExecAll-in-AccessAndBlockingData" id="ca91478b-c2c6-47c6-9fe8-ad5e7bcfacae">
+    <con:settings/>
+    <con:config xsi:type="con:RunTestCaseStep" ignoreEmptyProperties="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:targetTestCase>3a9b4088-ea61-480f-9d41-29490cb9a592</con:targetTestCase>
+      <con:properties/>
+      <con:returnProperties/>
+      <con:runMode>SINGLETON_AND_WAIT</con:runMode>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasource" name="DataSource-getTableCounts" id="65d15e6e-8f9c-4bd2-bd28-dd89161657fb">
+    <con:settings/>
+    <con:config xsi:type="con:DataSourceStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dataSource type="Grid">
+        <con:configuration><check>&lt;con:entry xmlns:con="http://eviware.com/soapui/config">true&lt;/con:entry></check><row><![CDATA[<xml-fragment><con:entry xmlns:con="http://eviware.com/soapui/config">RO_TOPUPS</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config">57</con:entry><con:entry xmlns:con="http://eviware.com/soapui/config"/><con:entry xmlns:con="http://eviware.com/soapui/config"/></xml-fragment>]]></row><recognizeAsPlainText>true</recognizeAsPlainText></con:configuration>
+      </con:dataSource>
+      <con:shared>true</con:shared>
+      <con:restartShared>true</con:restartShared>
+      <con:property>tableName</con:property>
+      <con:property>diffCount</con:property>
+      <con:startRow/>
+      <con:endRow/>
+      <con:recordsPerIteration>1</con:recordsPerIteration>
+      <con:completeLastOperation>true</con:completeLastOperation>
+      <con:failOnEmpty>true</con:failOnEmpty>
+      <con:gotoLoopOnEmpty>true</con:gotoLoopOnEmpty>
+      <con:trimValues>true</con:trimValues>
+      <con:entitizeValues>false</con:entitizeValues>
+      <con:restartOnRun>true</con:restartOnRun>
+      <con:expandProperties>false</con:expandProperties>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="jdbc" name="JDBC Request-getCount" id="4079748e-6082-452e-9c82-c6dd334aa2cf">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>SELECT COUNT(*)
+FROM ${DataSource-getTableCounts#tableName}</con:query>
+      <con:assertion type="JDBC Status" id="bdbf0b35-4b11-4230-81c0-a3b31d54fedf" name="JDBC Status"/>
+      <con:properties/>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="groovy" name="Groovy Script-compareCounts" id="62108076-d102-44b0-8221-0f64da923dae">
+    <con:settings/>
+    <con:config>
+      <script>/*
+ * This script compare old and new counts in tables
+ * Date: 25.06..2019
+ * Autor: Michael Gordon
+*/
+
+// read table name and old count 
+String sTableName = context.expand( '${DataSource-getTableCounts#tableName}' )
+String sDiffCount =context.expand( '${DataSource-getTableCounts#diffCount}' )
+String sCount= context.expand( '${JDBC Request-getCount#ResponseAsXml#//Results[1]/ResultSet[1]/Row[1]/COUNT[1]}' )
+ // log.info(sTableName +' - '+ sCount  +' - '+  sDiffCount )
+
+ // compare counts
+  log.info('Table: -  '+sTableName +'  Count: - '+sCount+' expected count is : - '+sDiffCount )
+ assert sCount.toInteger()==sDiffCount.toInteger()</script>
+    </con:config>
+  </con:testStep>
+  <con:testStep type="datasourceloop" name="DataSource Loop-getTableCounts" id="8f3df479-a597-4ed0-a193-c6b6ce4a7f86">
+    <con:settings/>
+    <con:config>
+      <dataSourceStep>DataSource-getTableCounts</dataSourceStep>
+      <targetStep>JDBC Request-getCount</targetStep>
+      <discardResults>true</discardResults>
+    </con:config>
+  </con:testStep>
+  <con:properties/>
+  <con:reportParameters/>
+  <con:breakPoints>
+    <con:testStepId>7a755599-b498-4e11-a8a1-e80c701985c4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>26756a6e-a765-42f5-bfcd-22eb55d04082</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>78f19189-2d15-4a39-afa3-ba618e0bd431</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>c34b8947-63ff-4bf5-8b1c-f827f1f13fe4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3052485c-08b5-419c-b7ea-1062a748891b</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>da3a9efb-8800-44cf-9835-c08681f1ccbe</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>780217a0-eb2a-4285-a295-85edb7cf7b66</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>50d4aae7-814c-47c1-b333-c0190cbf39f3</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0d125fb7-61a7-4228-905a-e59f6a198bb4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>312e3020-f00b-4cbe-8a7f-4b12f3e4e99e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>a4437182-980a-46b1-9514-ad1a3c841bfc</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>6db3823a-7064-4471-8d62-a33e4755f7b4</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>3494d228-363d-438d-b81d-206a9d2ee65d</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7023a727-9cfd-4ae1-b29c-0929c0e82365</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>813ac2de-bbda-4af1-b382-558faa188ce6</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>59d09ffd-5d27-4702-89f3-49e67f958789</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>5bbc1019-d138-452f-bfb9-e8c6ba8ef80e</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>eb6f6384-ed2e-47ba-bf98-9d468e5f5e49</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>51849ce8-88d1-4468-8483-52ece05333f2</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7896cd16-3a04-468a-a358-47401afe3c12</con:testStepId>
+    <con:status>ENABLED</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>63ccfdbb-4c15-446b-89e1-393fdef4367f</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>0bcf7a81-ec98-4e57-af54-e7166a366348</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:breakPoints>
+    <con:testStepId>7ca73e79-2b10-4d8b-937f-025f2459e5e8</con:testStepId>
+    <con:status>NONE</con:status>
+    <con:properties/>
+  </con:breakPoints>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>

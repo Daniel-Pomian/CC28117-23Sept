@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:testCase id="22b7e562-aa69-4025-8b69-16d7458a24ad" discardOkResults="true" failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase_CleanTopUpByMSISDN" searchProperties="true" disabled="true" maxResults="0" xmlns:con="http://eviware.com/soapui/config">
+  <con:description>Delete all topups for msisdn</con:description>
+  <con:settings>
+    <con:setting id="22b7e562-aa69-4025-8b69-16d7458a24adfileName">TestCase_CleanTopUpByMSISDN</con:setting>
+  </con:settings>
+  <con:savedRecentRuns>1</con:savedRecentRuns>
+  <con:testStep type="jdbc" name="JDBC_cleanupTopUpByMSISDN" id="2d31dd84-d4a4-4a7c-b092-aaec3914c08c">
+    <con:settings>
+      <con:setting id="prettyPrintResponse">true</con:setting>
+    </con:settings>
+    <con:config xsi:type="con:JdbcRequestTestStep" convertColumnNamesToUpperCase="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <con:dbConnectionName>drc-db</con:dbConnectionName>
+      <con:driver>${#Project#drc-db-driver}</con:driver>
+      <con:connectionString>${#Project#drc-db-connString}</con:connectionString>
+      <con:password/>
+      <con:connectionProperties/>
+      <con:query>DRC_TEST_CLEANUP_PKG.cleanupTopupByMsisdn(:msisdn)</con:query>
+      <con:storedProcedure>true</con:storedProcedure>
+      <con:assertion type="JDBC Status" id="5ed9ca1f-afc0-4815-8f14-91ca4b5cbec8" name="JDBC Status"/>
+      <con:assertion type="XPath Match" id="bcda4fbe-c4aa-4712-96e9-ca9186e2da9f" name="Match content of [UpdateCount]=-1">
+        <con:configuration>
+          <path>//Results[1]/UpdateCount[1]/text()</path>
+          <content>-1</content>
+          <allowWildcards>false</allowWildcards>
+          <ignoreNamspaceDifferences>true</ignoreNamspaceDifferences>
+          <ignoreComments>true</ignoreComments>
+        </con:configuration>
+      </con:assertion>
+      <con:properties>
+        <con:property>
+          <con:name>msisdn</con:name>
+          <con:value>${#TestCase#MSISDN}</con:value>
+        </con:property>
+      </con:properties>
+    </con:config>
+  </con:testStep>
+  <con:properties>
+    <con:property>
+      <con:name>MSISDN</con:name>
+      <con:value>4915032161151</con:value>
+    </con:property>
+  </con:properties>
+  <con:reportParameters/>
+  <con:environmentSpec>
+    <con:entry environmentId="e385afea-1153-4d90-83b9-3b49a724f0ea">
+      <con:authProfile>Inherit From Parent</con:authProfile>
+    </con:entry>
+  </con:environmentSpec>
+</con:testCase>
